@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PurchaseOrderMail;
 use Illuminate\Http\Request;
 use App\Models\Supplier;
 use App\Models\Product;
@@ -15,8 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
-
+use Illuminate\Support\Facades\Mail;
 
 use Gloudemans\Shoppingcart\Facades\Cart;
 use PhpOffice\PhpSpreadsheet\Worksheet\Validations;
@@ -49,10 +49,10 @@ public function SavePurchaseOrder(Request $request)
     
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
-            'expected_delivery_date' => 'required|date|after_or_equal:today',
+            // 'expected_delivery_date' => 'required|date|after_or_equal:today',
         ], [
             'supplier_id.required' => 'Please select a supplier.',
-            'expected_delivery_date.after_or_equal' => 'Expected delivery date cannot be in the past.',
+            // 'expected_delivery_date.after_or_equal' => 'Expected delivery date cannot be in the past.',
         ]);
 
         $po_number = 'PO-' . strtoupper(uniqid());
@@ -68,13 +68,30 @@ public function SavePurchaseOrder(Request $request)
         }
 
 
+        // $purchase = PurchaseOrder::create([
+        //     'po_number' => $po_number,
+        //     'supplier_id' => $request->supplier_id,
+        //     'expected_delivery_date' => $request->expected_delivery_date,
+        //     'status' => 'sent',
+        // ]);
 
+
+        #1 purchasing
         $purchase = PurchaseOrder::create([
             'po_number' => $po_number,
             'supplier_id' => $request->supplier_id,
             'expected_delivery_date' => $request->expected_delivery_date,
             'status' => 'sent',
         ]);
+
+
+        #2 token for supplier email
+        $purchase->supplier_confirmation_token = Str::uuid();
+        $purchase->save();
+
+
+        $confirmationUrl = route('supplier.confirm', $purchase->supplier_confirmation_token);
+
 
         foreach ($cart as $item) {
             $cost = $item->options->cost_price ?? 0;
@@ -86,6 +103,9 @@ public function SavePurchaseOrder(Request $request)
                 ]);
             }
 
+
+
+
             PurchaseOrderItem::create([
                 'purchase_order_id' => $purchase->id,
                 'product_id'        => $item->id,
@@ -95,6 +115,16 @@ public function SavePurchaseOrder(Request $request)
             ]);
         }
 
+
+                #3 supplier email needed for mailing
+            $supplier = $purchase->supplier;
+
+            Mail::to($supplier->email)
+                ->send(new PurchaseOrderMail($purchase, $confirmationUrl));
+
+
+    
+                
         Cart::instance('purchaseOrder')->destroy();
 
             return redirect()->route('purchase.order')->with([
@@ -130,7 +160,7 @@ public function SavePurchaseOrder(Request $request)
         public function AllPendingOrder()
         {
             // Get only POs where status is still "sent" or "partially_received"
-            $PendingOrder = PurchaseOrder::whereIn('status', ['sent', 'partially_received'])
+            $PendingOrder = PurchaseOrder::whereIn('status', ['confirmed', 'partially_received'])
                 ->latest()
                 ->get();
 

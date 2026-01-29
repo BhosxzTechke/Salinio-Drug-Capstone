@@ -11,11 +11,15 @@ class PurchaseOrder extends Model
     use HasFactory;
 
         protected $fillable = [
-        'po_number',
-        'supplier_id',
-        'expected_delivery_date',
-        'status',
-    ];
+            'po_number',
+            'supplier_id',
+            'expected_delivery_date',
+            'status',
+            'supplier_confirmation_token',
+            'supplier_confirmed_at',
+            'expiration_date'
+        ];
+
 
     /////////////////// SUB CATEGORY RELATION /////////////////
     public function supplier() {

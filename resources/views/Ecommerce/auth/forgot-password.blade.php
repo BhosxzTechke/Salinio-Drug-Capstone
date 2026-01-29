@@ -30,7 +30,10 @@
         <form class="mt-8 space-y-6 bg-white p-8 rounded-xl shadow-2xl" method="POST" action="{{ route('password.email') }}">
             @csrf
             <div class="form-group mb-4">
+
                 <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+
+                
                 <input id="email" name="email" type="email" autocomplete="email" required autofocus
                     class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
                     placeholder="Enter your email" value="{{ old('email') }}">

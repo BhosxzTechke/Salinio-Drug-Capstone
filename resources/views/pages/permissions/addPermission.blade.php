@@ -78,6 +78,7 @@
     <option value="product">Product</option>
     <option value="purchase-order">Purchase Order</option>
     <option value="reports">Reports</option>
+    <option value="rider">Rider</option>
     <option value="roles">Roles</option>
     <option value="salary">Salary</option>
     <option value="inventory">Inventory</option>

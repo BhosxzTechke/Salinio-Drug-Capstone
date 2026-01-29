@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Log In | UBold - Responsive Admin Dashboard Template</title>
+        <title>Log In | Salinio Drug Pharmacy</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
         <meta content="Coderthemes" name="author" />
@@ -47,18 +47,18 @@
 
 
 
-                                <form method="POST" action="{{ route('login') }}" >
-                                   @csrf
+                            <form method="POST" action="{{ route('login') }}" >
+                                @csrf
 
-                                   
-                                    <div class="mb-3">
-                                        <label for="emailaddress" class="form-label">Email/Name/Phone</label>
+                            
+                                <div class="mb-3">
+                                    <label for="emailaddress" class="form-label">Email/Name/Phone</label>
 
-                                        <input class="form-control @error('login') is-invalid @enderror"  name="login" type="text" id="login" required="" value="{{ old('login') }}" placeholder="Enter your email">
-                                    </div>
-                                         @error('login')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                    <input class="form-control @error('login') is-invalid @enderror"  name="login" type="text" id="login" required="" value="{{ old('login') }}" placeholder="Enter your email">
+                                </div>
+                                        @error('login')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
 
 
 

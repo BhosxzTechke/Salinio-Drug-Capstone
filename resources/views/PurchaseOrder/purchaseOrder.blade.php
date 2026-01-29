@@ -56,38 +56,46 @@
                         </div>
 
 
-                {{-- Expire Date --}}
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="expire_date">Expected Delivery Date</label>
-                        <input type="date" name="expected_delivery_date" class="form-control @error('expect_date') is-invalid @enderror" id="expect_date" min="{{ date('Y-m-d') }}" required="">
-                
-                        @error('expect_date')
-                            <span class="text-danger"> {{ $message }} </span>
-                            @enderror 
-            
-                    </div>
-                </div>
 
 
 
-                                                    {{-- Supplier --}}
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="supplier_id">Supplier</label>
-                                    <select name="supplier_id"
-                                            class="form-control @error('supplier_id') is-invalid @enderror"
-                                            id="supplier_id">
-                                        <option selected disabled>Select Supplier</option>
-                                        @foreach ($sup as $data)
-                                            <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('supplier_id')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
+<div class="col-md-6">
+    <div class="form-group mb-3">
+        <label for="supplier_id">Supplier</label>
+
+        <select name="supplier_id"
+                id="supplier_id"
+                class="form-control @error('supplier_id') is-invalid @enderror">
+            <option selected disabled>Select Supplier</option>
+
+            @foreach ($sup as $supplier)
+                <option value="{{ $supplier->id }}"
+                        data-email="{{ $supplier->email }}">
+                    {{ $supplier->name }}
+                </option>
+            @endforeach
+        </select>
+
+        <!-- Hidden field that updates automatically -->
+        <input type="hidden" name="supplier_email" id="supplier_email">
+
+        @error('supplier_id')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
+</div>
+
+        <script>
+                document.getElementById('supplier_id').addEventListener('change', function () {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const email = selectedOption.getAttribute('data-email');
+
+                    document.getElementById('supplier_email').value = email;
+                });
+        </script>
+
+
+
 
                             
             {{--  MODAL --}}

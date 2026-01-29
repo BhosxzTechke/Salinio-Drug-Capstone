@@ -18,6 +18,9 @@ class PasswordResetLinkController extends Controller
         return view('Ecommerce.auth.forgot-password');
     }
 
+
+
+
     /**
      * Handle an incoming password reset link request.
      *
@@ -25,24 +28,27 @@ class PasswordResetLinkController extends Controller
      */
             public function store(Request $request): RedirectResponse
             {
-                // Manual validation to prevent automatic error display
-                $validator = \Validator::make($request->all(), [
-                    'email' => ['required', 'email'],
-                ]);
+                    // Manual validation to prevent automatic error display
+                    $validator = \Validator::make($request->all(), [
+                        'email' => ['required', 'email'],
+                    ]);
 
-                if ($validator->fails()) {
-                    // Optionally, you can redirect silently without showing errors
-                    return back()->with('status', 'If your email exists, a reset link will be sent.');
-                }
 
-                // Attempt to send the password reset link using the "customers" broker
-                $status = Password::broker('customers')->sendResetLink(
-                    $request->only('email')
-                );
-
-                // Always return the same message to prevent exposing user existence
+                    
+            
+            if ($validator->fails()) {
+                // Optionally, you can redirect silently without showing errors
                 return back()->with('status', 'If your email exists, a reset link will be sent.');
             }
+
+            // Attempt to send the password reset link using the "customers" broker
+            $status = Password::broker('customers')->sendResetLink(
+                $request->only('email')
+            );
+
+        // Always return the same message to prevent exposing user existence
+        return back()->with('status', 'If your email exists, a reset link will be sent.');
+    }
 
     
 

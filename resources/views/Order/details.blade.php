@@ -25,7 +25,6 @@
                                         </ol>
                                     </div>
                                     
-                                    <h4 class="page-title">Profile</h4>
                                 </div>
                             </div>
                         </div>     
@@ -43,6 +42,8 @@
                                                 <form method="POST" action="{{ route('status.update') }}" enctype="multipart/form-data" >
                                                   @csrf 
                                                   @method('PUT')
+
+
 
 
                                                     <input type="hidden" name="id" value="{{ $Order->id }}">

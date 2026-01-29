@@ -97,7 +97,7 @@
 <div class="col-md-3">
                 <div class="form-group mb-3">
                     <label for="name" class="form-label">Assigned Role</label>
-                <select name="role" class="form-control @error('role') is-invalid @enderror" id="example-select">
+                <select id="roleSelect" name="role" class="form-control @error('role') is-invalid @enderror" id="example-select">
                             <option selected disabled >Select Role </option>
                             @foreach ($role as $data)
 
@@ -119,6 +119,28 @@
                 
                 </div>
             </div>
+
+
+
+                            <!-- Rider-specific Fields -->
+                <div class="col-md-3" id="riderFields" style="display: none;">
+                    <div class="form-group mb-3">
+                        <label for="vehicle_type" class="form-label">Vehicle Type <span class="text-danger">*</span></label>
+                        <input type="text" name="vehicle_type" class="form-control" 
+                                    value="{{ old('vehicle_type', optional($user->rider)->vehicle_type) }}">
+
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="availability" class="form-label">Availability <span class="text-danger">*</span></label>
+                        <select name="availability" class="form-control">
+                            <option value="available" {{ optional($user->rider)->availability == 'available' ? 'selected' : '' }}>Available</option>
+                            <option value="busy" {{ optional($user->rider)->availability == 'busy' ? 'selected' : '' }}>Busy</option>
+                        </select>
+                    </div>
+                </div>
+
+
             
 
 
@@ -180,6 +202,31 @@
         confirmBox.style.display = checkbox.checked ? 'block' : 'none';
     }
 </script>
+
+
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const roleSelect = document.getElementById('roleSelect');
+                const riderFields = document.getElementById('riderFields');
+
+                // Show Rider fields by default if selected
+                if(roleSelect.value === 'Rider') {
+                    riderFields.style.display = 'block';
+                }
+
+                // Toggle on change
+                roleSelect.addEventListener('change', function() {
+                    if(this.value === 'Rider') {
+                        riderFields.style.display = 'block';
+                    } else {
+                        riderFields.style.display = 'none';
+                    }
+                });
+            });
+            </script>
+
+
 
 
 

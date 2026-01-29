@@ -20,12 +20,12 @@
                     <table cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
                         <td style="vertical-align:middle;padding-right:12px;">
-                          {{-- <div style="width:44px;height:44px;border-radius:22px;background:#eef2ff;display:inline-flex;align-items:center;justify-content:center;">
+                      <div style="width:44px;height:44px;border-radius:22px;background:#eef2ff;display:inline-flex;align-items:center;justify-content:center;">
                             <!-- icon -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="color:#4f46e5" xmlns="http://www.w3.org/2000/svg">
                               <path d="M16 12H8m0 0l4-4m-4 4l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                          </div> --}}
+                          </div> 
                         </td>
                         <td style="vertical-align:middle;">
                           {{-- <div style="font-size:13px;color:#6b7280;margin-bottom:2px;">New message received</div> --}}
@@ -41,7 +41,7 @@
                     <!-- From block -->
                     <div style="background:#eef2ff;padding:12px;border-radius:10px;margin-bottom:14px;">
                       <div style="font-size:11px;color:#4f46e5;font-weight:600;text-transform:uppercase;letter-spacing:0.02em;">From</div>
-                      <div style="margin-top:6px;font-size:14px;font-weight:600;color:#0f172a;">{{ $name }} <span style="font-weight:400;color:#6b7280;">({{ $from }})</span></div>
+                      <div style="margin-top:6px;font-size:14px;font-weight:600;color:#0f172a;">{{ $name }} <span style="font-weight:400;color:#6b7280;">({{ $senderEmail }})</span></div>
                     </div>
 
                     <!-- Message -->

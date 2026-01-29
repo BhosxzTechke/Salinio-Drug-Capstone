@@ -9,14 +9,21 @@ use App\Models\Customer;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Orderdetails;
+use App\Models\Rider;
 use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\User;
+use App\Services\Track123Service;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderConfirmationMail;
+use App\Services\MockCourierService;
+
+
 
 class OrderController extends Controller
 {
@@ -29,6 +36,152 @@ class OrderController extends Controller
  */
 
     
+
+            ////////////////// PENDINGG ORDER TABLE       ///////////////
+
+    // ----------------------------
+    // After Confirm Status AUTOMATIC CHANGING WITHOUT RELOADING PAGE (AJAX)
+    // ----------------------------
+
+    // public function status()
+    // {
+    //     $shipments = DB::table('mock_shipments')->get();
+    //     return response()->json($shipments);
+    // }
+
+
+
+        public function shipmentStatus(Order $order)
+    {
+        $shipment = $order->shipments()->latest()->first();
+
+        return response()->json([
+            'tracking_number' => $shipment->tracking_number ?? null,
+            'delivery_status' => $shipment->delivery_status ?? $order->delivery_status,
+        ]);
+    }
+
+
+
+
+
+    // ----------------------------
+    // Save Tracking Number (AJAX)
+    // ----------------------------
+    public function saveTracking(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'tracking_number' => 'required|string|max:255',
+        ]);
+
+        $order = Order::findOrFail($request->order_id);
+
+        $order->update([
+            'tracking_number' => $request->tracking_number,
+            'order_status'    => 'ready_for_shipment',
+            'delivery_status' => 'ready_for_shipment', // waiting for pickup
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'tracking_number' => $order->tracking_number
+        ]);
+    }
+
+
+
+
+
+
+
+
+
+    // ----------------------------
+    // MarkAsConfirmOrder
+    // ----------------------------
+    
+                public function MarkAsConfirmOrder($id, MockCourierService $courier)
+                {
+                    $order = Order::findOrFail($id);
+
+                    $order->order_status = 'ready_for_shipment';
+                    $order->delivery_status = 'ready_for_shipment';
+                    $order->shipped_at = now();
+                    $order->shipped_by = auth()->id(); // or use a specific admin ID
+                    $order->save();
+
+                        // Create mock shipment
+                        $courier->createShipmentWithTracking($order->id);
+
+
+                    $notification = array(
+                        'message' => 'Customer Order Confirmed',
+                        'alert-type' => 'success',
+                    );
+
+
+                    
+                        return redirect()->back()->with($notification);
+ 
+                }
+
+
+                    
+                    // ----------------------------
+                    // Mark Pickup (AJAX)
+                    // ----------------------------
+                    public function markPickup(Order $order, MockCourierService $courier)
+                    {
+                        $order->update([
+                            'delivery_status' => 'picked_up',
+                            'order_status' => 'shipped',
+                        ]);
+
+                                            // Create mock shipment pickup this time
+                                            // gagalaw na ung cron 
+                    DB::table('mock_shipments')
+                        ->where('order_id', $order->id)
+                        ->update([
+                            'delivery_status' => 'picked_up',
+                            'updated_at' => now(),
+                        ]);
+
+
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'Order marked as picked up'
+                        ]);
+                    }
+
+
+
+
+
+    // ----------------------------
+    // Print Label
+    // ----------------------------
+
+
+    public function printLabel(Order $order)
+    {
+
+        $orders = Order::whereIn('order_status', ['pending', 'ready_for_shipment'])
+                ->where('delivery_status', 'ready_for_shipment')
+                ->get();
+                        
+        // You can use a PDF library, e.g., barryvdh/laravel-dompdf
+        $pdf = PDF::loadView('Order.PrintForPickup.print-label', compact('orders'));
+
+        return $pdf->stream("Order-{$order->id}-Label.pdf");
+    }
+
+
+
+
+
+
+
 
 
     //
@@ -90,23 +243,9 @@ class OrderController extends Controller
         //  Loop through cart and create OrderDetails
         foreach (Cart::content() as $item) {
 
-            // // Create empty order detail first (we’ll update with batch & profit after)
-            // $orderDetail = Orderdetails::create([
-            //     'order_id'   => $order->id,
-            //     'product_id' => $item->options->product_id,
-            //     'quantity'   => $item->qty,
-            //     'unitcost'   => 0, // will update after FIFO
-            //     'total'      => $item->qty * $item->price,
-            //     'batch_number' => null,
-            //     'profit'     => 0,
-            // ]);
-
             $quantityToSell = $item->qty;
             $sellingPrice = $item->price;
 
-
-
-            
 
 
                     $product = Product::find($item->options->product_id);
@@ -197,55 +336,56 @@ class OrderController extends Controller
 
 
 
+
+
     
         public function ShowPickupInvoice($order_id)
+
+        
                 {
                     $order = Order::with('customer', 'orderDetails.product')->findOrFail($order_id);
                     return view('invoice.pickupInvoice', compact('order'));
                 }
 
+                public function PendingPickup() {
 
+                
 
+                    $Orders = order::where('order_type', 'Pickup')
+                        ->where('order_status', 'pending')
+                        ->latest()
+                        ->get();
 
-    
+                    return view('Order.PickupOrder.pending', compact('Orders'));
 
-    public function PendingPickup() {
-
-        $Orders = order::where('order_type', 'Pickup')
-            ->where('order_status', 'pending')
-            ->latest()
-            ->get();
-
-        return view('Order.PickupOrder.pending', compact('Orders'));
-
-    }
+                }
 
 
 
 
- public function ajaxPickupComplete(Request $request)
-{
-    $order = Order::findOrFail($request->id);
-    $order->order_status = 'complete';
-    $order->shipped_at = now();
-    $order->shipped_by = auth()->id(); // or use a specific admin ID
-    $order->save();
+                        public function ajaxPickupComplete(Request $request)
+                        {
+                            $order = Order::findOrFail($request->id);
+                            $order->order_status = 'complete';
+                            $order->shipped_at = now();
+                            $order->shipped_by = auth()->id(); // or use a specific admin ID
+                            $order->save();
 
-    return response()->json(['success' => true, 'message' => 'Order marked as Complete.']);
-}
+                            return response()->json(['success' => true, 'message' => 'Order marked as Complete.']);
+                        }
 
 
 
-    public function CompletePickup() {
+                            public function CompletePickup() {
 
-        $Orders = order::where('order_type', 'Pickup')
-            ->where('order_status', 'complete')
-            ->latest()
-            ->get();
+                                $Orders = order::where('order_type', 'Pickup')
+                                    ->where('order_status', 'complete')
+                                    ->latest()
+                                    ->get();
 
-        return view('Order.PickupOrder.complete', compact('Orders'));
+                                return view('Order.PickupOrder.complete', compact('Orders'));
 
-    }
+                            }
 
 
 
@@ -265,156 +405,370 @@ class OrderController extends Controller
 
 
 
-    public function PendingOrders() {
 
-        $Orders = order::where('order_status','pending')->latest()->get();
-
-        return view('Order.pending', compact('Orders'));
-        
-
-    }
+    ////////////////////////////// PENDING ORDERS FOR ECOMMERCE OR CLIENT SIDE /////////////////////////////////
 
 
 
-    //// SHOW DETAILS ONLY
-    public function Details($order_id) {
+
+
+        public function PendingOrders() {
+            $Orders = Order::whereIn('order_status', ['pending', 'ready_for_shipment'])
+                        ->whereIn('delivery_status', ['pending', 'ready_for_shipment'])
+                        ->get();
+
+            return view('Order.pending', compact('Orders'));
+        }
+
+                
 
 
 
-        $OrderDetails = Orderdetails::where('order_id', $order_id)->orderBy('id', 'DESC')->get();
+            public function showAssign(Order $order) {
 
-        // Fetch the order to display its details
+                $Riders = Rider::all();
+    
 
-        // You can also use findOrFail to handle cases where the order does not exist
-        $Order = Order::findOrFail($order_id);
+                return view('Order.RiderAssigning.AssignedRider', compact('order','Riders'));
+                
 
-
-        return view('Order.Details.ShowDetails', compact('OrderDetails', 'Order'));
-
-    }
+            }
 
 
-    //// SHOW DETAILS AND COMPLETE ORDER BUTTON
-    public function CompleteDetailsOrder($order_id) {
+            public function storeAssign(Request $request, Order $order)
+                {
+                    $request->validate([
+                        'rider_id' => 'required|exists:riders,id',
+                    ]);
+
+                    $order = Order::find($request->order_id);
+
+
+                    
+                if (!$order) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Order not found'
+                    ], 404);
+                }
+
+                    $order->update([
+                        'rider_id' => $request->rider_id,
+                        'delivery_status' => 'assigned',
+                        // $order->order_status = 'assigned'; // optional but recommended
+                    ]);
+
+                    return redirect()->route('pending.order')
+                        ->with('success', 'Rider assigned successfully');
+                }
 
 
 
-        $OrderDetails = Orderdetails::where('order_id', $order_id)->orderBy('id', 'DESC')->get();
+                public function RiderShow($id){
 
-        // Fetch the order to display its details
+                $riderDetails = Rider::findOrFail($id);
 
-        // You can also use findOrFail to handle cases where the order does not exist
-        $Order = Order::findOrFail($order_id);
-
-
-        return view('Order.Details.CompleteDetails', compact('OrderDetails', 'Order'));
-
-    }
+                return view('Order.RiderAssigning.RiderDetails', compact('riderDetails'));
+                }
 
 
-    // Update the status of an order and Subtract the product quantity from stock
-    public function StatusUpdate(Request $request) {
 
-        // Validate the request data
-        $request->validate([
-            'id' => 'required|exists:orders,id',
-            'order_status' => 'required|string|max:255',
+
+
+                
+
+
+
+
+
+
+
+            //// SHOW DETAILS ONLY
+            public function Details($order_id) {
+
+
+
+                $OrderDetails = Orderdetails::where('order_id', $order_id)->orderBy('id', 'DESC')->get();
+
+                // Fetch the order to display its details
+
+                // You can also use findOrFail to handle cases where the order does not exist
+                $Order = Order::findOrFail($order_id);
+
+
+                return view('Order.Details.ShowDetails', compact('OrderDetails', 'Order'));
+
+            }
+
+
+
+
+                //// SHOW DETAILS AND COMPLETE ORDER BUTTON
+                public function CompleteDetailsOrder($order_id) {
+
+
+
+                    $OrderDetails = Orderdetails::where('order_id', $order_id)->orderBy('id', 'DESC')->get();
+
+                    // Fetch the order to display its details
+
+                    // You can also use findOrFail to handle cases where the order does not exist
+                    $Order = Order::findOrFail($order_id);
+
+
+                    return view('Order.Details.CompleteDetails', compact('OrderDetails', 'Order'));
+
+                }
+
+
+
+
+
+                //////// SHOW TRACKING JNT RIDER
+
+
+                public function showTrackingOrderDetails($orderId, Track123Service $track123)
+                            {
+                                $order = Order::findOrFail($orderId);
+                                $trackingInfo = null;
+
+                                if ($order->courier && $order->tracking_number) {
+                                    // For JNT, Track123 courier code is usually 'jtexpress-ph'
+                                    $courierCode = ($order->courier); // e.g. 'jnt' => 'jtexpress-ph'
+                                    if ($courierCode === 'jnt') {
+                                        $courierCode = 'jtexpress-ph'; 
+                                    }
+                                    $trackingInfo = $track123->getTrackingStatus($courierCode, $order->tracking_number);
+                                }
+
+                                return view('Order.TrackingRider.Trackingdetails', compact('order', 'trackingInfo'));
+                            }
+
+
+
+
+
+
+
+                            ////////////////
+///////////////////////     COMPLETE ORDER WHEN RIDER DELIVERED IT
+                            ///////////////
+public function StatusUpdate(Request $request)
+{
+    DB::beginTransaction();
+
+    try {
+
+        $order = Order::with('orderDetails')->findOrFail($request->id);
+
+        foreach ($order->orderDetails as $item) {
+
+            $qtyToDeduct  = $item->quantity;
+            $sellingPrice = $item->product->selling_price;
+
+            $totalProfit = 0;
+            $totalCost   = 0;
+
+            $batches = Inventory::where('product_id', $item->product_id)
+                ->where('quantity', '>', 0)
+                ->orderBy('received_date', 'asc') // FIFO
+                ->lockForUpdate()
+                ->get();
+
+            foreach ($batches as $batch) {
+
+                if ($qtyToDeduct <= 0) {
+                    break;
+                }
+
+                $deduct = min($batch->quantity, $qtyToDeduct);
+
+                // Deduct inventory
+                $batch->decrement('quantity', $deduct);
+
+                // Calculate cost & profit
+                $batchCost   = $batch->cost_price * $deduct;
+                $batchProfit = ($sellingPrice * $deduct) - $batchCost;
+
+                $totalCost   += $batchCost;
+                $totalProfit += $batchProfit;
+
+                $qtyToDeduct -= $deduct;
+            }
+
+            // ❗ Safety check (optional)
+            if ($qtyToDeduct > 0) {
+                throw new \Exception('Insufficient stock for product ID ' . $item->product_id);
+            }
+
+            //Update order item ONCE
+            $item->update([
+                'unitcost' => $totalCost / $item->quantity, // average cost
+                'profit'   => $totalProfit,
+            ]);
+        }
+
+        // ✅ Mark order completed
+        if ($request->order_status === 'shipped' || strtolower($request->delivery_status) === 'delivered') {
+
+            $order->completed_at   = now();
+            $order->payment_status = 'paid';
+            $order->order_status   = 'completed';
+
+            $customer = Customer::find($order->customer_id);
+
+            if ($customer && !empty($customer->email)) {
+                try {
+                    Mail::to($customer->email)
+                        ->send(new OrderConfirmationMail($order, $customer));
+                } catch (\Exception $e) {
+                    \Log::warning('Order email failed', [
+                        'order_id' => $order->id,
+                        'error'    => $e->getMessage(),
+                    ]);
+                }
+            }
+        }
+
+        $order->delivery_status = strtolower($request->delivery_status);
+        $order->save();
+
+        DB::commit();
+
+        return redirect()->route('complete.order')->with([
+            'message' => 'Complete Order',
+            'alert-type' => 'success',
         ]);
 
-        // Find the order by ID and update its status
-        $order = Order::findOrFail($request->id);
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()->with([
+            'message' => $e->getMessage(),
+            'alert-type' => 'error',
+        ]);
+    }
+}
 
 
-        // MINUS THE QUANTITY OF THE PRODUCT IN THE STOCK
-        $products = Orderdetails::where('order_id', $order->id)->get();
-        // kumbaga titingnan niya ung order id is same sa id nato
 
 
-        // then i loloop niya ung products 
 
-        foreach ($products as $inventory) {
-            // Update the product stock based on the quantity ordered
-            $InventproductModel = Inventory::findOrFail($inventory->product_id);
+                    // // Update the status of an order and Subtract the product quantity from stock
+                    // public function StatusUpdate(Request $request) {
 
-            
-            // BALI TITINGNAN NIA SA PRODUCT MODEL KUNG MAY MATCH SA PRODUCT ID
-            $InventproductModel->decrement('quantity', $inventory->quantity);
+                    //     // Validate the request data
+                    //     $request->validate([
+                    //         'id' => 'required|exists:orders,id',
+                    //         'order_status' => 'required|string|max:255',
+                    //     ]);
 
+                    //     // Find the order by ID and update its status
+                    //     $order = Order::findOrFail($request->id);
+
+
+                    //     // MINUS THE QUANTITY OF THE PRODUCT IN THE STOCK
+                    //     $products = Orderdetails::where('order_id', $order->id)->get();
+                    //     // kumbaga titingnan niya ung order id is same sa id nato
+
+
+
+                    //     // then i loloop niya ung products 
+
+                    //     foreach ($products as $inventory) {
+                    //         // Update the product stock based on the quantity ordered
+                    //         $InventproductModel = Inventory::findOrFail($inventory->product_id);
+
+                            
+                    //         // BALI TITINGNAN NIA SA PRODUCT MODEL KUNG MAY MATCH SA PRODUCT ID
+                    //         $InventproductModel->decrement('quantity', $inventory->quantity);
+
+                    //     }
+
+
+                    //             // Update the order status
+                    //             $order->order_status = $request->order_status;
+
+                    //             // Set completed_at ONLY when order is completed
+                    //             if ($request->order_status === 'completed') {
+                    //                 $order->completed_at = Carbon::now(); // or now()
+                    //             }
+
+                    //             $order->payment_status = 'paid';
+                    //             $order->save();
+
+
+                    //     $notification = array(
+                    //             'message' => 'Invoice Created Successfully',
+                    //             'alert-type' => 'success'
+                    //         );
+
+
+                    //     // Redirect back with a success message
+                    //     return redirect()->route('complete.order')->with($notification);
+                    // }
+
+
+
+
+            /////////////////// INVENTORY MANAGEMENT //////////////////////
+            public function ShowStock(){
+
+            $product = Product::latest()->get();
+            return view('Inventory.stocks',compact('product'));
+
+            }
+
+
+
+
+        public function ajaxMarkAsShipped(Request $request)
+        {
+            $order = Order::findOrFail($request->id);
+            $order->order_status = 'shipped';
+            $order->shipped_at = now();
+            $order->shipped_by = auth()->id(); // or use a specific admin ID
+            $order->save();
+
+            return response()->json(['success' => true, 'message' => 'Order marked as Shipped.']);
         }
 
 
-         // Update the order status Complete
-        $order->order_status = $request->order_status; 
-        $order->save();
-
-
-         $notification = array(
-                'message' => 'Invoice Created Successfully',
-                'alert-type' => 'success'
-            );
-
-
-        // Redirect back with a success message
-        return redirect()->route('pending.order')->with($notification);
-    }
 
 
 
+            public function ajaxOrderCancelled(Request $request)
+            {
 
-    /////////////////// INVENTORY MANAGEMENT //////////////////////
-    public function ShowStock(){
+                $order = Order::findOrFail($request->id);
+                $user  = auth('web')->user();
 
-    $product = Product::latest()->get();
-    return view('Inventory.stocks',compact('product'));
+                if (!$user) {
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
 
-    }
+                
+                $order->update([
+                    'order_status'       => 'cancelled',
+                    'cancelled_at'       => now(),
+                    'cancelled_by'       => $user->id,
+                    'cancel_reason' => $request->cancel_reason ?? 'No reason provided',
+                ]);
 
-
-public function ajaxMarkAsShipped(Request $request)
-{
-    $order = Order::findOrFail($request->id);
-    $order->order_status = 'shipped';
-    $order->shipped_at = now();
-    $order->shipped_by = auth()->id(); // or use a specific admin ID
-    $order->save();
-
-    return response()->json(['success' => true, 'message' => 'Order marked as Shipped.']);
-}
+                return response()->json(['success' => true, 'message' => 'Order cancelled.']);
+            }
 
 
 
 
 
 
+            public function AllShippedOrders() {
+                $Orders = Order::where('order_status','shipped')->get();
 
-public function ajaxMarkAsCancelled(Request $request)
-{
-
-    $order = Order::findOrFail($request->id);
-    $user  = auth('web')->user();
-
-    if (!$user) {
-        return response()->json(['error' => 'Unauthorized'], 401);
-    }
-
-    
-    $order->update([
-        'order_status'       => 'cancelled',
-        'cancelled_at'       => now(),
-        'cancelled_by'       => $user->id,
-        'cancel_reason' => $request->cancel_reason ?? 'No reason provided',
-    ]);
-
-    return response()->json(['success' => true, 'message' => 'Order cancelled.']);
-}
-
-
-
-    public function AllShippedOrders() {
-        $Orders = Order::where('order_status','shipped')->get();
-
-        return view('Order.Shipped', compact('Orders'));
-    }
+                return view('Order.Shipped', compact('Orders'));
+            }
 
 
 
@@ -433,6 +787,15 @@ public function ajaxMarkAsCancelled(Request $request)
         return view('Order.complete', compact('Orders'));
     }
 
+
+        public function ReturnOrders() {
+        $Orders = order::where('order_status','return')->get();
+
+        return view('Order.ReturnOrder', compact('Orders'));
+    }
+
+
+    
 
 
 

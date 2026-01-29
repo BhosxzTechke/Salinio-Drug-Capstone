@@ -18,6 +18,8 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Intervention\Image\Facades\Image;
 use Carbon\Carbon;
 use App\Models\Brand;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Support\Facades\Validator;
 
 class FrontendController extends Controller
@@ -160,7 +162,7 @@ class FrontendController extends Controller
 
         $orders = Order::with(['customer','orderDetails'])
             ->where('customer_id', $customer->id)
-            ->whereIn('order_status', ['pending', 'complete', 'return', 'shipped']) 
+            ->whereIn('order_status', ['pending', 'completed', 'return', 'shipped']) 
             ->orderBy('created_at', 'desc')
             ->latest()
             ->paginate(4);
@@ -172,13 +174,7 @@ class FrontendController extends Controller
             ->get();
 
 
-            $address = Address::with('customer')
-                ->where('customer_id', $customer->id)
-                ->orderByDesc('is_default') // default = 1 comes first
-                ->get();
-
-
-        return view('Ecommerce.ProfilePage.profile', compact('orders','address','customer','orderCancel'));
+        return view('Ecommerce.ProfilePage.profile', compact('orders','customer','orderCancel'));
     }
 
 
@@ -191,55 +187,142 @@ class FrontendController extends Controller
         }
 
 
-      public function ProfileUpdate(Request $request)
-{
-    $customerId = $request->input('id');
 
-    try {
-        // Validation
-        $validator = Validator::make($request->all(), [
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email,' . $customerId,
-            'tel'   => 'required|unique:customers,phone,' . $customerId,
-            'image' => 'nullable|image|max:10240', // 10 MB
-        ]);
+        public function ChatAdmin()
+        {
 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            $Customer = Auth::guard('customer')->user();
+
+            return view('Ecommerce.ProfilePage.ChatAdmin', compact('Customer'));
         }
 
-        $data = [
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'phone' => $request->input('tel'),
-            'added_by_staff' => '0',
-            'updated_at' => Carbon::now(),
-        ];
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            Image::make($image)->resize(300, 300)->save('frontend/assets/customer_image/' . $name_gen);
-            $data['image'] = 'frontend/assets/customer_image/' . $name_gen;
+        
+
+        public function CustomerAddress()
+        {
+
+            $customer_id = auth()->id();
+
+            $address = Address::where('customer_id', $customer_id)
+                            ->orderByDesc('is_default') // default address first
+                            ->orderBy('id', 'asc')       // then by id
+                            ->limit(3)
+                            ->get();
+
+
+            return view('Ecommerce.ProfilePage.CustomerAddress', compact('address'));
+
         }
 
-        // Update customer
-        Customer::findOrFail($customerId)->update($data);
 
-        $notification = [
-            'message' => 'Customer Updated Successfully',
-            'alert-type' => 'success'
-        ];
 
-        return redirect()->route('customer.profile')->with($notification);
+            public function CustomerAddressStore(Request $request)
+            {
+                $request->validate([
+                    'full_name' => 'required|string',
+                    'phone' => 'required|string',
+                    'street' => 'required|string',
+                    'barangay' => 'required|string',
+                    'city' => 'required|string',
+                    'is_default' => 'nullable|boolean',
+                ]);
 
-    } catch (\Exception $e) {
-        return back()->with('error', 'Something went wrong: ' . $e->getMessage())->withInput();
-    }
-}
+                $customerId = auth()->id(); // or customer_id
 
- 
+                // If this address is set as default
+                if ($request->is_default) {
+                    Address::where('customer_id', $customerId)
+                        ->update(['is_default' => false]);
+                }
+
+                Address::create([
+                    'customer_id' => $customerId,
+                    'full_name' => $request->full_name,
+                    'phone' => $request->phone,
+                    'street' => $request->street,
+                    'barangay' => $request->barangay,
+                    'city' => $request->city,
+                    'is_default' => $request->is_default ?? false,
+                ]);
+
+                return back()->with('success', 'Address saved successfully');
+            }
+
+
+
+
+        
+
+
+        
+
+
+        public function ProfileUpdate(Request $request)
+        {
+            $customerId = $request->input('id');
+
+            try {
+                // Validation
+                $validator = Validator::make($request->all(), [
+                    'name'  => 'required|string|max:255',
+                    'email' => 'required|email|unique:customers,email,' . $customerId,
+                    'tel'   => 'required|unique:customers,phone,' . $customerId,
+                    'image' => 'nullable|image|max:10240', // 10 MB
+                ]);
+
+                if ($validator->fails()) {
+                    return back()->withErrors($validator)->withInput();
+                }
+
+
+                $uploadedFileUrl = null;
+
+                // Handle image upload to Cloudinary
+                if ($request->hasFile('image')) {
+                    $image = $request->file('image');
+    
+                    $uploadedFileUrl = Cloudinary::upload($image->getRealPath(), 
+                    ['folder' => 'customer_images'
+                    ])->getSecurePath();
+
+                    // $data['image'] = $uploadedFileUrl;
+
+                }
+
+                $data = [
+                    'name' => $request->input('name'),
+                    'email' => $request->input('email'),
+                    'phone' => $request->input('tel'),
+                    'image' => $uploadedFileUrl,
+                    'added_by_staff' => '0',
+                    'updated_at' => Carbon::now(),
+                ];
+
+
+
+
+                // Update customer
+                Customer::findOrFail($customerId)->update($data);
+
+                $notification = [
+                    'message' => 'Customer Updated Successfully',
+                    'alert-type' => 'success'
+                ];
+
+
+                return redirect()->route('customer.profile')->with($notification);
+
+            } catch (\Exception $e) {
+                return back()->with('error', 'Something went wrong: ' . $e->getMessage())->withInput();
+            }
+        }
+
+
+
+
+
+
 
 
         public function ViewItem($id) {
@@ -251,5 +334,35 @@ class FrontendController extends Controller
 
             return view('Ecommerce.ProfilePage.ViewOrderItem', compact('order'));
         }
+
+
+        public function ReturnItem($id) {
+            $customer = Auth::guard('customer')->user();
+
+            $order = Order::where('id', $id)
+                        ->where('customer_id', $customer->id)
+                        ->firstOrFail();
+
+            return view('Ecommerce.ProfilePage.TrackOrder.ReturnItem', compact('order'));
+        }
+
+
+
+
+        
+        
+
+        public function TrackItem($id) {
+            $customer = Auth::guard('customer')->user();
+
+            $order = Order::where('id', $id)
+                        ->where('customer_id', $customer->id)
+                        ->firstOrFail();
+
+            return view('Ecommerce.ProfilePage.TrackOrder.TrackingOrder', compact('order'));
+        }
+
+
+        
 
 }

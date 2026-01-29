@@ -13,15 +13,28 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
+
+            
+        protected $commands = [
+            \App\Console\Commands\AutoUpdateMockShipments::class,
+        ];
+
+
+
     protected function schedule(Schedule $schedule)
     {
-    $schedule->command('backup:run', ['--only-db' => true])
-        ->dailyAt('02:00')
-        ->withoutOverlapping()
-        ->runInBackground();    
 
-    // Example: run daily just for testing
-        $schedule->command('inventory:update-status')->daily();
+            $schedule->command('mock:update-mock-shipments')->everyMinute();
+
+
+
+    // $schedule->command('backup:run', ['--only-db' => true])
+    //     ->dailyAt('02:00')
+    //     ->withoutOverlapping()
+    //     ->runInBackground();    
+
+    // // Example: run daily just for testing
+    //     $schedule->command('inventory:update-status')->daily();
             
     }
 

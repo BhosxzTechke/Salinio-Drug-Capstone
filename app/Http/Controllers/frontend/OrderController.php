@@ -40,289 +40,13 @@ class OrderController extends Controller
 
         // if authenticate 
         $Customer = Auth::guard('customer')->user();
-        $addresses = $Customer ? $Customer->addresses : collect();
 
-        return view('Ecommerce.payment.checkout', compact('totalInclusive', 'totalVatable', 'totalVat','addresses','Customer'));
+        $Shipaddress = Address::where('customer_id', $Customer->id)->where('is_default', 1)->first();
+
+        return view('Ecommerce.payment.checkout', compact('totalInclusive', 'totalVatable', 'totalVat','Shipaddress','Customer'));
 
 
         }
-
-
-
-
-//         public function EcommerceCheckout(Request $request) {
-
-
-
-
-//         // Create a new order
-//         $order = Order::create([
-//         'customer_id' => $request->customer_id,
-//         'order_source' => 'ECOM',
-//         'order_date' => Carbon::parse($request->order_date),
-//         'order_status' => $request->order_status,  // e.g., 'pending', 'completed'
-//         'total_products' => $request->total_products,
-//         'sub_total' => floatval(str_replace(',', '', Cart::instance('ecommerce')->subtotal())),
-//         'vat'       => floatval(str_replace(',', '', Cart::instance('ecommerce')->tax())),
-//         'invoice_no' => 'SdPrime' . mt_rand(10000000, 99999999), // Generate a random invoice number
-//         'total'     => floatval(str_replace(',', '', Cart::instance('ecommerce')->total())),
-//         'payment_status' => $request->payment_status ?? 'pending', // Default to 'pending' if not provided
-//         'pay' => $request->pay,
-//         'due' => $request->due,
-//         'payment_method' => $request->payment_method,
-//         'shipping_address_id' => $request->shipping_address_id, 
-//         'created_at' => now(),
-
-//         ]);
-
-
-//         // Loop through the cart items and create order details
-//         foreach (Cart::instance('ecommerce')->content() as $item) {
-//         Orderdetails::create([
-//         'order_id' => $order->id,
-//         'product_id' => $item->id,
-//         'quantity' => $item->qty,
-//         'price' => $item->price,
-//         'options' => json_encode($item->options),
-//         ]);
-//         }
-
-
-
-//         if ($request->payment_method === 'paypal') {
-// // Use PayPal client
-//                 $provider = new PayPalClient;
-//                 $provider->setApiCredentials(config('paypal'));
-//                 $paypalToken = $provider->getAccessToken();
-
-//                         $order = $provider->createOrder([
-//                         "intent" => "CAPTURE",
-//                         "application_context" => [
-//                         "return_url" => route("paypal.success", $order->id), // pass order ID
-//                         "cancel_url" => route("paypal.payment.cancel", $order->id),
-//                         ],
-//                         "purchase_units" => [
-//                         [
-//                         "amount" => [
-//                         "currency_code" => "USD",
-//                         "value" => floatval(str_replace(',', '', Cart::instance('ecommerce')->total())), // total from cart
-//                         ]
-//                         ]
-//                 ]
-//                 ]);
-
-//                 // dd($order);
-
-//                 // Redirect customer to PayPal approval page
-//                 foreach ($order['links'] as $link) {
-//                 if ($link['rel'] === 'approve') {
-//                 return redirect()->away($link['href']);
-//                 }
-//                 }
-
-//                 return back()->with('error', 'Something went wrong with PayPal.');
-//                 }
-
-
-
-                
-//                 // $order->decrement('quantity', $item->qty);
-
-
-//                 // ///
-//                 // Clear the cart after creating the order
-
-//                 Cart::instance('ecommerce')->destroy();
-
-//                 // $order = Order::with('items.product')->findOrFail(session('order'));
-
-//                 // return redirect()->route('success.order', compact('order'));
-
-//                 return redirect()
-//                 ->route('success.order', $order->id)
-//                 ->with('success', 'Payment successful!');
-// }
-
-
-
-
-
-
-// public function EcommerceCheckout(Request $request) { 
-
-//         if ($request->pay < $request->total) {
-//                 return back()->with([
-//                 'message' => 'The payment amount must be greater than or equal to the total due.',
-//                 'alert-type' => 'error'
-//                 ]);
-//         }
-
-//         $total = $request->total;
-//         $pay = $request->pay;
-//         $discount = $request->discount ?? 0;
-//         $due = $pay - $total;
-//         $subTotal = $total - $request->vat;
-
-//         DB::beginTransaction();
-
-//         try {
-//                 //  Create Order
-//                 $order = Order::create([
-
-
-//                 'customer_id' => $request->customer_id,
-//                 'order_source' => 'ECOM',
-//                 'order_type'     => 'Delivery',
-//                 'order_date' => Carbon::parse($request->order_date),
-//                 'order_status' => $request->order_status,  // e.g., 'pending', 'completed'
-//                 'total_products' => $request->total_products,
-//                 'sub_total' => floatval(str_replace(',', '', Cart::instance('ecommerce')->subtotal())),
-//                 'vat'       => floatval(str_replace(',', '', Cart::instance('ecommerce')->tax())),
-//                 'invoice_no' => 'SdPrime' . mt_rand(10000000, 99999999), // Generate a random invoice number
-//                 'total'     => floatval(str_replace(',', '', Cart::instance('ecommerce')->total())),
-//                 'payment_status' => $request->payment_status ?? 'pending', // Default to 'pending' if not provided
-//                 'pay' => $request->pay,
-//                 'due' => $request->due,
-//                 'payment_method' => $request->payment_method,
-//                 'shipping_address_id' => $request->shipping_address_id, 
-//                 'created_at' => now(),
-
-
-
-//                 ]);
-
-
-
-
-//         //  Loop through cart and create OrderDetails
-//         foreach (Cart::content() as $item) {
-
-//         // Create empty order detail first (we’ll update with batch & profit after)
-//         $orderDetail = Orderdetails::create([
-//         'order_id'   => $order->id,
-//         'product_id' => $item->options->product_id,
-//         'quantity'   => $item->qty,
-//         'unitcost'   => 0, // will update after FIFO
-//         'total'      => $item->qty * $item->price,
-//         'batch_number' => null,
-//         'profit'     => 0,
-//         ]);
-
-
-
-//         if ($request->payment_method === 'paypal') {
-//                 // Use PayPal client
-//                 $provider = new PayPalClient;
-//                 $provider->setApiCredentials(config('paypal'));
-//                 $paypalToken = $provider->getAccessToken();
-
-//                         $order = $provider->createOrder([
-//                         "intent" => "CAPTURE",
-//                         "application_context" => [
-//                         "return_url" => route("paypal.success", $order->id), // pass order ID
-//                         "cancel_url" => route("paypal.payment.cancel", $order->id),
-//                         ],
-//                         "purchase_units" => [
-//                         [
-//                         "amount" => [
-//                         "currency_code" => "USD",
-//                         "value" => floatval(str_replace(',', '', Cart::instance('ecommerce')->total())), // total from cart
-//                         ]
-//                         ]
-//                 ]
-//                 ]);
-
-//                 // dd($order);
-
-//                 // Redirect customer to PayPal approval page
-//                 foreach ($order['links'] as $link) {
-//                 if ($link['rel'] === 'approve') {
-//                 return redirect()->away($link['href']);
-//                 }
-//                 }
-
-// return back()->with('error', 'Something went wrong with PayPal.');
-// }
-
-
-
-//                 $quantityToSell = $item->qty;
-//                 $sellingPrice = $item->price;
-
-
-
-//             //  Deduct stock using FIFO
-//         $batches = Inventory::where('product_id', $item->options->product_id)
-//                                 ->where('quantity', '>', 0)
-//                                 ->orderBy('received_date', 'asc')
-//                                 ->get();
-
-
-//         foreach ($batches as $batch) {
-//                 if ($quantityToSell <= 0) break;
-
-                
-
-//                 $deduct = min($batch->quantity, $quantityToSell);
-
-//                 // Deduct stock
-//                 $batch->decrement('quantity', $deduct);
-
-
-//                 // Calculate profit
-//                 $unitCost = $batch->cost_price;
-//                 $profit = ($sellingPrice - $unitCost) * $deduct;
-
-
-//                 // Update order detail for this batch (if multiple batches, you can optionally split into multiple order_details rows)
-
-//                     //  Create a new order_detail per batch
-//                 Orderdetails::create([
-//                         'order_id'      => $order->id,
-//                         'product_id'    => $item->options['product_id'],
-//                         'quantity'      => $deduct,
-//                         'unitcost'      => $unitCost,
-//                         'total'         => $deduct * $sellingPrice,
-//                         'batch_number'  => $batch->batch_number,
-//                         'profit'        => $profit,
-//                 ]);
-
-//         $quantityToSell -= $deduct;
-//         }
-
-//         if ($quantityToSell > 0) {
-//         throw new \Exception("Not enough stock for product: {$item->name}");
-//         }
-// }
-
-//         // Clear cart
-//         Cart::instance('ecommerce')->destroy();
-
-//         DB::commit();
-
-//                 // return response()->json([
-//                 // 'success' => true,
-//                 // 'order_id' => $order->id
-//                 // ]);
-
-
-//                 $order = Order::with('items.product')->findOrFail(session('order'));
-
-//                 return redirect()->route('success.order', compact('order'));
-
-//                 return redirect()
-//                 ->route('success.order', $order->id)
-//                 ->with('success', 'Payment successful!');
-
-
-
-
-//         } catch (\Exception $e) {
-//                 DB::rollBack();
-//                 return back()->with('error', 'Something went wrong: '.$e->getMessage());
-//         }
-// }
-
 
 
 
@@ -438,163 +162,103 @@ public function EcommerceCheckout(Request $request)
 
 
 
+
 private function processOrder(Request $request)
 {
-DB::beginTransaction();
+    DB::beginTransaction();
 
-try {
+    try {
 
-//     // If checkout data is in session (e.g., from PayPal redirect)
-// $checkoutData = session('checkout_data', []);
-// $shippingAddressId = $request->shipping_address_id ?? $checkoutData['shipping_address_id'] ?? null;
+        $cartInstance = Cart::instance('ecommerce');
 
-
-
-// if (!$shippingAddressId) {
-//     throw new \Exception("Shipping address is required.");
-// }
+        if ($cartInstance->count() === 0) {
+            throw new \Exception('Cart is empty.');
+        }
 
 
-
-$cartInstance = Cart::instance('ecommerce');
-$cartTotal = floatval(str_replace(',', '', $cartInstance->total()));
-$subTotal = floatval(str_replace(',', '', $cartInstance->subtotal()));
-$vat = floatval(str_replace(',', '', $cartInstance->tax()));
-$pay = $cartTotal;
-$due = $pay - $cartTotal;
-
-
-
-
-
-$order = Order::create([
-        'customer_id' => $request->customer_id,
-        'order_source' => 'ECOM',
-        'order_type' => 'Delivery',
-        'order_date' => Carbon::parse($request->order_date),
-        'order_status' => $request->order_status,
-        'total_products' => $request->total_products,
-        'sub_total' => $subTotal,
-        'vat' => $vat,
-        'invoice_no' => 'SdPrime' . mt_rand(10000000, 99999999),
-        'total' => $cartTotal,
-        'payment_status' => $request->payment_status ?? 'pending',
-        'pay' => $cartTotal,
-        'due' => $due,
-        'payment_method' => $request->payment_method,
-        // 'shipping_address_id' => $shippingAddressId, 
+                // PAYMENT LOGIC (MUST BE BEFORE CREATE)
+        if ($request->payment_method === 'cod') {
+            $paymentMethod = 'cod';
+            $paymentStatus = 'unpaid';
+        } else {
+            $paymentMethod = 'paypal';
+            $paymentStatus = 'paid';
+        }
         
-        'created_at' => now(),
-]);
 
-foreach ($cartInstance->content() as $item) {
-        $quantityToSell = $item->qty;
-        $sellingPrice = $item->price;
+        $cartTotal = (float) str_replace(',', '', $cartInstance->total());
+        $subTotal  = (float) str_replace(',', '', $cartInstance->subtotal());
+        $vat       = (float) str_replace(',', '', $cartInstance->tax());
 
-                $product = Product::find($item->options->product_id);
+        //  KEEP REQUEST-BASED DATA (PAYPAL DEPENDS ON THIS)
+        $order = Order::create([
+            'customer_id'     => $request->customer_id ?? '',
+            'order_source'    => 'ECOM',
+            'order_type'      => 'Delivery',
 
-                // FEFO (for medicines with expiration)
-                // FIFO (for non-expiring products)
+            // KEEP THESE (IMPORTANT)
+            'order_date'      => Carbon::parse($request->order_date ?? ''),
+            'order_status'    => 'pending',
+            'total_products'  => $request->total_products ?? '',
 
-
-                
-                if ($product && $product->has_expiration) {
-                // FEFO - First Expired, First Out
-                $batches = Inventory::where('product_id', $item->options->product_id)
-                        ->where('quantity', '>', 0)
-                        ->whereNotNull('expiry_date')
-                        ->orderBy('expiry_date', 'asc')
-                        ->get();
+            // DELIVERY STATUS LOGIC
+            'delivery_status' => 'pending',
 
 
-                        
-                } else {
-                // FIFO - First In, First Out
-                $batches = Inventory::where('product_id', $item->options->product_id)
-                        ->where('quantity', '>', 0)
-                        ->orderBy('received_date', 'asc')
-                        ->get();
-                }
+            // COURIER JNT OR OWN RIDER // mas good code fallback if wala sa dalawang yan then 'own rider'
+            'courier' => $request->shipping_method == 'own_rider' ? 'own_rider' : 'jnt',
+
+
+            'shipping_address_id' => $request->shipping_address_id ?? '',
 
 
 
-        foreach ($batches as $batch) {
-        if ($quantityToSell <= 0) break;
+            'sub_total'       => $subTotal ?? '',
+            'vat'             => $vat ?? '',
+            'invoice_no'      => 'Salinio' . mt_rand(10000000, 99999999),
+            'total'           => $cartTotal ?? '',
 
-        $deduct = min($batch->quantity, $quantityToSell);
-        $batch->decrement('quantity', $deduct);
+            // KEEP PAYPAL VALUES
+            'payment_method' => $paymentMethod,
+            'payment_status' => $paymentStatus,
 
-        $unitCost = $batch->cost_price;
-        $profit = ($sellingPrice - $unitCost) * $deduct;
 
-        Orderdetails::create([
-                'order_id' => $order->id,
-                'product_id' => $item->options['product_id'],
-                'quantity' => $deduct,
-                'unitcost' => $unitCost,
-                'total' => $deduct * $sellingPrice,
-                'batch_number' => $batch->batch_number,
-                'profit' => $profit,
+
+            'pay'             => $cartTotal ?? '',
+            'due'             => 0,
+
+            'created_at'      => now(),
         ]);
 
-        $quantityToSell -= $deduct;
+        // SAVE ORDER DETAILS ONLY (NO INVENTORY DEDUCTION)
+        foreach ($cartInstance->content() as $item) {
+            Orderdetails::create([
+                'order_id'   => $order->id ?? '',
+                'product_id' => $item->options->product_id ?? '',
+                'quantity'   => $item->qty ?? '',
+                'price'      => $item->price ?? '',
+                // 'status'     => 'pending',
+            ]);
         }
 
-            if ($quantityToSell > 0) {
-                throw new \Exception("Not enough stock for product: {$item->name}");
-            }
-        }
-
-        Cart::instance('ecommerce')->destroy();
+        //  CLEAR CART
+        $cartInstance->destroy();
 
         DB::commit();
 
-
-
-
-        // $customer = Customer::find($request->customer_id);
-
-
-        // $shippingAddress = Address::find($shippingAddressId);
-
-        //         $details = [
-        //             'title' => 'Order Completed Successfully',
-        //             'name' => $customer->name,
-        //             'shipping_address' => $shippingAddress ? $shippingAddress->full_address : 'N/A',
-        //             'from' => config('mail.from.address'),
-        //             'body' => "Hi {$customer->name}, your order #{$order->invoice_no} has been completed successfully. 
-        //                     Total: ₱" . number_format($order->total, 2),
-        //         ];
-
-
-
-
-            // Mail::send('emails.order-complete', $details, function ($message) use ($customer) {
-            //     $message->to($customer->email)
-            //             ->subject('Your Order Confirmation');
-            // });
-
-
-                    // Mail::send('emails.order-complete', $details, function ($message) use ($request) {
-                    //         $message->to('danmichaelantiquina9@gmail.com')
-                    //                 ->subject('Order Successfully from' . $request->name);
-                    //     });
-
-
-
-
- 
         return redirect()
             ->route('success.order', $order->id)
-            ->with('success', 'Order completed successfully!');
+            ->with('success', 'Payment successful. Your order is now pending.');
+
     } catch (\Exception $e) {
+
         DB::rollBack();
-        return back()->with('error', 'Something went wrong: ' . $e->getMessage());
 
-
-
+        //  THIS WILL NOW ONLY HAPPEN IF THERE IS A REAL ERROR
+        return back()->with('error', $e->getMessage());
     }
 }
+
 
 
 

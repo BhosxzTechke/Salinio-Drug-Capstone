@@ -20,12 +20,12 @@
                                 <div class="page-title-box">
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
-                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                            <li class="breadcrumb-item active">Profile</li>
+                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Order Item</a></li>
+                                            <li class="breadcrumb-item active">Complete Order</li>
                                         </ol>
                                     </div>
                                     
-                                    <h4 class="page-title">Profile</h4>
+                                    <h4 class="page-title">Complete Order</h4>
                                 </div>
                             </div>
                         </div>     
@@ -41,14 +41,17 @@
                                             <div class="tab-pane" id="settings">
 
                                                 <form method="POST" action="{{ route('status.update') }}" enctype="multipart/form-data" >
-                                                  @csrf 
-                                                  @method('PUT')
+                                                    @csrf 
+                                                    @method('PUT')
 
 
-                                                    <input type="hidden" name="id" value="{{ $Order->id }}">
+                                                        <input name="delivery_status" type="text" value="{{$Order->delivery_status ?? ''}}">
 
-                                                    
-                                                    <input type="hidden" name="order_status" value="complete">
+
+                                                        <input type="hidden" name="id" value="{{ $Order->id }}">
+
+                                                        
+                                                        <input type="text" name="order_status" value="{{$Order->order_status ?? ''}}">
 
                                                     <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Order Details</h5>
 
@@ -137,15 +140,6 @@
 
 
 
-                                                 <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="text" class="">Due Amount</label>
-                                                                <p class="text-danger">{{ $Order->due }}</p>
-
-                                                            </div>
-                                                        </div> <!-- end col -->
-
-
 
 
 
@@ -162,7 +156,7 @@
                                                     <th>Product Code</th>
                                                     <th>Quantity </th>
                                                     <th>Price</th>
-                                                    <th>Total(+VAT)</th>
+                                                    <th>Total</th>
                                                 </tr>
 
                                         </thead>

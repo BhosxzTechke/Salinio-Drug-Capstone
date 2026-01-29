@@ -17,7 +17,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @property int $id
  * @property string $name
-    
+
 
  */
 
@@ -50,7 +50,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $hidden = [
+    protected $hidden = [   
         'password',
         'remember_token',
     ];
@@ -63,6 +63,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+            public function rider()
+            {
+                return $this->hasOne(\App\Models\Rider::class);
+            }
+
+         //This means: a User may have 1 Rider record (or null if not a Rider).
+
+
 
     /**
      * Get the roles associated with the user.

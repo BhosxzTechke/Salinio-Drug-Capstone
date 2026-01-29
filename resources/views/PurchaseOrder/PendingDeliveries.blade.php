@@ -20,7 +20,7 @@
                             </ol>
 
                         </div>
-                        <h4 class="page-title">All Purchase Orders</h4>
+                        <h4 class="page-title">All Received Orders To Supplier</h4>
                     </div>
                 </div>
             </div>     

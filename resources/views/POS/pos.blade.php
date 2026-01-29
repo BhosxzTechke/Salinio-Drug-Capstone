@@ -4,6 +4,72 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 
+<style>
+    /* Global */
+.page-title {
+    font-weight: 600;
+}
+
+.card {
+    border-radius: 14px;
+    border: none;
+}
+
+.shadow-soft {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* Cart Table */
+.table-modern th {
+    background: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.table-modern td {
+    vertical-align: middle;
+}
+
+/* Quantity Input */
+.qty-input {
+    width: 60px;
+    text-align: center;
+}
+
+/* Product Card */
+.product-card .card {
+    transition: all 0.25s ease;
+}
+
+.product-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.product-card img {
+    height: 80px;
+    object-fit: contain;
+}
+
+/* Sticky Summary */
+.cart-summary {
+    position: sticky;
+    bottom: 0;
+    background: #111827;
+    color: #fff;
+    border-radius: 0 0 14px 14px;
+}
+
+/* Buttons */
+.btn-pos {
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+
+</style>
+
                 <div class="content">
 
                     <!-- Start Content-->
@@ -28,106 +94,104 @@
 
 
 
-<div class="row">
-        <div class="col-lg-6 col-xl-6">
-            <div class="card text-center">
+                <div class="row">
+                        <div class="col-lg-6 col-xl-6">
+                            <div class="card text-center">
 
 
-                    <div class="card-body">
+    <div class="card-body p-3">
 
-                            <div class="table-responsive">
-                                <table class="table table-bordered border-primary mb-0">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Subtotal</th>
-                <th>Action</th>
-            </tr>
-        </thead>
+        <h5 class="mb-3 fw-semibold">🛒 Current Order</h5>
 
+        <div class="table-responsive">
+            <table class="table table-modern align-middle">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th width="90">Qty</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
 
-        @php
-        $allItem = Cart::content();
-        $ProductsItem = $allItem->where('options', '!=', null);
+                                        @php
+                        $allItem = Cart::content();
+                        $ProductsItem = $allItem->where('options', '!=', null);
 
-        
-        @endphp
-        <tbody id="cart-body">
-            @foreach ($ProductsItem as $item)
-                
-            <tr>
-                <td>{{$item->name}}</td>
-                
-                <form method="POST" action="{{ url('/pos/ChangeQty/' . $item->rowId )}}">
-                @csrf
-
-                <td><input type="number" name="qty" value="{{ $item->qty }}" min="1" style="width: 40px;">
-                <button type="submit" class="btn btn-sm btn-success" style="margin-top:-2px ;"> <i class="fas fa-check"></i> </button></td>
-                
-
-                <td>{{$item->price * $item->qty}}</td>
-                <td>{{$item->subtotal}}</td>
-                </form>
+                        
+                        @endphp
 
 
-                            
+                <tbody id="cart-body">
+                    @foreach ($ProductsItem as $item)
+                    <tr>
+                        <td class="fw-medium">{{ $item->name }}</td>
 
-                            <td>
-                                <form action="{{ url('/pos-RemovePrd/' . $item->rowId) }}" method="POST">
+                        <td>
+                            <form method="POST" action="{{ url('/pos/ChangeQty/' . $item->rowId )}}" class="d-flex gap-1">
+                                @csrf
+                                <input type="number" name="qty" value="{{ $item->qty }}" min="1" class="form-control form-control-sm qty-input">
+                                <button class="btn btn-success btn-sm">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                        </td>
+
+                        <td>₱{{ number_format($item->price,2) }}</td>
+                        <td class="fw-semibold">₱{{ number_format($item->subtotal,2) }}</td>
+
+                        <td>
+                            <form action="{{ url('/pos-RemovePrd/' . $item->rowId) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-
-                                <button type="submit" class="btn btn-danger btn-sm">
+                                <button class="btn btn-outline-danger btn-sm">
                                     <i class="fas fa-trash"></i>
-                                </button></a>
+                                </button>
                             </form>
-                            </td>
-                        
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-                        </tr>
-                         @endforeach
-                    </tbody>
-                                            </table>
-                                        </div> <!-- end .table-responsive-->
-                                    </div>
 
-                                    <div class="bg-light">
-
-                                    </div>
-
-                <div class="card text-bg-info">
-                <div class="card-body bg-dark">
+                                <div class="card text-bg-info">
+                                <div class="card-body bg-dark">
 
 
                     <hr>
 
                     
 
-                <p class="text-start">
-                    <strong>Vatable Sales:</strong> ₱{{ number_format($totalVatable, 2) }}
-                </p>
+    <!-- Summary -->
+    <div class="cart-summary p-3">
+        <div class="d-flex justify-content-between">
+            <span>Vatable Sales</span>
+            <strong>₱{{ number_format($totalVatable,2) }}</strong>
+        </div>
 
-                <p class="text-start">
-                    <strong>VAT ({{ $vatRate }}%):</strong> ₱{{ number_format($totalVat, 2) }}
-                </p>
+        <div class="d-flex justify-content-between">
+            <span>VAT ({{ $vatRate }}%)</span>
+            <strong>₱{{ number_format($totalVat,2) }}</strong>
+        </div>
 
-                <hr class="my-2">
+        <hr class="border-light">
 
-                <p class="text-start">
-                    <strong>Total Amount Due (Inclusive):</strong> ₱{{ number_format($totalInclusive, 2) }}
-                </p>
+        <div class="d-flex justify-content-between fs-5">
+            <span>Total</span>
+            <strong>₱{{ number_format($totalInclusive,2) }}</strong>
+        </div>
 
-  <div class="form-group mb-3" style="text-align: left; margin-left: 15px; margin-top: 10px;">
-
-           <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#invoice-modal" 
-                @if(Cart::count() == 0) disabled @endif>
-                Proceed Payment
-           </button>
-
-   <br>
-          </div>
+        <button class="btn btn-success btn-pos w-100 mt-3"
+            data-bs-toggle="modal"
+            data-bs-target="#invoice-modal"
+            @if(Cart::count() == 0) disabled @endif>
+            💳 Proceed Payment
+        </button>
+    </div>
 
 
                 </div>

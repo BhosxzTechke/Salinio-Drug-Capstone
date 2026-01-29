@@ -118,13 +118,6 @@
             <button type="button" class="btn btn-info add-discount" data-bs-toggle="modal" data-bs-target="#discount-modal">Add Discount</button>
         </div>
 
-                    
-
-
-
-
-
-
 
 
                     <!-- Modal -->

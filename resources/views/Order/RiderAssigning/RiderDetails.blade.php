@@ -1,0 +1,154 @@
+
+
+
+
+@extends('admin_dashboard')
+@section('admin')
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box">
+                                    <div class="page-title-right">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Orders</a></li>
+                                            <li class="breadcrumb-item active">Rider Details</li>
+                                        </ol>
+                                    </div>
+                                    
+                                    <h4 class="page-title">Rider Details</h4>
+                                </div>
+                            </div>
+                        </div>     
+                        <!-- end page title -->
+
+
+  <div class="row">
+
+                        <div class="col-lg-8 col-xl-12">
+                                <div class="card">
+                                    <div class="card-body">
+    
+                                            <div class="tab-pane" id="settings">
+
+{{-- 
+
+                                    <form method="POST" action="" enctype="multipart/form-data" >
+                                        @csrf --}}
+
+
+                                        <input type="hidden" name="id" value="{{ $riderDetails->id }}">
+
+
+                                        <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Rider Info</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+
+                                                <div class="mb-3">
+                                                    <label for="name" class="">Rider Name</label>
+                                                    <p class="text-danger">{{ $riderDetails->user->name ?? '' }} </p>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="text" class="">Rider Email</label>
+                                                    <p class="text-danger">{{ $riderDetails->user->email ?? '' }}</p>
+
+                                                    </div>
+                                            </div> <!-- end col -->
+
+
+                                            
+{{-- 
+                                <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="text" class="">Supplier Address</label>
+                                                    <p class="text-danger">{{ $riderDetails->user->email ?? '' }}</p>
+
+                                                </div>
+                                            </div> <!-- end col -->
+ --}}
+
+
+                                    <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="phone" class="">Supplier Phone</label>
+                                                    <p class="text-danger">{{ $riderDetails->user->phone ?? '' }}</p>
+
+                                                </div>
+                                            </div> <!-- end col -->
+
+
+                                        <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="phone" class="">Vehicle Type</label>
+                                                    <p class="text-danger">{{ $riderDetails->vehicle_type ?? '' }}</p>
+
+                                                </div>
+                                            </div> <!-- end col -->
+
+
+{{-- 
+
+
+                                                <div class="col-md-12">
+                                            <div class="mb-3">
+                                                    <label for="example-fileinput" class="form-label">Customer Image</label>
+                                                    <img id="showImage" src="{{ (!empty($supplier->image)) ? url($supplier->image) : url('uploads/noimage.png') }}" class="rounded-circle avatar-lg img-thumbnail">
+                                                </div>
+                                            </div> <!-- end col --> --}}
+
+
+                                        </div> <!-- end row -->
+
+{{-- 
+                                        <div class="text-end">
+                                            <a href="{{ route('all.supplier')}}"><button type="" name="" class="btn btn-info waves-effect waves-light mt-2"></i>Back </button></a>
+                                        </div>
+                                         --}}
+                                    </form>
+                                </div>
+                                            <!-- end settings content-->
+    
+                                    </div>
+                                </div> <!-- end card-->
+
+                            </div> <!-- end col -->
+                        </div>
+                        <!-- end row-->
+
+                    </div> <!-- container -->
+
+                </div> <!-- content -->
+
+
+                  <script type="text/javascript">
+                    
+                    $(document).ready(function(){
+                      $('#image').change(function(e){
+                        var reader = new FileReader();
+                        reader.onload =  function(e){
+                          $('#showImage').attr('src',e.target.result);
+                        }
+                        reader.readAsDataURL(e.target.files['0']);
+                      });
+                    });
+
+                  </script>
+                            
+
+
+
+
+@endsection

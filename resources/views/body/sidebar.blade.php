@@ -57,6 +57,53 @@
                             </li>
 
 
+                            
+                            <li>
+                                <a href="{{ route('ai.admin.chat') }}" >
+                                    <i class="mdi mdi-view-dashboard-outline"></i>
+                                    {{-- <span class="badge bg-success rounded-pill float-end"></span> --}}
+                                    <span> Ai Assistant </span>
+                                </a>
+
+                            </li>
+
+
+
+                            
+                    @if(Auth::user()->can('rider-menu')) 
+                        <li>
+                                <a href="#sidebarEcommerce" data-bs-toggle="collapse">
+                                    <i class="mdi mdi-cart-outline"></i>
+                                    <span> Rider </span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <div class="collapse" id="sidebarEcommerce">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="{{ route('rider.table')}}">
+                                                <span class="badge bg-success rounded-pill float-end">4</span>
+                                                <span>Awaiting Orders</span></a>
+                                        </li>
+
+                                        <li>
+                                            <a href="{{route('rider.pickup')}}">PickUp Orders</a>
+                                        </li>
+
+                                        
+                                        <li>
+                                            <a href="{{route('rider.delivering')}}">Out For Delivery Orders</a>
+                                        </li>
+
+
+
+                                        
+                                        
+                                    </ul>
+                                </div>
+                            </li>
+                            @endif
+
+
 
                             @if(Auth::user()->can('view-pos-page')) 
                             <li>
@@ -68,6 +115,8 @@
 
                             </li>
                             @endif
+
+
 
 
 
@@ -100,7 +149,7 @@
 
 
                             
-                        @if(Auth::user()->can('customer-menu')) 
+                        {{-- @if(Auth::user()->can('customer-menu')) 
                             <li>
                                 <a href="#sidebarCrm" data-bs-toggle="collapse">
                                     <i class="mdi mdi-account-multiple-outline"></i>
@@ -126,7 +175,7 @@
                                     </ul>
                                 </div>
                             </li>
-                            @endif
+                            @endif --}}
 
 
 
@@ -185,7 +234,7 @@
                             </div>
                         </li> --}}
 
-
+{{-- 
                         @if(Auth::user()->can('attendance-menu'))
                         <li>
                             <a href="#attendance" data-bs-toggle="collapse">
@@ -206,7 +255,7 @@
                                 </ul>
                             </div>
                         </li>
-                        @endif  
+                        @endif   --}}
 
 
 
@@ -348,7 +397,7 @@
                             @endif
 
                             @if(Auth::user()->can('view-all-pending-order'))
-                                <li><a href="{{ route('all.pending.order') }}">Pending Deliveries</a></li>
+                                <li><a href="{{ route('all.pending.order') }}">Received Deliveries</a></li>
                             @endif
 
                             @if(Auth::user()->can('view-all-received-order'))
@@ -421,6 +470,11 @@
                         @if(Auth::user()->can('view-complete-orders'))
                         <li><a href="{{ route('complete.order') }}">Complete Orders</a></li>
                         @endif
+
+
+                        <li><a href="{{ route('return.order') }}">Return Orders</a></li>
+
+
                         
                                 </ul>
                             </div>
@@ -429,7 +483,7 @@
 
 
 
-@if(Auth::user()->can('pickup-order-menu'))
+{{-- @if(Auth::user()->can('pickup-order-menu'))
                         <li>
                         <a href="#pickup" data-bs-toggle="collapse">
                             <i class="mdi mdi-storefront-outline"></i>
@@ -453,7 +507,7 @@
                                 </ul>
                             </div>
                         </li>
-                    @endif
+                    @endif --}}
 
 
 
@@ -506,7 +560,7 @@
 
 
 
-                @if(Auth::user()->can('audit-trail-menu'))
+                {{-- @if(Auth::user()->can('audit-trail-menu')) --}}
                 <li>
                     <a href="#audit" data-bs-toggle="collapse">
                         <i class="mdi mdi-file-document-outline"></i>
@@ -518,24 +572,24 @@
                 <div class="collapse" id="audit">
                     <ul class="nav-second-level">
 
-                        @if(Auth::user()->can('view-audit-trail-action'))
+                        {{-- @if(Auth::user()->can('view-audit-trail-action')) --}}
                             <li>
                                 <a href="{{ route('audit.trail')}}">Audit By Action</a>
                             </li>
-                        @endif
+                        {{-- @endif --}}
 
 
-                        @if(Auth::user()->can('view-audit-trail-log'))
+                        {{-- @if(Auth::user()->can('view-audit-trail-log')) --}}
                         <li>
                             <a href="{{ route('audit.log') }}">Audit By Log</a>
                         </li>
-                        @endif
+                        {{-- @endif --}}
 
 
                         </ul>
                     </div>
                 </li>
-            @endif
+            {{-- @endif --}}
 
 
           @if(Auth::user()->can('manage-commerce-settings'))
@@ -550,11 +604,11 @@
 
 
 
-        @if(Auth::user()->can('all-reports-section'))
+        {{-- @if(Auth::user()->can('all-reports-section')) --}}
             <li class="menu-title mt-2">Reports</li>
 
 
-            @if(Auth::user()->can('reports-menu'))
+            {{-- @if(Auth::user()->can('reports-menu')) --}}
                 <li>
                     <a href="#SalesReport" data-bs-toggle="collapse">
                         <i class="mdi mdi-chart-bar"></i>
@@ -566,40 +620,40 @@
                 <div class="collapse" id="SalesReport">
                     <ul class="nav-second-level">
 
-                        @if(Auth::user()->can('view-daily-sales-report'))
+                        {{-- @if(Auth::user()->can('view-daily-sales-report')) --}}
                             <li>
                                 <a href="{{ route('daily.reports')}}">Daily Sales Report</a>
                             </li>
-                        @endif
+                        {{-- @endif --}}
 
 
-                        @if(Auth::user()->can('view-weekly-sales-report'))
+                        {{-- @if(Auth::user()->can('view-weekly-sales-report')) --}}
                         <li>
                             <a href="{{ route('weekly.reports') }}">Weekly Sales Report</a>
                         </li>
-                        @endif
+                        {{-- @endif --}}
 
 
-                        @if(Auth::user()->can('view-monthly-sales-report'))
+                        {{-- @if(Auth::user()->can('view-monthly-sales-report')) --}}
                         <li>
                             <a href="{{ route('monthly.reports') }}">Monthly Sales Report</a>
                         </li>
-                        @endif
+                        {{-- @endif --}}
 
 
-                        @if(Auth::user()->can('view-top-sellings'))
+                        {{-- @if(Auth::user()->can('view-top-sellings')) --}}
                         <li>
                             <a href="{{ route('top.sellings') }}">Top Selling Products</a>
                         </li>
-                        @endif
+                        {{-- @endif --}}
 
                         </ul>
                     </div>
                 </li>
-            @endif
+            {{-- @endif --}}
 
 
-        @endif
+        {{-- @endif --}}
 
 
 
@@ -751,6 +805,11 @@
 
 
 
+        <li><a href="{{ route('view.admin.chat') }}"><i class="mdi mdi-cart-outline"></i><span> Chat Customer</span></a>
+
+
+
+
         {{-- <li class="menu-title mt-2">GENERAL SETTINGS</li> --}}
 
 
@@ -828,11 +887,11 @@
                 <div class="collapse" id="sidebarExpages">
                     <ul class="nav-second-level">   
 
-                        {{-- @if(Auth::user()->can('view-all-permissions'))
+                        {{-- @if(Auth::user()->can('view-all-permissions')) --}}
                         <li>
                             <a href="{{ route('all.permission') }}">All Permission</a>
                         </li>
-                        @endif --}}
+                        {{-- @endif --}}
 
                         @if(Auth::user()->can('add-roles-and-permissions'))
                         <li>

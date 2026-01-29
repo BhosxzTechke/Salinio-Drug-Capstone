@@ -55,25 +55,25 @@
     </div>
 
 
-              <div class="col-md-6">
-        <div class="form-group mb-3">
-            <label for="firstname" class="form-label">Group Name </label>
-            <select name="group_name" class="form-select" id="example-select">
-                    <option selected disabled >Select Group  </option>
-                   
-        <option value="pos" {{ $permission->group_name == 'pos' ? 'selected' : '' }}> Pos</option>
-        <option value="employee" {{ $permission->group_name == 'employee' ? 'selected' : '' }}> Employee</option>
-        <option value="customer" {{ $permission->group_name == 'customer' ? 'selected' : '' }}> Customer</option>
-        <option value="supplier" {{ $permission->group_name == 'supplier' ? 'selected' : '' }}> Supplier</option>
-        <option value="salary" {{ $permission->group_name == 'salary' ? 'selected' : '' }}> Salary </option>
-        <option value="attendence" {{ $permission->group_name == 'attendence' ? 'selected' : '' }}> Attendence </option>
-        <option value="category" {{ $permission->group_name == 'category' ? 'selected' : '' }}> Category </option>
-        <option value="product" {{ $permission->group_name == 'product' ? 'selected' : '' }}> Product </option>
-        <option value="expense" {{ $permission->group_name == 'expense' ? 'selected' : '' }}> Expense </option>
-        <option value="orders" {{ $permission->group_name == 'orders' ? 'selected' : '' }}> Orders</option>
-        <option value="stock" {{ $permission->group_name == 'stock' ? 'selected' : '' }}> Stock </option>
-        <option value="roles" {{ $permission->group_name == 'roles' ? 'selected' : '' }}> Roles</option> 
-                     
+                <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label for="firstname" class="form-label">Group Name </label>
+                <select name="group_name" class="form-select" id="example-select">
+                        <option selected disabled >Select Group  </option>
+                    
+            <option value="pos" {{ $permission->group_name == 'pos' ? 'selected' : '' }}> Pos</option>
+            <option value="employee" {{ $permission->group_name == 'employee' ? 'selected' : '' }}> Employee</option>
+            <option value="customer" {{ $permission->group_name == 'customer' ? 'selected' : '' }}> Customer</option>
+            <option value="supplier" {{ $permission->group_name == 'supplier' ? 'selected' : '' }}> Supplier</option>
+            <option value="salary" {{ $permission->group_name == 'salary' ? 'selected' : '' }}> Salary </option>
+            <option value="attendence" {{ $permission->group_name == 'attendence' ? 'selected' : '' }}> Attendence </option>
+            <option value="category" {{ $permission->group_name == 'category' ? 'selected' : '' }}> Category </option>
+            <option value="product" {{ $permission->group_name == 'product' ? 'selected' : '' }}> Product </option>
+            <option value="expense" {{ $permission->group_name == 'expense' ? 'selected' : '' }}> Expense </option>
+            <option value="orders" {{ $permission->group_name == 'orders' ? 'selected' : '' }}> Orders</option>
+            <option value="stock" {{ $permission->group_name == 'stock' ? 'selected' : '' }}> Stock </option>
+            <option value="roles" {{ $permission->group_name == 'roles' ? 'selected' : '' }}> Roles</option> 
+                        
                 </select>   
         </div>
     </div>

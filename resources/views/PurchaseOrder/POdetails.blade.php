@@ -48,7 +48,7 @@
 
                             
 
-                            <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Batch #</h5>
+                            <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> LOT #</h5>
 
 
 
@@ -102,7 +102,7 @@
 
 
             <div class="row mb-3">
-                <label for="example-text-input" class="col-sm-2 col-form-label">Remarks </label>
+                <label for="example-text-input" class="col-sm-2 col-form-label">GRN </label>
                 <div class="col-sm-10">
                 <textarea name="remarks" id="elm1" name="remarks">{{ $Delivery->remarks ?? '' }}</textarea>
             </div>
@@ -122,8 +122,8 @@
                             <th>SL</th>
                             <th>Image</th>
                             <th>Product Name</th>
-                            <th>Batch #</th>
-                            <th>Quantity </th>                            
+                            <th>LOT #</th>
+                            <th>Quantity Ordered</th>                            
                             <th>Expiration Date</th>
                             <th>Quantity Received</th>
                         </tr>
@@ -160,6 +160,7 @@
 <input type="text" 
     name="items[{{ $key }}][batch_number]" 
     class="form-control" 
+    style="background-color: #203a54; color: white;"
     value="{{ optional($Delivery?->delivery_items->get($key))->batch_number ?? $data->auto_batch_number }}" 
     readonly>
     </td>
@@ -171,14 +172,27 @@
 
     
     {{-- Expiry Date --}}
+
+    @if ($data->product && $data->product->has_expiration == 1)
     <td>
         <input type="date"
-        value="{{ optional($Delivery?->delivery_items->get($key))->expiry_date ?? '' }}"
+        value="{{ $data->expiration_date ?? 'Non-Expiration Item' }}"
         name="items[{{ $key }}][expiry_date]"
         class="form-control expiry-date"
         min="{{ date('Y-m-d') }}"
-        required>
+        style="background-color: #203a54; color: white;"
+        readonly>
     </td>
+    @else 
+
+        <td>
+        <input type="text"
+        style="background-color: #203a54; color: white;"
+        placeholder="Non-Expiration Item"
+        readonly>
+    </td>
+
+    @endif
 
 
 
@@ -186,12 +200,12 @@
 
     {{-- Quantity Received (default = ordered qty) --}}
     <td>
-        <input type="number"
-               value="{{ $data->quantity_ordered }}"
-               name="items[{{ $key }}][quantity_received]"
-               class="form-control quantity_ordered"
-               max="{{ $data->remaining_qty ?? $data->quantity_ordered }}">
-    </td>
+            <input type="number"
+                value="{{ $data->quantity_ordered }}"
+                name="items[{{ $key }}][quantity_received]"
+                class="form-control quantity_ordered"
+                max="{{ $data->remaining_qty ?? $data->quantity_ordered }}">
+        </td>
 
 
 

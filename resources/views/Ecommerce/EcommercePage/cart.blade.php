@@ -13,6 +13,7 @@
         @php $ProductsCart = Cart::instance('ecommerce')->content(); @endphp
 
 
+
 <div class="flex flex-col md:flex-row py-16 max-w-6xl w-full px-6 mx-auto">
     <div class="flex-1 max-w-4xl">
 
@@ -76,11 +77,11 @@
         </a>
     </div>
 
-    <div class="max-w-[360px] w-full bg-gray-100/40 p-5 max-md:mt-16 border border-gray-300/70">
-        <h2 class="text-xl md:text-xl font-medium">Order Summary</h2>
-        <span class="text-sm text-indigo-500">{{ $ProductsCart->count() }} Items</span>
-      
-        <hr class="border-gray-300 my-5" />
+        <div class="max-w-[360px] w-full bg-gray-100/40 p-5 max-md:mt-16 border border-gray-300/70">
+            <h2 class="text-xl md:text-xl font-medium">Order Summary</h2>
+            <span class="text-sm text-indigo-500">{{ $ProductsCart->count() }} Items</span>
+        
+            <hr class="border-gray-300 my-5" />
 
 
 

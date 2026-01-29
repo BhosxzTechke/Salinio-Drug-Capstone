@@ -44,7 +44,7 @@
 
     <!-- Actions -->
     <div class="grid gap-3 mt-4">
-      <a href="{{ route('customer.profile') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl w-full block">Track My Order</a>
+      <a href="{{ route('customer.track.item', $order->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl w-full block">Track My Order</a>
       <a href="{{ route('customer.dashboard')}}" class="border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium py-3 rounded-xl w-full block">Continue Shopping</a>
     </div>
   </div>

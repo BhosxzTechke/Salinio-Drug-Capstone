@@ -88,7 +88,8 @@
                     <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-lg">
                       {{ $inventories->product->stock }} in stock
                     </span>
-                    {{-- <button type="button" class="p-2 bg-white/90 rounded-full shadow hover:bg-pink-100 transition">
+                    
+              <button type="button" class="p-2 bg-white/90 rounded-full shadow hover:bg-pink-100 transition">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="2" stroke="currentColor" class="w-5 h-5 text-pink-500">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -97,7 +98,7 @@
                           3.75 5.401 3.75 3.3 5.765 3.3 8.25c0 7.22 
                           8.7 11.25 8.7 11.25s8.7-4.03 8.7-11.25z" />
                       </svg>
-                    </button> --}}
+                    </button>
                   </div>
 
                   <!-- Overlay for Prescription Required IF 1 SIYA SA COLUMN DATA-->

@@ -44,7 +44,7 @@
 <body onload="window.print()">
 
 <div class="receipt-container">
-    <h2>My Pharmacy POS</h2>
+    <h2>Salinio Drug Pharmacy</h2>
     <h4>Official Receipt</h4>
     <p class="small">Date: {{ $order->order_date }}</p>
     <p class="small">Invoice No: {{ $order->invoice_no }}</p>
@@ -65,11 +65,13 @@
                 <tr>
                     <td>{{ $detail->product->product_name ?? '' }}</td>
                     <td>{{ $detail->quantity ?? '' }}</td>
-                    <td class="center">{{ number_format($detail->unitcost, 2) }}</td>
+                    <td class="center">{{ number_format($detail->product->selling_price, 2) }}</td>
                     <td class="center">{{ number_format($detail->total, 2) }}</td>
                 </tr>
             @endforeach
         </tbody>
+
+
         <tfoot>
             <tr>
                 <td colspan="3">Subtotal</td>
@@ -100,11 +102,13 @@
 </div>
 
 <script>
-    // After print dialog is closed, auto-redirect cashier back to POS
+    // After print dialog nagclosed, auto-redirect cashier back to POS
     window.onafterprint = function () {
         window.location.href = "{{ route('pos') }}";
     };
 </script>
+
+
 
 </body>
 </html>

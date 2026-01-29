@@ -20,12 +20,11 @@
                                 <div class="page-title-box">
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
-                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                            <li class="breadcrumb-item active">Profile</li>
+                                            <li class="breadcrumb-item"><a href="javascript: void(0);">pending</a></li>
+                                            <li class="breadcrumb-item active">Order Details</li>
                                         </ol>
                                     </div>
                                     
-                                    <h4 class="page-title">Profile</h4>
                                 </div>
                             </div>
                         </div>     
@@ -43,6 +42,15 @@
                                                 <form method="POST" action="{{ route('status.update') }}" enctype="multipart/form-data" >
                                                   @csrf 
                                                   @method('PUT')
+
+
+
+                                                  
+                    @php
+
+                        $orderId = $Order->id;
+                        $order = App\Models\Order::find($orderId);
+                    @endphp
 
 
                                                     <input type="hidden" name="id" value="{{ $Order->id }}">
@@ -125,6 +133,36 @@
 
 
 
+                                    <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="text" class="">Delivery Status </label>
+                                                        <p class="text-danger">{{ $Order->delivery_status }}</p>
+
+                                        </div>
+                                    </div> <!-- end col -->
+
+
+
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="">Courier</label>
+
+                                                            <p class="fw-bold">
+                                                                @if($Order->courier === 'jnt')
+                                                                    <i class="fa-solid fa-truck-fast text-danger"></i>
+                                                                    J&T Express
+                                                                @elseif($Order->courier === 'own_rider')
+                                                                    <i class="fa-solid fa-motorcycle text-primary"></i>
+                                                                    Own Rider
+                                                                @else
+                                                                    <i class="fa-solid fa-truck text-secondary"></i>
+                                                                    {{ ucfirst($Order->courier) }}
+                                                                @endif
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+
 
 
                                                 <div class="col-md-6">
@@ -137,35 +175,41 @@
 
 
 
-                                                 <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="text" class="">Due Amount</label>
-                                                                <p class="text-danger">{{ $Order->due }}</p>
+                                                
 
-                                                            </div>
-                                                        </div> <!-- end col -->
+                                        <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="text" class="">Shipping Address</label>
+                                                        <p class="text-danger">
+                                                            {{ $Order->shippingAddress->street }} <br>
+                                                            {{ $Order->shippingAddress->barangay }}
+                                                            {{ $Order->shippingAddress->city }}
+                                                        </p>
 
-                    @php
+                                                    </div>
+                                                </div> <!-- end col -->
 
-                        $orderId = $Order->id;
-                        $order = App\Models\Order::find($orderId);
-                    @endphp
 
-                    @if($order && $order->reference_number)
 
-                         <div class="col-md-6">
-                            <button type="button" class="btn btn-dark">
-                                        <img src="{{ asset('logo/gcash-seeklogo.png') }}" width="40px" alt="Logo">
 
-                        <span class="badge badge-light">Payment Method: Gcash</span> <span class="badge badge-info">{{ $order->reference_number }}</span></button>
-                            </div>
 
-                    @else
-                         <div class="col-md-6">
-                            <button type="button" class="btn btn-primary">
-                        <span class="badge badge-light">Payment Method: Cash</span></button>
-                            </div>
-                    @endif
+                                                <div class="col-md-6">
+                                                    <button type="button" class="btn btn-dark d-flex align-items-center gap-2">
+                                                        @if($order->payment_method === 'cash')
+                                                            <i class="fa-solid fa-money-bill-wave"></i>
+                                                            <span>Cash on Delivery</span>
+
+                                                        @elseif($order->payment_method === 'paypal')
+                                                            <i class="fa-brands fa-paypal"></i>
+                                                            <span>PayPal</span>
+
+                                                        @else
+                                                            <i class="fa-solid fa-credit-card"></i>
+                                                            <span>{{ ucfirst($order->payment_method) }}</span>
+                                                        @endif
+                                                    </button>
+                                                </div>
+
 
 
                         </div> <!-- end row -->
@@ -183,7 +227,7 @@
                                                     <th>Product Code</th>
                                                     <th>Quantity </th>
                                                     <th>Price</th>
-                                                    <th>Total(+VAT)</th>
+                                                    <th>Total Amount</th>
                                                 </tr>
 
                                         </thead>

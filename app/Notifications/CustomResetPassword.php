@@ -31,19 +31,17 @@ class CustomResetPassword extends Notification
             return 'mailtrap';
         }
 
-        public function toMail($notifiable)
-        {
-
-                return (new MailMessage)
-                    ->mailer('mailtrap') // explicitly use Mailtrap
-                    ->from(env('MAILTRAP_FROM_ADDRESS'), env('MAILTRAP_FROM_NAME'))
-                    ->subject('Reset Your Password')
-                    ->view('emails.custom-reset', [
-                        'url' => $this->url,
-                        'appName' => config('app.name'),
-                        'customer' => $notifiable,
-                    ]);
-        }
+                            public function toMail($notifiable)
+                            {
+                                return (new MailMessage)
+                                    // Laravel will automatically use MAIL_FROM_ADDRESS
+                                    ->subject('Reset Your Password')
+                                    ->view('emails.custom-reset', [
+                                        'url' => $this->url,
+                                        'appName' => config('app.name'),
+                                        'customer' => $notifiable,
+                                    ]);
+                            }
 
     public function toArray($notifiable)
     {

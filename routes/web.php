@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\AdminAiController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\CustomersGoogleController;
 use App\Http\Controllers\backend\EmployeesController;
 use App\Http\Controllers\backend\CustomerController;
 use App\Http\Controllers\backend\SupplierController;
@@ -24,6 +26,8 @@ use App\Http\Controllers\backend\RoleController;
 use App\Http\Controllers\backend\SubCategoryController;
 use App\Http\Controllers\backend\AuditController;
 use App\Http\Controllers\backend\ReportController;
+use App\Http\Controllers\backend\RiderController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\frontend\AboutController;
 use App\Http\Controllers\frontend\AuthCustomerController;
 use App\Http\Controllers\frontend\BrandController as FrontendBrandController;
@@ -33,9 +37,12 @@ use App\Http\Controllers\frontend\CategoryController as FrontendCategoryControll
 use App\Http\Controllers\frontend\ContactController;
 use App\Http\Controllers\frontend\CustomerRegisteredController;
 use App\Http\Controllers\frontend\OrderController as FrontendOrderController;
+use App\Http\Controllers\frontend\WishlistController;
+use App\Http\Controllers\SupplierConfirmationController;
 use App\Models\HeroSlider;  
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 
 
@@ -49,6 +56,43 @@ use Illuminate\Http\Request;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+
+
+// |--------------------------------------------------------------------------
+// | AI ROUTES
+// |--------------------------------------------------------------------------
+
+        Route::get('/admin/show', [AdminAiController::class, 'AiChatShow'])->name('ai.admin.chat');
+        Route::post('/admin/ai-chat', [AdminAiController::class, 'ask'])->name('ai.admin.ask');
+
+
+
+
+// |--------------------------------------------------------------------------
+// | CORRIER Routes
+// |--------------------------------------------------------------------------
+
+
+    Route::get('/track/{tracking_number}', function($tracking_number, \App\Services\MockCourierService $courier){
+        $shipment = $courier->getShipment($tracking_number);
+
+        if(!$shipment){
+            return response()->json(['error'=>'Tracking not found'], 404);
+        }
+
+        return response()->json([
+            'tracking_number' => $shipment->tracking_number,
+            'delivery_status' => $shipment->delivery_status,
+            'last_update' => $shipment->updated_at
+        ]);
+    });
+
+
+
+    Route::get('/order/{order}/shipment-status', [OrderController::class, 'shipmentStatus']);
+
+    
 
 // ---------------- PUBLIC ROUTES ----------------
 
@@ -166,15 +210,25 @@ use Illuminate\Http\Request;
 
             // TO PROTECT THE URL BY MANIPULATING IT IN DASHBOARD MAIN
 
-     Route::middleware('auth')->group(function () {
-        Route::get('/profile/view', [AdminController::class, 'Viewprofile'])->name('view.profile');
-        Route::post('/profile/view/store', [AdminController::class, 'StoreProfile'])->name('admin.profile.store');
-        Route::get('/profile/changePassword', [AdminController::class, 'ChangePassword'])->name('admin.change.password');
-        Route::post('/profile/changePassword/store', [AdminController::class, 'UpdatePassword'])->name('password.change.store');    
+            Route::middleware('auth')->group(function () {
+                Route::get('/profile/view', [AdminController::class, 'Viewprofile'])->name('view.profile');
+                Route::post('/profile/view/store', [AdminController::class, 'StoreProfile'])->name('admin.profile.store');
+                Route::get('/profile/changePassword', [AdminController::class, 'ChangePassword'])->name('admin.change.password');
+                Route::post('/profile/changePassword/store', [AdminController::class, 'UpdatePassword'])->name('password.change.store');    
 
 
 
-});
+                //////////// CHAT SYSTEM
+
+                    Route::post('/chat/send', [ChatController::class, 'send']);
+                    Route::get('/chat/fetch/{userId}', [ChatController::class, 'fetch']);
+
+                    Route::get('/admin/chats', [ChatController::class, 'adminChats'])
+                            ->name('view.admin.chat');
+
+        });
+
+
 
 
 
@@ -207,6 +261,17 @@ use Illuminate\Http\Request;
 
    
         // });
+
+
+        Route::get('/test-email', function () {
+            Mail::raw('Test email from Salinio Drug Pharmacy system.', function ($message) {
+                $message->to('tarucjohneric19@gmail.com')
+                        ->subject('SMTP Test - Laravel');
+            });
+
+            return 'Email sent!';
+        });
+
 
 
 
@@ -549,6 +614,16 @@ use Illuminate\Http\Request;
     Route::get('all/Pending/Order', 'AllPendingOrder')->name('all.pending.order')->middleware('permission:view-all-pending-order');
 
 
+
+
+
+
+
+
+
+
+
+
     ///////// SHOWING FORM DETAILS
 
     Route::get('Received/Order/{id}', 'ReceivedOrderDetails')->name('Received.Order');
@@ -862,23 +937,62 @@ use Illuminate\Http\Request;
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                Route::get('/orders/{order}/assign', [OrderController::class, 'showAssign'])
+                    ->name('assigned.Riders');
+
+                Route::post('/orders/{order}/assign', [OrderController::class, 'storeAssign'])
+                    ->name('orders.assign.store');
 
 
 
+                Route::get('/orders/riderShow/{rider_Id}', [OrderController::class, 'RiderShow'])
+                    ->name('rider.show');
+
+                    
+
+            Route::get('/edit/permission/{id}', 'EditPermission')->name('edit.permission');
+
+
+                    // ->middleware(['auth', 'role:Admin']); // only admin can assign
 
 
             // Pending Orders TABLE
             Route::get('/Order/Pending', 'PendingOrders')->name('pending.order')->middleware('permission:view-pending-orders');
 
 
+            Route::get('/orders/MarkAsOrderConfirmed/{id}', [OrderController::class, 'MarkAsConfirmOrder'])->name('confirm.Mark.Order');
+
+
+
+
+
+
+            /////////////////// SAVING TRACKING JNT
+
+            Route::post('/orders/save-tracking', [OrderController::class, 'saveTracking'])
+                    ->name('orders.saveTracking');
+
+                Route::post('/orders/pickup/{order}', [OrderController::class, 'markPickup'])
+                    ->name('orders.pickup');
+
+                Route::get('/orders/print-label/{order}', [OrderController::class, 'printLabel'])
+                    ->name('orders.printLabel');
+
+
+
 
         
             // AJAX for Mark as Shipped and Cancelled
             Route::post('/orders/ajax/mark-shipped', [OrderController::class, 'ajaxMarkAsShipped'])->name('orders.ajax.shipped');
-            Route::post('/orders/ajax/mark-cancelled', [OrderController::class, 'ajaxMarkAsCancelled'])->name('orders.ajax.cancelled');
+            
+            Route::post('/orders/ajax/mark-cancelled', [OrderController::class, 'ajaxOrderCancelled'])->name('orders.ajax.cancelled');
 
-                ///////////////////////////////////////////////
+
+
+
+
+            ///////////////////////////////////////////////
 
 
             // Shipped Orders TABLE
@@ -895,6 +1009,10 @@ use Illuminate\Http\Request;
             Route::get('/Order/complete', 'CompleteOrders')->name('complete.order')->middleware('permission:view-complete-orders');
 
 
+            // Return Orders TABLE
+            Route::get('/Order/Return', 'ReturnOrders')->name('return.order');
+
+
             //Show Order Details Form
             Route::get('/Order/Details/{order_id}', 'Details')->name('details');
 
@@ -903,6 +1021,13 @@ use Illuminate\Http\Request;
             Route::get('/Complet/Details/{order_id}', 'CompleteDetailsOrder')->name('complete.order.details');
 
 
+
+            //Show Order Details Form with complete order button  Complete Table
+            Route::get('/Tracking/Shipment/{order_id}', 'showTrackingOrderDetails')->name('track.shipment.order');
+
+
+
+            
 
             //Update Order Status
             Route::put('/update/status', 'StatusUpdate')->name('status.update');
@@ -1057,7 +1182,9 @@ use Illuminate\Http\Request;
 
         ////////////////////// BACKUP DATABASE ///////////////////////
     Route::middleware(['auth', 'web'])->group(function () {
-    Route::get('/admin/backup', [AdminController::class, 'BackupDatabase'])->name('backup.database')->middleware('permission:view-backup-database');
+    Route::get('/admin/backup', [AdminController::class, 'BackupDatabase'])->name('backup.database');
+        // Route::get('/admin/backup', [AdminController::class, 'BackupDatabase'])->name('backup.database')->middleware('permission:view-backup-database');
+
     Route::post('/backup/now', [AdminController::class, 'BackupNow'])->name('backup.now');
     Route::get('/backup/{getFilename}', [AdminController::class, 'DownloadDatabase'])->name('backup.download');
     Route::delete('/backup/{getFilename}', [AdminController::class, 'DeleteDatabase'])->name('backup.delete');
@@ -1067,10 +1194,14 @@ use Illuminate\Http\Request;
 
     
         Route::controller(AuditController::class)->group(function () {
+            Route::get('/audit-trail', 'AuditTrail')->name('audit.trail');
 
-            Route::get('/audit-trail', 'AuditTrail')->name('audit.trail')->middleware('permission:view-all-trail');
+            // Route::get('/audit-trail', 'AuditTrail')->name('audit.trail')->middleware('permission:view-all-trail');
 
-            Route::get('/audit-log', 'AuditLog')->name('audit.log')->middleware('permission:view-audit-trail-log');
+            Route::get('/audit-log', 'AuditLog')->name('audit.log');
+
+            // Route::get('/audit-log', 'AuditLog')->name('audit.log')->middleware('permission:view-audit-trail-log');
+
 
             
         });
@@ -1175,17 +1306,39 @@ use Illuminate\Http\Request;
                   //////////////////    CHECKOUT PAGE ///////////////////////
 
 
-     Route::controller(FrontendController::class)->group(function () {
+        Route::controller(FrontendController::class)->group(function () {
 
-    Route::get('/cart', 'CartShow')->name('cart.show');
-
-
-    route::get('/wishlist', 'WishlistShow')->name('wishlist.show');
+        Route::get('/cart', 'CartShow')->name('cart.show');
 
 
-    Route::get('/product/{product_id}', 'ProductDetails')->name('product.show');
+        route::get('/wishlist', 'WishlistShow')->name('wishlist.show');
 
-   });
+
+        Route::get('/product/{product_id}', 'ProductDetails')->name('product.show');
+
+    });
+
+
+            Route::controller(WishlistController::class)->group(function () {
+
+                route::post('/ecommerce/wishlist/add', 'EcommerceAddWishlist')->name('ecommerce.wishlist.add');
+
+                route::get('/ecommerce/wishlist', 'wishlistTest');
+
+            route::DELETE('/ecommerce-RemoveWsh/{rowId}', 'RemoveEcommWish')->name('removeWishlist');
+
+                
+
+            });
+
+
+
+
+                Route::post('/test-wishlist', function () {
+                    return dd('WISHLIST CLICK WORKS ✅');
+                })->name('test.wishlist');
+
+
 
 
 
@@ -1244,10 +1397,25 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
     Route::get('/customer/profile', [FrontendController::class, 'ProfileShow'])->name('customer.profile');
     Route::get('/customer/profile/edit', [FrontendController::class, 'ProfileEdit'])->name('customer.profile.edit');
 
+    Route::get('/customer/chat/admin', [FrontendController::class, 'ChatAdmin'])->name('chat.admin');
+
+    Route::get('/customer/address', [FrontendController::class, 'CustomerAddress'])->name('customer.adress');
+
+
+    Route::post('/customer/address/store', [FrontendController::class, 'CustomerAddressStore'])->name('store.customer.address');
+
+
+
+
 
     Route::put('/customer/profile/update', [FrontendController::class, 'ProfileUpdate'])->name('update.customer.profile');
 
     Route::get('/customer/view/item/{id}', [FrontendController::class, 'ViewItem'])->name('customer.view.item');
+
+    Route::get('/customer/return/item/{id}', [FrontendController::class, 'ReturnItem'])->name('return.order.item');
+
+
+    Route::get('/customer/track/item/{id}', [FrontendController::class, 'TrackItem'])->name('customer.track.item');
 
 
 
@@ -1259,7 +1427,26 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
 
 
 
+            // Admin route
+            Route::post('/admin/chat/send', [ChatController::class, 'sendAdmin'])
+                ->middleware('auth:web'); // web guard
 
+            // Customer route
+            Route::post('/customer/chat/send', [ChatController::class, 'sendCustomer'])
+                ->middleware('auth:customer'); // customer guard
+
+
+            // Admin routes
+            Route::get('/admin/chat/fetch/{customerId}', [ChatController::class,'fetchAdmin'])
+                ->middleware('auth:web');
+
+            // Customer routes
+            Route::get('/customer/chat/fetch', [ChatController::class,'fetchCustomer'])
+                ->middleware('auth:customer');
+
+
+
+                
 
         Route::controller(CartController::class)->group(function () {
                     
@@ -1277,8 +1464,6 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
             /////////// CART CHECKOUT //////////////
 
 
-
-
         });
 
 
@@ -1286,7 +1471,7 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
                     
             ////// PRODUCT DETAILS CART /////////////////
 
-            route::get('/ecommerce/payment', 'EcommercePayment')->name('cart.payment');
+            route::get('/ecommerce/payment', 'EcommercePayment')->middleware('auth:customer')->name('cart.payment');
 
 
             route::post('/ecommerce/checkout', 'EcommerceCheckout')->name('cart.checkout');
@@ -1339,6 +1524,69 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
         ////////////////// LAZY LOADING FOR USER TO GO IN CHECKOUT  ////////////////
 
         // Route::get('/checkout', [OrderController::class, 'payment'])->name('checkout');
+
+
+
+
+
+
+        /////////////////////////////
+
+
+        Route::prefix('customer')->group(function () {
+        Route::get('/auth/google', [CustomersGoogleController::class, 'redirect'])
+            ->name('customer.google.login');
+
+        Route::get('/auth/google/callback', [CustomersGoogleController::class, 'callback']);
+    });
+
+
+
+
+
+        Route::get('/supplier/confirm/{token}', [SupplierConfirmationController::class, 'show'])
+        ->name('supplier.confirm');
+
+        Route::post('/supplier/confirm/{token}', [SupplierConfirmationController::class, 'store'])
+            ->name('supplier.confirm.store');
+
+
+
+
+
+
+            ////////////////////// RIDER SIDE ////////////////////////////
+
+
+
+        ////////////////////////////////  INVENTORY /////////////////////
+            Route::controller(RiderController::class)->group(function () {
+
+            Route::get('/Rider/Orders', 'ForRiderTable')->name('rider.table');
+
+            Route::get('/Pickup/details/{Order_id}', 'PickupItemDetails')->name('Product.details.pickUp');
+
+            //////////////////////////
+
+
+            Route::get('/Rider/Pickup', 'ForPickUpTable')->name('rider.pickup');
+
+            
+            Route::get('/Rider/Delivering', 'ForStartDeliveryTable')->name('rider.delivering');
+
+
+
+
+        });
+
+        
+
+
+        Route::post('/orders/pickUp/Item', [RiderController::class, 'ajaxPickupItem'])->name('orders.pickUp');
+
+        Route::post('/orders/Delivered/Item', [RiderController::class, 'ajaxDeliveredtem'])->name('orders.Delivering');
+
+        Route::post('/orders/Complete/Delivered', [RiderController::class, 'ajaxCompleteDelivered'])->name('orders.complete.delivered');
 
 
 

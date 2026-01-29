@@ -11,13 +11,29 @@ class Address extends Model
     use HasFactory;
 
 
- protected $fillable = ['customer_id', 'full_address', 'is_default'];
+    protected $fillable = [
+        'customer_id',
+        'full_name',
+        'phone',
+        'street',
+        'barangay',
+        'city',
+        'is_default',
+    ];
 
 
 
+    // In Address.php
+    protected $casts = [
+        'is_default' => 'boolean',
+    ];
 
-    public function customer()
-    {
-        return $this->belongsTo(Customer::class);
-    }
+    protected $table = 'addresses';
+
+
+
+        public function customer()
+        {
+            return $this->belongsTo(Customer::class, 'customer_id');
+        }
 }                                                                                                                                                       

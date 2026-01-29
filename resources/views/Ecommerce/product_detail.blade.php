@@ -55,43 +55,47 @@
     <div class="flex items-center space-x-4">
       <p class="text-3xl font-bold text-violet-600">₱{{ number_format($inventory->product->selling_price,2) }}</p>
 
-
       @if($inventory->quantity > 0)
         <span class="badge badge-success ml-2">In Stock</span>
       @else
         <span class="badge badge-error ml-2">Out of Stock</span>
       @endif
-    </div>
+        </div>
 
 
 
-    <!-- Short Description -->
-    <p class="text-gray-700 leading-relaxed">{{ $inventory->product->description }}</p>
+        <!-- Short Description -->
+        <p class="text-gray-700 leading-relaxed">{{ $inventory->product->description }}</p>
 
-    <!-- Add to Cart Button -->
-    <div class="mt-4">
+        <!-- Add to Cart Button -->
+        <div class="mt-4">
 
 
       @if($inventory->product->prescription_required)
         <div class="text-center space-y-2">
           <p class="text-sm text-red-500 font-semibold">
-            This medicine requires a valid prescription and can only be purchased in-store.
+        This medicine requires a valid prescription and can only be purchased in-store.
           </p>
           <a href="{{ route('contact.show') }}" 
-            class="btn bg-gray-500 text-white hover:bg-gray-600 flex-1">
-            Visit Our Store
+        class="btn bg-gray-500 text-white hover:bg-gray-600 flex-1">
+        Visit Our Store
           </a>
         </div>
+      @elseif($inventory->quantity <= 0)
+        <button type="submit" 
+            class="btn bg-gray-400 text-white cursor-not-allowed flex-1" disabled>
+          Out of Stock
+        </button>
       @else
         <button type="submit" 
-                class="btn bg-violet-600 text-white hover:bg-violet-700 flex-1">
+            class="btn bg-violet-600 text-white hover:bg-violet-700 flex-1">
           Add to Cart
         </button>
       @endif
 
 
 
-    </div>
+        </div>
   </form>
 
 

@@ -5,8 +5,8 @@
 
 
 
-<div class="min-h-screen bg-base-200 p-6 flex justify-center bg-slate-50">
-  <div class="w-full max-w-5xl">
+<div class="min-h-screen bg-base-200 p-6 pb-16 flex justify-center bg-slate-50">
+<div class="min-h-screen flex flex-col bg-slate-50">
     <!-- Profile Header -->
     <div class="card bg-base-100 shadow-xl mb-6 bg-slate-50">
       <div class="card-body flex flex-col md:flex-row items-center gap-6">
@@ -19,8 +19,21 @@
           <h2 class="text-2xl font-bold">{{ Auth::guard('customer')->user()->name }}</h2>
           <p class="text-sm text-gray-500">{{ Auth::guard('customer')->user()->email }}</p>
           <div class="mt-4 flex flex-wrap justify-center md:justify-start gap-2">
+        
             <a href="{{ route('customer.profile.edit') }}">
             <button class="btn btn-inverse bg-slate-100 text-gray-800 hover:bg-gray-900 hover:text-gray-100">Edit Profile</button></a>
+
+                      
+          <a href="{{ route('customer.adress') }}">
+          <button class="btn btn-inverse bg-slate-100 text-gray-800 hover:bg-gray-900 hover:text-gray-100">Address</button></a>
+          </a>
+
+          
+          <a href="{{ route('chat.admin') }}">
+          <button class="btn btn-inverse bg-slate-100 text-gray-800 hover:bg-gray-900 hover:text-gray-100">Chat Admin</button></a>
+          </a>
+
+
 
 
         <form method="POST" action="{{ route('customer.logout') }}">
@@ -95,7 +108,8 @@
             <th class="px-6 py-3 text-right">Total Amount</th>
             <th class="px-6 py-3 text-center">Status</th>
             <th class="px-6 py-3 text-center">Cancel / Refund</th>
-            <th class="px-6 py-3 text-center">Items</th> 
+            <th class="px-6 py-3 text-center">Items</th>
+            <th class="px-6 py-3 text-center">Track</th> 
           </tr>
         </thead>
 
@@ -122,6 +136,8 @@
                 {{ $order->order_date }}
               </td>
 
+
+              
               <!-- Total -->
               <td class="md:table-cell px-0 md:px-6 py-2 font-semibold text-gray-900 md:text-right">
                 <span class="md:hidden font-semibold block">Total:</span>
@@ -143,26 +159,50 @@
                 </span>
               </td>
 
-              <!-- Cancel / Refund -->
+
+
+<!-- Cancel / Refund -->
               <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">
-                @if (!in_array($order->order_status, ['cancelled', 'shipped', 'complete']))
+
+                {{-- Pending orders can be cancelled --}}
+                @if (!in_array($order->order_status, ['cancelled', 'shipped', 'completed']))
                   <button class="btn btn-sm btn-error mark-cancelled-customer" data-id="{{ $order->id }}">
                     Cancel
                   </button>
+
+                {{-- Completed orders can be returned ONLY within return window  7 DAYS--}} 
+                @elseif($order->canBeReturned())
+                  <a href="{{ route('return.order.item', $order->id)}}" class="btn btn-sm btn-primary">
+                    Return
+                  </a>
+
+                {{-- Everything else --}}
                 @else
                   <span class="text-gray-400 text-xs">Not Available</span>
                 @endif
+
               </td>
 
 
+                <!-- View Items -->
+                <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">
+                  <a href="{{ route('customer.view.item', $order->id) }}" 
+                    class="btn btn-primary btn-xs">
+                    View Items
+                  </a>
+                </td>
 
-              <!-- View Items -->
-              <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">
-                <a href="{{ route('customer.view.item', $order->id) }}" 
-                   class="btn btn-primary btn-xs">
-                  View Items
-                </a>
-              </td>
+                              
+                <!-- View Track -->
+                <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">
+                  <a href="{{ route('customer.track.item', $order->id) }}" 
+                    class="btn btn-primary btn-xs">
+                    Track Item
+                  </a>
+                </td>
+
+
+
             </tr>
           @empty
             <tr>

@@ -115,7 +115,7 @@
         <div class="col-md-3">
             <div class="form-group mb-3">
                 <label for="role" class="form-label">Assigned Role <span class="text-danger">*</span></label>
-                <select name="role" class="form-control @error('role') is-invalid @enderror" required>
+                <select id="roleSelect" name="role" class="form-control @error('role') is-invalid @enderror" required>
                     <option selected disabled>Select Role</option>
                     @foreach ($role as $data)
                         <option value="{{ $data->name }}" 
@@ -133,6 +133,21 @@
             </div>
         </div>
 
+                <!-- Rider-specific Fields -->
+                <div class="col-md-3" id="riderFields" style="display: none;">
+                    <div class="form-group mb-3">
+                        <label for="vehicle_type" class="form-label">Vehicle Type <span class="text-danger">*</span></label>
+                        <input type="text" name="vehicle_type" class="form-control" placeholder="Enter vehicle type">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="availability" class="form-label">Availability <span class="text-danger">*</span></label>
+                        <select name="availability" class="form-control">
+                            <option value="available">Available</option>
+                            <option value="busy">Busy</option>
+                        </select>
+                    </div>
+                </div>
 
 
         {{-- <!-- Notice about default password -->
@@ -165,6 +180,22 @@
 
 </div> <!-- content -->
 
+
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const roleSelect = document.getElementById('roleSelect');
+                const riderFields = document.getElementById('riderFields');
+
+                roleSelect.addEventListener('change', function() {
+                    if (this.value === 'Rider') {
+                        riderFields.style.display = 'block';
+                    } else {
+                        riderFields.style.display = 'none';
+                    }
+                });
+            });
+            </script>
 
 
 

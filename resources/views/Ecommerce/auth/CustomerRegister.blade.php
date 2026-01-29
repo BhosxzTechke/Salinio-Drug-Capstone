@@ -17,9 +17,9 @@
   <!-- Registration Card -->
   <div class="z-10 max-w-md w-full space-y-8">
     <div class="text-center">
-      <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Register for your pharmacy</h2>
+      <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Create Your Account</h2>
       <p class="mt-2 text-sm text-gray-600">
-        Create your account to manage medicines, stock, and sales easily
+        Sign up to start shopping and enjoy our products
       </p>
     </div>
 

@@ -21,9 +21,13 @@ class Customer extends Authenticatable
         'email',
         'password',
         'phone',
+        'address',
         'date_of_birth',
         'gender',
-        'is_active',                                    
+        'is_active',  
+        'added_by_staff',
+        'image',
+        'remember_token'                          
     ];
 
 
@@ -31,22 +35,6 @@ class Customer extends Authenticatable
         'created_at',
         'updated_at',
     ];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -65,12 +53,11 @@ class Customer extends Authenticatable
 }
 
 
-
-
         public function addresses()
         {
-            return $this->hasMany(Address::class);
+            return $this->hasMany(Address::class, 'customer_id');
         }
+
 
         
         public function defaultAddress()

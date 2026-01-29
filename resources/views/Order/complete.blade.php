@@ -25,13 +25,14 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                     
+
+                
+
                     
                     <table id="basic-datatable" class="table dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>Sl</th>
-                                <th>Image</th>
                                 <th>Name</th>
                                 <th>Order Date</th>
                                 <th>Payment Status</th>
@@ -48,7 +49,6 @@
         	@foreach($Orders as $key=> $item)
             <tr>
                 <td>{{ $key+1 }}</td>
-                <td> <img src="{{ asset($item->customer->image ?? '') }}" style="width:50px; height: 40px;"> </td>
                 <td>{{ $item['customer']['name'] ?? '' }}</td>
                 <td>{{ $item->order_date }}</td>
                 <td>{{ $item->payment_status }}</td>

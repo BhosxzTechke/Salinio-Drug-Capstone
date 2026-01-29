@@ -40,6 +40,7 @@ class NewPasswordController extends Controller
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
         // Use the "customers" broker instead of the default "users"
+        
         $status = Password::broker('customers')->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($customer) use ($request) {

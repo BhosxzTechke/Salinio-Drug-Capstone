@@ -74,7 +74,7 @@
                                 <th>Code</th>
                                 <th>Stock</th> 
                                 <th>Expiration Date</th> 
-                                <th>Status</th> 
+                                {{-- <th>Status</th>  --}}
                             </tr>
                         </thead>
                     
@@ -97,8 +97,9 @@
                         <button class="btn btn-success waves-effect waves-light">{{ $item->quantity }}</button>
                     @endif
                 </td>
+
                 <td>{{ $item->expiry_date ?? '' }}</td>
-                <td><button class="btn btn-dark waves-effect waves-light">{{ $item->status }}</button></td>
+                {{-- <td><button class="btn btn-dark waves-effect waves-light">{{ $item->status }}</button></td> --}}
 
 
             </tr>

@@ -121,58 +121,38 @@
             </div>
         </div>
     </div>
+
+    
 </div>
 
 
-<div class="row">
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-body">
-                <div class="dropdown float-end">
-                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="mdi mdi-dots-vertical"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a href="javascript:void(0);" class="dropdown-item">Sales Report</a>
-                        <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
-                        <a href="javascript:void(0);" class="dropdown-item">Profit</a>
-                        <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                    </div>
+
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Today's Sales (Hourly)</h5>
                 </div>
-
-                <h4 class="header-title mb-0">Total Revenue</h4>
-
-
-                
-                <div class="widget-chart text-center" dir="ltr">
-                    <!-- Remove chart div if not using chart -->
-
-
-                    <h5 class="text-muted mt-0">Total sales made today</h5>
-                    <h2>₱{{ number_format($todaySales, 2) }}</h2>
-
-                    <p class="text-muted w-75 mx-auto sp-line-2">Revenue progress toward daily target.</p>
-
-                    <div class="row mt-3">
-                        <div class="col-4">
-                            <p class="text-muted font-15 mb-1 text-truncate">Target</p>
-                            <h4><i class="fe-arrow-down text-danger me-1"></i>₱{{ number_format($targetSales, 2) }}</h4>
-                        </div>
-                        <div class="col-4">
-                            <p class="text-muted font-15 mb-1 text-truncate">Last week</p>
-                            <h4><i class="fe-arrow-up text-success me-1"></i>₱{{ number_format($lastWeekSales, 2) }}</h4>
-                        </div>
-                        <div class="col-4">
-                            <p class="text-muted font-15 mb-1 text-truncate">Last Month</p>
-                            <h4><i class="fe-arrow-down text-danger me-1"></i>₱{{ number_format($lastMonthSales, 2) }}</h4>
-                        </div>
-                    </div>
-
+                <div class="card-body">
+                    <canvas id="todaySalesLine" height="95"></canvas>
                 </div>
             </div>
-        </div> <!-- end card -->
-    </div> <!-- end col-->
-</div>
+
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Daily Sales vs Purchase Cost</h5>
+                    <small class="text-muted">Compare revenue and inventory expenses</small>
+                </div>
+                <div class="card-body">
+                    <canvas id="combinedChart"></canvas>
+                </div>
+            </div>
+
+            
+
+
+
+
 
 
 
@@ -568,41 +548,156 @@
 
                 </div> <!-- content -->
 
-<!-- ApexCharts -->
+
+                            
+        <!-- ApexCharts -->
+        {{-- <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var el = document.querySelector("#total-revenue");
+
+            // Destroy old charts if any
+            if (el._apexCharts) {
+                el._apexCharts.forEach(chart => chart.destroy());
+            }
+
+            var options = {
+                chart: { type: 'radialBar', height: 180 },
+                series: [{{ $percentage }}], // only the real percentage
+                labels: ['Revenue'],
+                plotOptions: {
+                    radialBar: {
+                        hollow: { size: '60%' },
+                        dataLabels: {
+                            name: { show: true },
+                            value: {
+                                show: true,
+                                formatter: function(val){ return val + "%"; }
+                            }
+                        }
+                    }
+                },
+                colors: ['#f1556c'],
+            };
+
+            var chart = new ApexCharts(el, options);
+            chart.render();
+        });
+
+
+
+        ish
+        </script> --}}
+<<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var el = document.querySelector("#total-revenue");
+document.addEventListener('DOMContentLoaded', function () {
 
-    // Destroy old charts if any
-    if (el._apexCharts) {
-        el._apexCharts.forEach(chart => chart.destroy());
-    }
+    // Get labels (unique dates from both datasets)
+    const poDates = {!! json_encode($purchaseOrderTrend->pluck('date')) !!};
+    const salesDates = {!! json_encode($salesTrend->pluck('date')) !!};
+    const allDates = Array.from(new Set([...poDates, ...salesDates])).sort();
 
-    var options = {
-        chart: { type: 'radialBar', height: 180 },
-        series: [{{ $percentage }}], // only the real percentage
-        labels: ['Revenue'],
-        plotOptions: {
-            radialBar: {
-                hollow: { size: '60%' },
-                dataLabels: {
-                    name: { show: true },
-                    value: {
-                        show: true,
-                        formatter: function(val){ return val + "%"; }
+    // Map totals for each date, default to 0 if missing
+    const purchaseTotals = allDates.map(date => {
+        const record = {!! $purchaseOrderTrend !!}.find(r => r.date === date);
+        return record ? record.total_purchase : 0;
+    });
+
+    const salesTotals = allDates.map(date => {
+        const record = {!! $salesTrend !!}.find(r => r.date === date);
+        return record ? record.total_sales : 0;
+    });
+
+    const ctx = document.getElementById('combinedChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: allDates,
+            datasets: [
+                {
+                    label: 'Purchase Cost (₱)',
+                    data: purchaseTotals,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Sales Revenue (₱)',
+                    data: salesTotals,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '₱' + context.raw;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₱' + value;
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        autoSkip: false
                     }
                 }
             }
-        },
-        colors: ['#f1556c'],
-    };
-
-    var chart = new ApexCharts(el, options);
-    chart.render();
+        }
+    });
 });
-
-
 </script>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const todayCtx = document.getElementById('todaySalesLine').getContext('2d');
+
+new Chart(todayCtx, {
+    type: 'line',
+    data: {
+        labels: {!! json_encode(
+            $todaySalesTrend->pluck('hour')->map(fn($h) => $h . ':00')
+        ) !!},
+        datasets: [{
+            label: 'Sales Today',
+            data: {!! json_encode($todaySalesTrend->pluck('total_sales')) !!},
+            tension: 0.4,
+            borderWidth: 2,
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: value => '₱' + value
+                }
+            }
+        }
+    }
+});
+</script>
+
+
 
 
 @endsection

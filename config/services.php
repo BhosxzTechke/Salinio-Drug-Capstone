@@ -30,4 +30,21 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'google' => [
+    'client_id' => env('GOOGLE_CLIENT_ID'),
+    'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+    'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+
+    'track123' => [
+        'api_token' => env('TRACK123_API_TOKEN'),
+        'base_url' => 'https://api.track123.com/v1', // Confirm from Track123 docs
+    ],
+
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+    ],
+
+
 ];

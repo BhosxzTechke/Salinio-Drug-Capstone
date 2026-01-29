@@ -14,12 +14,12 @@
                                 <div class="page-title-box">
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
-                    {{-- <form method="POST" action="{{ route('backup.now') }}">
+                   <form method="POST" action="{{ route('backup.now') }}">
                         @csrf
                         <button class="btn btn-primary rounded-pill waves-effect waves-light">
                             Backup Now
                         </button>
-                    </form>                                  --}}
+                    </form>                                 
                 
                 </ol>
 
@@ -62,12 +62,39 @@
                         <td>{{ $data->getSize() }}</td>
                         <td>{{ $data->getPath() }}</td>
                         <td>
-                            @if(Auth::user()->can('download-backup'))
+
+                            
+                            {{-- @if(Auth::user()->can('download-backup')) 
                                 <a href="{{ url($data->getFilename()) }}" class="btn btn-blue rounded-pill waves-effect waves-light">Download </a> 
-                            @endif
-                @if(Auth::user()->can('delete-backup'))
-                    <a href="{{ url('backup/delete/'. $data->getFilename()) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash"></i> Delete</a>
-                @endif
+                       @endif --}}
+
+
+                            <a href="{{ route('backup.download', $data->getFilename()) }}"
+                                                    class="btn btn-blue rounded-pill waves-effect waves-light">
+                                                    Download
+                                                    </a>
+
+                            
+                {{-- @if(Auth::user()->can('delete-backup')) --}}
+                    {{-- <a href="{{ url('backup/delete/'. $data->getFilename()) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash"></i> Delete</a> --}}
+                {{-- @endif --}}
+
+                
+
+                <form action="{{ route('backup.delete', $data->getFilename()) }}"
+                                            method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                    class="btn btn-danger rounded-pill waves-effect waves-light"
+                                                    onclick="return confirm('Are you sure you want to delete this backup?')">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+
+
                         </td>
                     </tr>
                         @endforeach

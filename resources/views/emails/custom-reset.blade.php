@@ -18,12 +18,14 @@
                 You are receiving this email because we received a password reset request for your account.
               </p>
 
+
               <div style="text-align:center; margin:28px 0;">
-                <a href="{{ $url }}"
-                   style="display:inline-block; padding:14px 28px; background:#2563eb; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:600; font-size:16px;">
-                  Reset Password
-                </a>
+                    <a href="{{ $url }}"
+                      style="display:inline-block; padding:14px 28px; background:#2563eb; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:600; font-size:16px;">
+                      Reset Password
+                    </a>
               </div>
+
 
               <p style="font-size:14px; line-height:1.6; margin:12px 0; color:#6b7280;">
                 This password reset link will expire in 60 minutes. If you did not request a password reset, no further action is required.
@@ -38,6 +40,8 @@
                 If you're having trouble clicking the "Reset Password" button, copy and paste this URL into your web browser:<br>
                 <span style="word-break:break-all;">{{ $url }}</span>
               </div>
+
+
             </td>
           </tr>
         </table>

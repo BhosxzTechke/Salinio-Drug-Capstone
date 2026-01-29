@@ -38,10 +38,10 @@
                                         <th>SL</th>
                                         <th>Invoice</th>
                                         <th>Customer Name</th>
-                                        <th>Date Shipped</th>
-                                        <th>Shipped By</th>
                                         <th>Payment</th>
-                                        <th>Status</th>
+                                        <th>Order Status</th>
+                                        <th>Tracking Number</th>
+                                        <th>Delivery Status</th>
                                         <th>Action</th> 
                                     </tr>
 
@@ -53,19 +53,62 @@
         {{-- Order table Fillable --}}
     @php $sl = 1 @endphp
         @foreach ($Orders as $data)
+
+            @php
+        $shipment = $data->shipments->first(); // get first shipment if exists
+        $tracking_number = $shipment->tracking_number ?? null;
+        $delivery_status = $shipment->delivery_status ?? $data->delivery_status;
+            @endphp
+
+
+
+
         <tr>
             <td>{{ $sl++ }}</td>
             <td>{{ $data->invoice_no }}</td>
             <td>{{ $data->customer->name ?? '' }}</td>
-            <td>{{ $data->shipped_at ?? '' }}</td>
-            <td>{{ $data->ShippedBy->name ?? '' }}</td>
             <td>{{ $data->payment_status }}</td>
             <td><span class="badge bg-danger"> {{ $data->order_status }}</span></td>
-            <td>
-                <a href="{{ route('complete.order.details', $data->id) }}" class="btn btn-sm btn-dark">Complete Order Details</a>
-            </td>   
-        </tr>
-   @endforeach
+
+
+            {{-- Without Reloading the page --}}
+            <td class="tracking" data-order-id="{{ $data->id }}">
+                <span class="badge bg-danger"> {{ $tracking_number ?? '—' }} </span>
+            </td>
+            <td class="delivery-status" data-order-id="{{ $data->id }}">
+                <span class="badge bg-danger"> {{ $delivery_status }} </span>
+            </td>
+
+
+                <td class="action-cell" data-order-id="{{ $data->id }}"
+                    data-courier="{{ $data->courier }}"
+                    data-complete-url="{{ route('complete.order.details', $data->id) }}">
+                    
+                        @if($delivery_status === 'delivered' && $data->courier === 'own_rider')
+                            <a href="{{ route('complete.order.details', $data->id) }}" class="btn btn-sm btn-dark">
+                                Complete Order Details
+                            </a>
+                        @elseif($delivery_status === 'delivered' && in_array($data->courier, ['jnt']) && $tracking_number)
+                            <a href="{{ route('complete.order.details', $data->id) }}"
+                            class="btn btn-sm btn-dark">
+                                Complete Order Details
+                            </a>
+
+                        @elseif(in_array($data->courier, ['jnt']) && $data->tracking_number)
+                            <a href="{{ route('track.shipment.order', $data->id) }}" class="btn btn-sm btn-dark">
+                                Tracking Shipment
+                            </a>
+                        @else
+                            <span class="text-gray-600 italic">In Progress</span>
+                        @endif
+
+                </td>
+
+                
+
+            
+            </tr>
+    @endforeach
 
 
 
@@ -85,24 +128,6 @@
 
                 </div> <!-- content -->
 
-                <!-- Footer Start -->
-                <footer class="footer">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <script>document.write(new Date().getFullYear())</script> &copy; UBold theme by <a href="">Coderthemes</a> 
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-md-end footer-links d-none d-sm-block">
-                                    <a href="javascript:void(0);">About Us</a>
-                                    <a href="javascript:void(0);">Help</a>
-                                    <a href="javasc
-                                    ript:void(0);">Contact Us</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
                 <!-- end Footer -->
 
             </div>
@@ -123,6 +148,57 @@
 
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    function refreshStatuses() {
+        document.querySelectorAll('.delivery-status').forEach(el => {
+            let orderId = el.dataset.orderId;
+
+            fetch(`/order/${orderId}/shipment-status`)
+                .then(res => res.json())
+                .then(data => {
+
+                    // Update delivery status text
+                    let badge = el.querySelector('span');
+                    badge.textContent = data.delivery_status;
+
+                    // Button logic
+                    let actionCell = document.querySelector(
+                        `.action-cell[data-order-id="${orderId}"]`
+                    );
+
+                    if (
+                        data.delivery_status === 'delivered' &&
+                        actionCell &&
+                        actionCell.dataset.courier === 'jnt'
+                    ) {
+                        // If button doesn't exist yet, add it
+                        if (!actionCell.querySelector('a')) {
+                            let url = actionCell.dataset.completeUrl;
+                            actionCell.innerHTML = `
+                                <a href="${url}" class="btn btn-sm btn-dark">
+                                    Complete Order Details
+                                </a>
+                            `;
+                        }
+                    }
+                })
+                .catch(console.error);
+        });
+    }
+
+    refreshStatuses();
+    setInterval(refreshStatuses, 3000);
+});
+</script>
+
+
+
+
+
 
 
 <script>

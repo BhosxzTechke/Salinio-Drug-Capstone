@@ -87,49 +87,50 @@
 
 
 
-<script>
-function imageUploader() {
-  return {
-    dragging: false,
-    previewUrl: null,
-    objectUrl: null,
+      <script>
+        
+      function imageUploader() {
+        return {
+          dragging: false,
+          previewUrl: null,
+          objectUrl: null,
 
-    previewFile(event) {
-      const file = event.target.files[0];
-      this.setPreview(file);
-    },
+          previewFile(event) {
+            const file = event.target.files[0];
+            this.setPreview(file);
+          },
 
-    handleDrop(event) {
-      this.dragging = false;
-      const file = event.dataTransfer.files[0];
-      if (!file) return;
+          handleDrop(event) {
+            this.dragging = false;
+            const file = event.dataTransfer.files[0];
+            if (!file) return;
 
-      // put file into hidden input so form submission works
-      const dt = new DataTransfer();
-      dt.items.add(file);
-      this.$refs.fileInput.files = dt.files;
+            // put file into hidden input so form submission works
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            this.$refs.fileInput.files = dt.files;
 
-      this.setPreview(file);
-    },
+            this.setPreview(file);
+          },
 
-    setPreview(file) {
-      if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
-      if (!file) {
-        this.previewUrl = null;
-        return;
+          setPreview(file) {
+            if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
+            if (!file) {
+              this.previewUrl = null;
+              return;
+            }
+            this.objectUrl = URL.createObjectURL(file);
+            this.previewUrl = this.objectUrl;
+          },
+
+          clear() {
+            if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
+            this.previewUrl = null;
+            this.$refs.fileInput.value = '';
+          }
+        }
       }
-      this.objectUrl = URL.createObjectURL(file);
-      this.previewUrl = this.objectUrl;
-    },
-
-    clear() {
-      if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
-      this.previewUrl = null;
-      this.$refs.fileInput.value = '';
-    }
-  }
-}
-</script>
+      </script>
 
 
 @endsection

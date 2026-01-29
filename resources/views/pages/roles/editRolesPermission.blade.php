@@ -1,302 +1,240 @@
 @extends('admin_dashboard')
 @section('admin')
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
+<style>
+/* =====================
+   MODERN SPLIT VIEW UX
+===================== */
 
-<style class="text/css">
-    .form-check-label {
-        margin-left: 0.5em;
-    }
-    .form-check {
-        margin-bottom: 1rem;
-    }
-    .form-check-primary .form-check-input:checked {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-    .form-check-label{
-        text-transform: capitalize;
-    }
+.permission-layout {
+    display: flex;
+    gap: 1.5rem;
+    min-height: 520px;
+}
 
+/* LEFT SIDEBAR */
+.permission-sidebar {
+    width: 280px;
+    border-right: 1px solid #e5e7eb;
+}
+
+.permission-group-item {
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.permission-group-item:hover,
+.permission-group-item.active {
+    background-color: #f1f5f9;
+}
+
+/* RIGHT CONTENT */
+.permission-content {
+    flex: 1;
+}
+
+.permission-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.permission-box {
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: 0.15s;
+}
+
+.permission-box:hover {
+    background: #f8fafc;
+}
 </style>
 
- <div class="content">
+<div class="content">
+    <div class="container-fluid">
 
-                    <!-- Start Content-->
-                    <div class="container-fluid">
+        <h4 class="page-title mb-3">Edit Role Permission</h4>
 
-                        <!-- start page title -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                    <div class="page-title-right">
-                                        <ol class="breadcrumb m-0">
-                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Edit Role Permission</a></li>
-                                            
-                                        </ol>
-                                    </div>
-                                    <h4 class="page-title">Edit Role Permission</h4>
-                                </div>
-                            </div>
-                        </div>     
-                        <!-- end page title -->
-
-<div class="row">
-    
-
-  <div class="col-lg-8 col-xl-12">
-<div class="card">
-    <div class="card-body">
-                                    
-                                      
-                                         
-                                           
-
-    <!-- end timeline content-->
-
-    <div class="tab-pane" id="settings">
-        <form id="myForm" method="post" action="{{ route('role.permission.update', $roles->id) }}" enctype="multipart/form-data">
+        <form id="myForm"
+              method="POST"
+              action="{{ route('role.permission.update', $roles->id) }}">
             @csrf
 
+            <!-- Top Bar -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <span class="badge bg-primary fs-5 py-2 px-3">
+                        {{ $roles->name }}
+                    </span>
+                </div>
 
-            <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Edit Role Permission</h5>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="custome_selectAll">
+                        <label class="form-check-label fw-semibold">
+                            Select All Permissions
+                        </label>
+                    </div>
+                </div>
+            </div>
 
-            <div class="row">
+            <!-- Split Layout -->
+            <div class="permission-layout">
 
+                <!-- LEFT: GROUP LIST -->
+                <div class="permission-sidebar">
+                    @foreach ($permissionGroups as $index => $group)
+                        @php
+                            $groupSlug = Str::slug($group->group_name);
+                            $permissions = App\Models\User::getPermissionByGroup($group->group_name);
+                        @endphp
 
-<div class="col-md-6">
-    <div class="form-group mb-3">
-        <span class="badge bg-primary fs-5 py-2 px-3">
+                        <div class="permission-group-item {{ $index === 0 ? 'active' : '' }}"
+                             data-group="{{ $groupSlug }}">
+                            <div class="form-check m-0">
+                                <input class="form-check-input group-checkbox"
+                                       type="checkbox"
+                                       id="group_{{ $groupSlug }}"
+                                       data-group="{{ $groupSlug }}"
+                                       {{ App\Models\User::roleHasPermissions($roles, $permissions) ? 'checked' : '' }}>
+                                <label class="form-check-label fw-medium">
+                                    {{ $group->group_name }}
+                                </label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
 
-            {{ $roles->name }}
-        </span>
-    </div>
-</div>
+                <!-- RIGHT: PERMISSIONS -->
+                <div class="permission-content">
+                    @foreach ($permissionGroups as $index => $group)
+                        @php
+                            $groupSlug = Str::slug($group->group_name);
+                            $permissions = App\Models\User::getPermissionByGroup($group->group_name);
+                        @endphp
 
+                        <div class="permission-panel {{ $index !== 0 ? 'd-none' : '' }}"
+                             data-panel="{{ $groupSlug }}">
 
+                            <h6 class="fw-semibold mb-3">
+                                {{ $group->group_name }} Permissions
+                            </h6>
 
-{{-- Select All --}}
-<div class="col-md-9">
-    <div class="form-check mb-2 form-check-primary">
-        <input class="form-check-input" type="checkbox" id="custome_selectAll">
-        <label class="form-check-label" for="custome_selectAll">Select All</label>
-    </div>     
-</div>
-
-
-
-
-
-            
-    <br>
-    <br>
-    
-
-@foreach ($permissionGroups as $group)
-    <div class="row">
-        <div class="col-3">
-            @php
-                $permissions = App\Models\User::getPermissionByGroup($group->group_name);
-            @endphp
-
-            <div class="form-check mb-2 form-check-primary">
-                <input 
-                    class="form-check-input rounded-circle group-checkbox" 
-                    type="checkbox" 
-                    id="group_{{ Str::slug($group->group_name) }}" 
-                    data-group="{{ Str::slug($group->group_name) }}"
-                    {{ App\Models\User::roleHasPermissions($roles, $permissions) ? 'checked' : ''}}
-                >
-                <label class="form-check-label" for="group_{{ Str::slug($group->group_name) }}">{{ $group->group_name }}</label>
-            </div>  
-        </div>  
-
-
-
-
-
-<div class="col-md-9">
-                                @php
-                                    $groupSlug = Str::slug($group->group_name);
-                                @endphp
-
+                            <div class="permission-grid">
                                 @foreach ($permissions as $permission)
-                                    @php
-                                        $permSlug = Str::slug($permission->name); 
-                                    @endphp
-                                    <div class="form-check mb-2 form-check-primary">
-                                        <input 
-                                            class="form-check-input rounded-circle permission-checkbox"
-                                            type="checkbox"
-                                            name="permission[]" 
-                                            value="{{ $permission->name }}"
-                                            id="perm_{{ $permSlug }}"
-                                            data-group="{{ $groupSlug }}"
-                                            {{ $roles->hasPermissionTo($permission->name) ? 'checked' : '' }}
-                                        >
-                                        <label class="form-check-label" for="perm_{{ $permSlug }}">
-                                            {{ $permission->name }}
-                                        </label>
+                                    <div class="permission-box">
+                                        <div class="form-check m-0">
+                                            <input class="form-check-input permission-checkbox"
+                                                   type="checkbox"
+                                                   name="permission[]"
+                                                   value="{{ $permission->name }}"
+                                                   data-group="{{ $groupSlug }}"
+                                                   {{ $roles->hasPermissionTo($permission->name) ? 'checked' : '' }}>
+                                            <label class="form-check-label">
+                                                {{ $permission->name }}
+                                            </label>
+                                        </div>
                                     </div>
                                 @endforeach
+                            </div>
 
-
-<br>
-
-
-
-        </div>
-    </div>
-@endforeach
-
-
-
-
-            </div> <!-- end row -->
- 
-        
-            
-            <div class="text-end">
-                <button type="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Update</button>
-            </div>
-        </form>
-    </div>
-    <!-- end settings content-->
-    
-                                       
-                                    </div>
-                                </div> <!-- end card-->
-
-                            </div> <!-- end col -->
                         </div>
-                        <!-- end row-->
+                    @endforeach
+                </div>
 
-                    </div> <!-- container -->
+            </div>
 
-                </div> <!-- content -->
+            <!-- Save -->
+            <div class="text-end mt-4">
+                <button class="btn btn-success px-4">
+                    <i class="mdi mdi-content-save"></i> Update Permissions
+                </button>
+            </div>
 
+        </form>
 
-<script type="text/javascript">
-    $(document).ready(function (){
-        $('#myForm').validate({
-            rules: {
-                name: {
-                    required : true,
-                }, 
-                group_name: {
-                    required : true,
-                }, 
-                
-            },
-            messages :{
-                name: {
-                    required : 'Please Enter Permission Name',
-                }, 
-                group_name: {
-                    required : 'Please Select Group Name',
-                },
-              
+    </div>
+</div>
 
-            },
-            errorElement : 'span', 
-            errorPlacement: function (error,element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight : function(element, errorClass, validClass){
-                $(element).addClass('is-invalid');
-            },
-            unhighlight : function(element, errorClass, validClass){
-                $(element).removeClass('is-invalid');
-            },
-        });
-    });
-    
-</script>
-
-
-
-
-<script type="text/javascript">
-        $('#custome_selectAll').click(function() {
-            if ($(this).is(':checked')) {
-                $('input[type= checkbox').prop('checked', true);
-            } else {
-                $('input[type= checkbox]').prop('checked', false);
-            }
-        });
-    
-    </script>
-
-
-
-<script type="text/javascript">
+{{-- =====================
+   JS LOGIC
+===================== --}}
+<script>
 $(document).ready(function () {
+
+    // Sidebar navigation
+    $('.permission-group-item').on('click', function (e) {
+        if (!$(e.target).is('input')) {
+            $('.permission-group-item').removeClass('active');
+            $(this).addClass('active');
+
+            let group = $(this).data('group');
+            $('.permission-panel').addClass('d-none');
+            $('[data-panel="' + group + '"]').removeClass('d-none');
+        }
+    });
 
     // Select All
     $('#custome_selectAll').on('change', function () {
-        const isChecked = $(this).is(':checked');
-        $('input[type=checkbox]').prop('checked', isChecked).prop('indeterminate', false);
+        $('.group-checkbox, .permission-checkbox')
+            .prop('checked', this.checked)
+            .prop('indeterminate', false);
     });
 
-
-
-    // Group checkbox → select all its permissions
+    // Group checkbox
     $('.group-checkbox').on('change', function () {
-        const groupId = $(this).data('group');
-        const isChecked = $(this).is(':checked');
-        $(`.permission-checkbox[data-group="${groupId}"]`).prop('checked', isChecked);
-        $(this).prop('indeterminate', false);
-        updateSelectAll();
+        let group = $(this).data('group');
+        $('.permission-checkbox[data-group="' + group + '"]')
+            .prop('checked', this.checked);
+
+        updateStates();
     });
 
-    // Permission checkbox → update group checkbox
+    // Permission checkbox
     $('.permission-checkbox').on('change', function () {
-        const groupId = $(this).data('group');
-        const groupPermissions = $(`.permission-checkbox[data-group="${groupId}"]`);
-        const checkedCount = groupPermissions.filter(':checked').length;
-
-        const groupCheckbox = $(`#group_${groupId}`);
-        if (checkedCount === 0) {
-            groupCheckbox.prop('checked', false).prop('indeterminate', false);
-        } else if (checkedCount === groupPermissions.length) {
-            groupCheckbox.prop('checked', true).prop('indeterminate', false);
-        } else {
-            groupCheckbox.prop('checked', false).prop('indeterminate', true);
-        }
-
-        updateSelectAll();
+        updateStates();
     });
 
-    // Update Select All status
-    function updateSelectAll() {
-        const totalPermissions = $('.permission-checkbox').length;
-        const checkedPermissions = $('.permission-checkbox:checked').length;
-        const selectAll = $('#custome_selectAll');
+    function updateStates() {
+        // Groups
+        $('.group-checkbox').each(function () {
+            let group = $(this).data('group');
+            let perms = $('.permission-checkbox[data-group="' + group + '"]');
+            let checked = perms.filter(':checked').length;
 
-        if (checkedPermissions === 0) {
-            selectAll.prop('checked', false).prop('indeterminate', false);
-        } else if (checkedPermissions === totalPermissions) {
-            selectAll.prop('checked', true).prop('indeterminate', false);
+            if (checked === 0) {
+                $(this).prop('checked', false).prop('indeterminate', false);
+            } else if (checked === perms.length) {
+                $(this).prop('checked', true).prop('indeterminate', false);
+            } else {
+                $(this).prop('checked', false).prop('indeterminate', true);
+            }
+        });
+
+        // Select All
+        let total = $('.permission-checkbox').length;
+        let checkedTotal = $('.permission-checkbox:checked').length;
+
+        if (checkedTotal === 0) {
+            $('#custome_selectAll').prop('checked', false).prop('indeterminate', false);
+        } else if (checkedTotal === total) {
+            $('#custome_selectAll').prop('checked', true).prop('indeterminate', false);
         } else {
-            selectAll.prop('checked', false).prop('indeterminate', true);
+            $('#custome_selectAll').prop('checked', false).prop('indeterminate', true);
         }
     }
 
-    // Initialize indeterminate states on page load
-    $('.group-checkbox').each(function() {
-        const groupId = $(this).data('group');
-        const groupPermissions = $(`.permission-checkbox[data-group="${groupId}"]`);
-        const checkedCount = groupPermissions.filter(':checked').length;
-
-        if (checkedCount > 0 && checkedCount < groupPermissions.length) {
-            $(this).prop('indeterminate', true);
-        }
-    });
-
-    updateSelectAll();
+    // Init on load
+    updateStates();
 });
 </script>
-
 
 @endsection

@@ -30,6 +30,10 @@
 
 </head>
 
+
+
+
+
 <body class="bg-gray-100 overflow-x-hidden">
 
 <!-- GLOBAL FULLSCREEN LOADER -->
@@ -51,10 +55,157 @@
 
 
 
-    <!-- Page Content -->
+    {{-- <!-- Page Content -->
 <main class="w-screen px-0 py-0 m-0">
     @yield('content')
+
+    <!-- Floating Chat -->
+<chaindesk-chatbox-standard id="chaindesk-chat" style="position: fixed; bottom: 20px; right: 20px; width: 350px; height: 500px; z-index: 9999;"></chaindesk-chatbox-standard>
+
+@section('scripts')
+
+@php
+  $customer = auth()->guard('customer')->user();
+@endphp
+
+
+
+
+@if($customer)
+<script type="module">
+    import Chatbox from 'https://cdn.jsdelivr.net/npm/@chaindesk/embeds@latest/dist/chatbox/index.js';
+
+    const widget = await Chatbox.initBubble({
+        agentId: 'cmkwkmatx0d2lq1utoiuk0zg6',
+
+        contact: {
+        firstName: @json($customer->name),
+        email: @json($customer->email),
+        userId: @json('customer_'.$customer->id),
+        },
+
+        context: `
+    You are chatting with a logged-in customer named {{ $customer->name }}.
+    Rules:
+    - Keep answers short and direct.
+    - Avoid unnecessary explanations.
+    - Encourage the user to ask short, clear questions.
+    - Be helpful but concise.
+        `,
+    });
+
+        widget.open();
+
+</script>
+@endif
+
+
+
+
+{{-- 
+<script type="module">
+  import Chatbox from 'https://cdn.jsdelivr.net/npm/@chaindesk/embeds@latest/dist/chatbox/index.js';
+
+  const widget = await Chatbox.initBubble({
+    agentId: 'cmkwkmatx0d2lq1utoiuk0zg6',
+    
+    // optional 
+    // If provided will create a contact for the user and link it to the conversation
+    contact: {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'customer@email.com',
+      phoneNumber: '+33612345644',
+      userId: '42424242',
+    },
+    // optional
+    // Override initial messages
+    initialMessages: [
+      'Hello Georges how are you doing today?',
+      'How can I help you ?',
+    ],
+    // optional
+    // Provided context will be appended to the Agent system prompt
+    context: "The user you are talking to is John. Start by Greeting him by his name.",
+
+    
+  });
+
+  // open the chat bubble
+  widget.open();
+
+  // close the chat bubble
+  widget.close()
+
+  // or 
+  widget.toggle()
+</script> --}}
+{{-- 
+</main> --}} 
+
+
+
+<!-- Page Content -->
+<main class="w-screen px-0 py-0 m-0">
+        @yield('content')
+
+
+@php
+    $customer = auth()->guard('customer')->user();
+@endphp
+
+<script
+    src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
+    data-name="wonderchat-seo"
+    data-address="app.wonderchat.io"
+    data-id="cmkxnhttc0n0wi5krxp0dqty9"
+    data-widget-size="small"
+    data-widget-button-size="normal"
+
+    {{-- Visitor data --}}
+    @if($customer)
+        data-user-id="customer_{{ $customer->id }}"
+        data-user-name="{{ $customer->name }}"
+        data-user-email="{{ $customer->email }}"
+    @endif
+
+    defer
+></script>
+
+
+
+
+
+    {{-- <script src="//code.tidio.co/au57g5xkzazysz5agqbkco57fgcbk67n.js" async></script>
+
+    @php
+        $customer = auth()->guard('customer')->user();
+    @endphp
+
+    <script>
+        window.tidioChatApi = window.tidioChatApi || [];
+        window.tidioChatApi.push(function() {
+
+            // Set visitor info
+            @if($customer)
+            window.tidioChatApi.setVisitorData({
+                name: @json($customer->name),
+                email: @json($customer->email),
+                userId: @json('customer_'.$customer->id)
+            });
+            @endif
+
+            // Change bot name
+            window.tidioChatApi.setBotName("Salinio AI");
+
+            // Optional: change bot avatar
+            window.tidioChatApi.setBotAvatar("https://example.com/your-bot-avatar.png");
+
+        });
+    </script> --}}
+
 </main>
+
 
 
     @include('Ecommerce.Layout.footer')
@@ -72,6 +223,10 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+
+
+
 
 
 
@@ -155,8 +310,6 @@
 <livewire:global-loader />
 
     @livewireScripts
-
-
 
 </body>
 </html>

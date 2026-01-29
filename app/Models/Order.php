@@ -46,9 +46,43 @@ class Order extends Model
         'completed_at', 
         'order_type',
         'reference_number',
+        'delivery_status',
+        'rider_id',
+        'assigned_at',
+        'delivered_at',
+        'courier',
+        'tracking_number'
             
 
     ];
+
+        protected $casts = [
+        'completed_at' => 'datetime',
+    ];
+
+
+            // Relationship: order has many shipments
+        public function shipments()
+        {
+            return $this->hasMany(MockShipment::class, 'order_id', 'id');
+        }
+
+
+
+
+            public function canBeReturned(): bool
+            {
+               /// so kapag completed di niya eexecute na return false pero kung pending or else rereturn false niya 
+                if ($this->order_status !== 'completed') {
+                    return false;
+                }
+
+                if (!$this->completed_at) {
+                    return false;
+                }
+
+                return now()->lessThan($this->completed_at->addDays(7));
+            }
 
 
 

@@ -20,60 +20,110 @@ use App\Models\Orderdetails;
 use App\Models\Order;   
 use Illuminate\Support\Facades\Log;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-
-
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
     //
 
-    public function dashboard()
-    {
+public function dashboard()
+{
+    // =======================
+    // KPI CARDS
+    // =======================
 
     $totalProfit = Orderdetails::sum('profit');
 
-        // Total Sales (completed orders)
-        $totalSales = Order::where('order_status', 'complete')->sum('total');
+    $totalSales = Order::where('order_status', 'complete')->sum('total');
 
-        // Total Orders (completed)
-        $totalOrders = Order::where('order_status', 'complete')->count();
+    $totalOrders = Order::where('order_status', 'complete')->count();
 
-        // Average Order Value
-        $avgOrder = $totalOrders > 0 ? $totalSales / $totalOrders : 0;
+    $avgOrder = $totalOrders > 0 ? $totalSales / $totalOrders : 0;
 
 
+    // =======================
+    // TARGET / SUMMARY
+    // =======================
 
-        /////// for dynamic chart
+    $todaySales = Order::whereDate('order_date', Carbon::today())
+        ->where('order_status', 'complete')
+        ->sum('total');
 
-        // Total sales today
-        $todaySales = Order::whereDate('order_date', Carbon::today())
-                            ->where('order_status', 'complete')
-                            ->sum('total');
+    $targetSales = 10000;
 
-        // Target sales (example: daily target, you can store in settings table)
-        $targetSales = 10000; // example static, or get from DB
+    $lastWeekSales = Order::whereBetween('order_date', [
+            Carbon::now()->subWeek()->startOfWeek(),
+            Carbon::now()->subWeek()->endOfWeek()
+        ])
+        ->where('order_status', 'complete')
+        ->sum('total');
 
-        // Last week sales
-        $lastWeekSales = Order::whereBetween('order_date', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()])
-                                ->where('order_status', 'complete')
-                                ->sum('total');
+    $lastMonthSales = Order::whereBetween('order_date', [
+            Carbon::now()->subMonth()->startOfMonth(),
+            Carbon::now()->subMonth()->endOfMonth()
+        ])
+        ->where('order_status', 'complete')
+        ->sum('total');
 
-        // Last month sales
-        $lastMonthSales = Order::whereBetween('order_date', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])
-                                ->where('order_status', 'complete')
-                                ->sum('total');
-
-
-        // Calculate percentage for circle
-        $percentage = $targetSales > 0 ? round(($todaySales / $targetSales) * 100, 2) : 0;
-
-
-
-        return view('index', compact('percentage','totalProfit', 'totalSales', 'totalOrders', 'avgOrder','todaySales', 'targetSales', 'lastWeekSales', 'lastMonthSales'));     
+    $percentage = $targetSales > 0
+        ? round(($todaySales / $targetSales) * 100, 2)
+        : 0;
 
 
-    }    // End Method
+    // =======================
+    // 📈 SALES TREND GRAPH TODAY
+    // =======================
+
+$todaySalesTrend = Order::selectRaw("
+        HOUR(order_date) as hour,
+        SUM(total) as total_sales
+    ")
+    ->whereDate('order_date', Carbon::today())
+    ->where('order_status', 'complete')
+    ->groupBy('hour')
+    ->orderBy('hour')
+    ->get();
+
+
+    // =======================
+// 📦 PURCHASE ORDER COST
+// =======================
+
+    // Daily purchase order cost
+    $purchaseOrderTrend = DB::table('purchase_order_items')
+        ->selectRaw('DATE(created_at) as date, SUM(line_total) as total_purchase')
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get();
+
+    // Daily sales/profit
+    $salesTrend = DB::table('orderdetails')
+        ->selectRaw('DATE(created_at) as date, SUM(total) as total_sales, SUM(profit) as total_profit')
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get();
+
+
+    return view('index', compact(
+        'percentage',
+        'totalProfit',
+        'totalSales',
+        'totalOrders',
+        'avgOrder',
+        'todaySales',
+        'todaySalesTrend',
+        'purchaseOrderTrend',
+        'salesTrend'
+
+    ));
+}
+
     
+
+
+
+
+
 
 
 
@@ -318,24 +368,26 @@ class AdminController extends Controller
             }
                 
 
+
+
+
+
+
 public function StoreAdmin(Request $request)
 {
+    $superadminLimit = 2; // optional: move to config
 
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'phone' => 'required|numeric|unique:users,phone',
+        'role' => 'required|string',
+        'vehicle_type' => $request->role === 'Rider' ? 'required|string|max:255' : 'nullable',
+        'availability' => $request->role === 'Rider' ? 'required|in:available,busy' : 'nullable',
+    ]);
 
-
-        $request->validate([
-            // 'id' => 'required|exists:users,id',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|numeric|unique:users,phone',
-            'role' => 'required|string',
-        ]);
-
-
-    $superadminLimit = 2; // you can move this to config
     if ($request->role === 'superadmin') {
         $superadminCount = User::role('superadmin')->count();
-
         if ($superadminCount >= $superadminLimit) {
             return redirect()->back()
                 ->withErrors(['role' => "Superadmin limit of {$superadminLimit} reached."])
@@ -345,23 +397,30 @@ public function StoreAdmin(Request $request)
 
     $randomPassword = Str::random(10);
 
-    $user = new User();
-    $user->name = $request->name;
-    $user->email = $request->email;
-    $user->phone = $request->phone;
-    $user->password = Hash::make($randomPassword);
-    $user->temp_password = $randomPassword;
-    $user->must_change_password = true;
-    $user->save();
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'password' => Hash::make($randomPassword),
+        'temp_password' => $randomPassword,
+        'must_change_password' => true,
+    ]);
 
     $user->assignRole($request->role);
 
+    // Rider-specific info
+    if ($request->role === 'Rider') {
+        \App\Models\Rider::create([
+            'user_id' => $user->id,
+            'vehicle_type' => $request->vehicle_type,
+            'availability' => $request->availability,
+        ]);
+    }
 
     return redirect()->route('all.admin')
-                        ->with('temp_password', $randomPassword)
-                        ->with('success', 'Admin created successfully!');
+        ->with('temp_password', $randomPassword)
+        ->with('success', 'User created successfully!');
 }
-
 
 
 
@@ -380,62 +439,64 @@ public function StoreAdmin(Request $request)
     }
 
 
-
+    
 public function UpdateAdmin(Request $request)
 {
     try {
-        $usersID = $request->input('id');
-
-        // Validation
-        $request->validate([
-            'id' => 'required|exists:users,id',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $usersID,
-            'phone' => 'required|numeric|unique:users,phone,' . $usersID,
-            'role' => 'required|string',
-        ]);
-
-
-               // Admin password verification if reset password
-        if ($request->has('reset_password'))  {
-            $request->validate([
-                'admin_password' => 'required|string',
-            ]);
-        }
-
-
-        // Admin password verification if reset password
-        if ($request->has('reset_password') && $request->filled('admin_password')) {
-            $request->validate([
-                'admin_password' => 'required|string',
-            ]);
-        }
-
         $user = User::findOrFail($request->id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'required|numeric|unique:users,phone,' . $user->id,
+            'role' => 'required|string',
+            'vehicle_type' => $request->role === 'Rider' ? 'required|string|max:255' : 'nullable',
+            'availability' => $request->role === 'Rider' ? 'required|in:available,busy' : 'nullable',
+        ]);
 
         // Reset password logic
         if ($request->has('reset_password') && $request->filled('admin_password')) {
             $admin = Auth::guard('web')->user();
-
             if (!Hash::check($request->admin_password, $admin->password)) {
                 return back()->with([
                     'message' => 'Incorrect admin password.',
                     'alert-type' => 'warning',
                 ]);
             }
-
             $tempPassword = Str::random(10);
             $user->password = Hash::make($tempPassword);
             $user->must_change_password = 1;
             $user->temp_password = $tempPassword;
         }
 
-        // Update user info
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
+        // Update user
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+        ]);
+
         $user->syncRoles([$request->role]);
-        $user->save();
+
+        // Update Rider info
+        if ($request->role === 'Rider') {
+            if ($user->rider) {
+                $user->rider->update([
+                    'vehicle_type' => $request->vehicle_type,
+                    'availability' => $request->availability,
+                ]);
+            } else {
+                \App\Models\Rider::create([
+                    'user_id' => $user->id,
+                    'vehicle_type' => $request->vehicle_type,
+                    'availability' => $request->availability,
+                ]);
+            }
+        } else {
+            if ($user->rider) {
+                $user->rider->delete();
+            }
+        }
 
         return redirect()->route('all.admin')->with([
             'message' => 'Profile updated successfully!',
@@ -443,13 +504,11 @@ public function UpdateAdmin(Request $request)
         ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails (e.g. duplicate email or phone)
         return back()->with([
-            'message' => $e->validator->errors()->first(), // show first error message
+            'message' => $e->validator->errors()->first(),
             'alert-type' => 'error'
         ]);
     } catch (\Exception $e) {
-        // Unexpected error
         \Log::error('User update failed: ' . $e->getMessage());
         return back()->with([
             'message' => 'Something went wrong. Please try again later.',
@@ -457,7 +516,6 @@ public function UpdateAdmin(Request $request)
         ]);
     }
 }
-
 
 
 
@@ -522,11 +580,11 @@ public function UpdateAdmin(Request $request)
 
     // all backup database
 
-    public function BackupDatabase() {
+            public function BackupDatabase() {
 
 
-        return view('backup.backup_database')->with('files',File::files(storage_path('app/POS-Ecommerce')));
-    }
+                return view('backup.backup_database')->with('files',File::files(storage_path('app/POS-Ecommerce')));
+            }
 
 
 public function BackupNow()
@@ -547,19 +605,25 @@ public function BackupNow()
     return redirect()->back()->with($notification);
 }
 
-public function DownloadDatabase($getFilename)
-{
-    $path = storage_path('app/POS-Ecommerce/' . $getFilename);
 
-    if (!file_exists($path)) {
-        return redirect()->back()->with([
-            'message' => 'File not found.',
-            'alert-type' => 'error'
-        ]);
-    }
 
-    return response()->download($path);
-}
+
+        public function DownloadDatabase($getFilename)
+        {
+            $path = storage_path('app/POS-Ecommerce/' . $getFilename);
+
+            if (!file_exists($path)) {
+                return redirect()->back()->with([
+                    'message' => 'File not found.',
+                    'alert-type' => 'error'
+                ]);
+            }
+
+            return response()->download($path);
+        }
+
+
+
 
     public function DeleteDatabase($getFilename){
 
