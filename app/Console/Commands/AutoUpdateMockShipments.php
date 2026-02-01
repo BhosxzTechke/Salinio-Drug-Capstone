@@ -36,4 +36,19 @@ class AutoUpdateMockShipments extends Command
 
         return Command::SUCCESS;
     }
+
+
+
+
+    //     public function handle()
+    // {
+    //     $courier = new \App\Services\MockCourierService();
+    //     $courier->autoUpdateShipments();
+    //     $this->info('Mock shipments updated!');
+
+    //     return Command::SUCCESS;
+    // }
+
+
+    
 }

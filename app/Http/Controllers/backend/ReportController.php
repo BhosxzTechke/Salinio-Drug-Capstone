@@ -26,7 +26,7 @@ public function dailyReport(Request $request)
 
     // Query all completed orders within date range
     $query = Order::whereBetween('order_date', [$fromDate, $toDate])
-        ->where('order_status', 'complete')
+        ->where('order_status', 'completed')
         ->with(['orderDetails.product']); // include related product data
 
 
@@ -67,57 +67,57 @@ public function dailyReport(Request $request)
 
 
 
-            public function weeklyReport(Request $request)
-            {
-            $start = now()->startOfWeek();
-            $end = now()->endOfWeek();
+            // public function weeklyReport(Request $request)
+            // {
+            // $start = now()->startOfWeek();
+            // $end = now()->endOfWeek();
 
 
-            $sourceFilter = $request->input('source'); // expects 'POS' or 'ECOM'
+            // $sourceFilter = $request->input('source'); // expects 'POS' or 'ECOM'
 
-            $query = Order::whereBetween('order_date', [$start, $end])
-                ->where('order_status', 'complete');
-
-
-            if ($sourceFilter) {
-                $query->where('order_source', $sourceFilter);
-            }
-
-            $orders = $query->get();
+            // $query = Order::whereBetween('order_date', [$start, $end])
+            //     ->where('order_status', 'complete');
 
 
-            $totalSales = $query->sum('total');
+            // if ($sourceFilter) {
+            //     $query->where('order_source', $sourceFilter);
+            // }
 
-            return view('Reports.WeeklyReports', compact('orders', 'totalSales','start', 'end'));
-
-
-            }
-
-
-        public function monthlyReport(Request $request)
-        {
-            $month = now()->month;
-            $year = now()->year;
+            // $orders = $query->get();
 
 
-            $sourceFilter = $request->input('source'); // expects 'POS' or 'ECOM'
+            // $totalSales = $query->sum('total');
 
-            $query = Order::whereMonth('order_date', $month)
-                ->whereYear('order_date', $year)
-                ->where('order_status', 'complete');
+            // return view('Reports.WeeklyReports', compact('orders', 'totalSales','start', 'end'));
 
 
-            if ($sourceFilter) {
-                $query->where('order_source', $sourceFilter);
-            }
-
-            $orders = $query->get();
-
-        $totalSales = $orders->sum('total');
+            // }
 
 
-        return view('Reports.MonthlyReports', compact('orders', 'totalSales', 'month', 'year'));
-    }
+    //     public function monthlyReport(Request $request)
+    //     {
+    //         $month = now()->month;
+    //         $year = now()->year;
+
+
+    //         $sourceFilter = $request->input('source'); // expects 'POS' or 'ECOM'
+
+    //         $query = Order::whereMonth('order_date', $month)
+    //             ->whereYear('order_date', $year)
+    //             ->where('order_status', 'complete');
+
+
+    //         if ($sourceFilter) {
+    //             $query->where('order_source', $sourceFilter);
+    //         }
+
+    //         $orders = $query->get();
+
+    //     $totalSales = $orders->sum('total');
+
+
+    //     return view('Reports.MonthlyReports', compact('orders', 'totalSales', 'month', 'year'));
+    // }
 
 
             public function TopSelling(Request $request) {

@@ -137,7 +137,7 @@
 
                             {{-- For shipping Address ID --}}
 
-                            <input type="hidden" name="shipping_address_id" value="{{ $Shipaddress->id }}">
+                            {{-- <input type="hidden" name="shipping_address_id" value="{{ $Shipaddress->id }}"> --}}
 
 
             <p class="text-sm font-medium uppercase mt-6">Payment Method</p>
@@ -151,11 +151,11 @@
                     <p class="text-sm font-medium uppercase mt-6">Shipping Method</p>
 
             <div class="mt-2 space-y-2">
-                <label class="flex items-center gap-2">
+                {{-- <label class="flex items-center gap-2">
                     <input type="radio" name="shipping_method" value="own_rider" checked>
                     <span>Own Rider (Same Day)</span>
                     <span class="ml-auto text-sm text-gray-600">₱50</span>
-                </label>
+                </label> --}}
 
                 <label class="flex items-center gap-2">
                     <input type="radio" name="shipping_method" value="jnt">

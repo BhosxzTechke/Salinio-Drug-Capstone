@@ -26,6 +26,8 @@ class AdminAiController extends Controller
         }
 
 
+        
+
         private function buildContext()
         {
             // Example only – replace with real queries

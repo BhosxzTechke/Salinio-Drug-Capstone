@@ -51,6 +51,8 @@
 
 
 
+@if($inventory)
+
 <section class="bg-gray-50 pt-10">
   <div class="max-w-6xl mx-auto px-4">
     <div class="bg-white shadow-sm rounded-xl overflow-hidden">
@@ -62,6 +64,9 @@
         </p>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
+
+
+
 
         @foreach ($inventory as $inventories)
 
@@ -92,9 +97,12 @@
                   ₱{{ number_format($inventories->product->selling_price, 2) }}
                 </span>
 
-                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">
-                  {{ $inventories->product->stock }} in stock
-                </span>
+
+
+                    <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-lg">
+                      {{ $inventories->total_quantity }} in stock  
+                      
+                    </span>
 
                 {{-- ❤️ WISHLIST BUTTON (formaction FIX) --}}
                 <button
@@ -150,10 +158,43 @@
         @endforeach
 
         </div>
+
+
       </div>
     </div>
   </div>
 </section>
+
+
+@else
+
+
+
+<section class="bg-gray-50 pt-10">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="bg-white shadow-sm rounded-xl overflow-hidden">
+      <div class="p-6">
+
+        <h3 class="text-2xl font-semibold text-gray-800">Today’s For You!</h3>
+        <p class="text-sm text-gray-600 mb-6">
+          This will be the best pharmacy
+        </p>
+        
+        <br>
+
+
+        <h2>No Product to Display... </h2>
+
+
+
+              </div>
+    </div>
+  </div>
+</section>
+
+
+@endif
+
 
 
 

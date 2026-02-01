@@ -62,23 +62,48 @@ public function EcommerceAddCart(Request $request)
 
 
 
-    public function EcommerceChangeQty(Request $request, $rowId)
-    {
-    $cartItem = Cart::instance('ecommerce')->get($rowId);
+                    public function EcommerceChangeQty(Request $request, $rowId)
+                    {
+                        $cart = Cart::instance('ecommerce');
 
-                if (!$cartItem) {
-                    return back()->with('error', 'Item not found in cart.');
-                }
+                        $cartItem = $cart->get($rowId);
 
-                $qty = $cartItem->qty;
+                        if (!$cartItem) {
+                            return back()->with([
+                                'message' => 'Cart item not found.',
+                                'alert-type' => 'error'
+                            ]);
+                        }
 
-                if ($request->action === 'increase') {
-                    $qty++;
-                } elseif ($request->action === 'decrease' && $qty > 1) {
-                    $qty--;
-                } elseif ($request->has('qty')) {
-                    $qty = max(1, (int) $request->qty); // manual input
-                }
+                        $productId = $cartItem->options->product_id ?? null;
+
+                        $totalAvailable = Inventory::where('product_id', $productId)
+                            ->sum('quantity');
+
+                        if ($request->qty > $totalAvailable) {
+                            return back()->with([
+                                'message' => 'Insufficient stock available across all batches.',
+                                'alert-type' => 'error'
+                            ]);
+                        }
+
+
+                $qty = $request->qty;
+
+                // if ($request->action === 'increase') {
+                //     $qty++;
+                // } elseif ($request->action === 'decrease' && $qty > 1) {
+                //     $qty--;
+                // } elseif ($request->has('qty')) {
+                //     $qty = max(1, (int) $request->qty); // manual input
+                // }
+
+
+
+                                
+                    // Update cart qty
+                    // Cart::update($rowId, $request->qty);
+
 
                 Cart::instance('ecommerce')->update($rowId, $qty);
 

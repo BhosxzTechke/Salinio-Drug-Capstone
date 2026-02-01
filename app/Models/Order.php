@@ -70,6 +70,7 @@ class Order extends Model
 
 
 
+
             public function canBeReturned(): bool
             {
                /// so kapag completed di niya eexecute na return false pero kung pending or else rereturn false niya 

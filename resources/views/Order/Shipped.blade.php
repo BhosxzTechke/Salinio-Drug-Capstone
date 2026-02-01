@@ -75,20 +75,16 @@
             <td class="tracking" data-order-id="{{ $data->id }}">
                 <span class="badge bg-danger"> {{ $tracking_number ?? '—' }} </span>
             </td>
+
+
             <td class="delivery-status" data-order-id="{{ $data->id }}">
                 <span class="badge bg-danger"> {{ $delivery_status }} </span>
             </td>
-
-
                 <td class="action-cell" data-order-id="{{ $data->id }}"
                     data-courier="{{ $data->courier }}"
                     data-complete-url="{{ route('complete.order.details', $data->id) }}">
-                    
-                        @if($delivery_status === 'delivered' && $data->courier === 'own_rider')
-                            <a href="{{ route('complete.order.details', $data->id) }}" class="btn btn-sm btn-dark">
-                                Complete Order Details
-                            </a>
-                        @elseif($delivery_status === 'delivered' && in_array($data->courier, ['jnt']) && $tracking_number)
+
+                        @if($delivery_status === 'delivered' && in_array($data->courier, ['jnt']) && $tracking_number)
                             <a href="{{ route('complete.order.details', $data->id) }}"
                             class="btn btn-sm btn-dark">
                                 Complete Order Details

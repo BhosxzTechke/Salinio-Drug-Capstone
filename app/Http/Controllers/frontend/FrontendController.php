@@ -55,7 +55,7 @@ class FrontendController extends Controller
     $today = now()->toDateString();
 
 
-            $inventory = Inventory::where('quantity', '>', 0)
+            $inventory = Inventory::where('quantity', '>', 10)
                 ->where(function ($query) use ($today) {
                     $query->whereNull('expiry_date') // allow items without expiry
                         ->orWhere('expiry_date', '>', $today); // only include not-expired
@@ -69,6 +69,10 @@ class FrontendController extends Controller
                 ->groupBy('product_id', 'selling_price')
                 ->orderByDesc('latest_created')
                 ->get();
+
+
+
+
 
 
             $bestSellers = $inventory

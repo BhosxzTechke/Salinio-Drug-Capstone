@@ -37,14 +37,15 @@ return [
     ],
 
 
-    'track123' => [
-        'api_token' => env('TRACK123_API_TOKEN'),
-        'base_url' => 'https://api.track123.com/v1', // Confirm from Track123 docs
-    ],
-
     'openai' => [
         'key' => env('OPENAI_API_KEY'),
     ],
 
+
+    'clicksend' => [
+    'username' => env('CLICKSEND_USERNAME'),
+    'password' => env('CLICKSEND_PASSWORD'),
+    'sms_from' => env('CLICKSEND_SMS_FROM', 'DemoCourier'),
+],
 
 ];

@@ -71,6 +71,9 @@
         <div class="mt-4">
 
 
+
+
+
       @if($inventory->product->prescription_required)
         <div class="text-center space-y-2">
           <p class="text-sm text-red-500 font-semibold">
@@ -87,6 +90,7 @@
           Out of Stock
         </button>
       @else
+      
         <button type="submit" 
             class="btn bg-violet-600 text-white hover:bg-violet-700 flex-1">
           Add to Cart
@@ -116,20 +120,23 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
         @method('PATCH')
 
         <!-- Decrease Quantity -->
-        <button type="submit" name="action" value="decrease" class="btn btn-outline join-item">-</button>
+        {{-- <button type="submit" name="action" value="decrease" class="btn btn-outline join-item">-</button> --}}
 
         <!-- Input Quantity -->
+
       <input 
+        max="{{ $inventory->quantity}}"  
         type="number" 
         name="qty" 
         value="{{ $item->qty }}" 
         min="1" 
         class="input input-bordered join-item w-16 text-center" 
-        onchange="this.form.submit()"
+        {{-- onchange="this.form.submit()" --}}
       />
 
+
         <!-- Increase Quantity -->
-        <button type="submit" name="action" value="increase" class="btn btn-outline join-item">+</button>
+        <button type="submit" onchange="this.form.submit()" name="action" value="increase" class="btn btn-outline join-item">+</button>
 
 
         

@@ -19,11 +19,14 @@ class AdminAIAssistantService
             'Authorization' => 'Bearer ' . $apiKey,
             'Content-Type'  => 'application/json',
         ])->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-4o-mini',  // cheap and fast for testing
+            'model' => 'gpt-4o-mini',  // 
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => 'You are an AI assistant for a pharmacy admin system. Only answer inventory, sales, expiry, and operational questions. Do NOT give medical advice.'
+                    'content' => 'You are an AI assistant for a 
+                                pharmacy admin system. Only answer inventory, 
+                                sales, expiry, and operational questions. 
+                                Do NOT give medical advice.'
                 ],
                 [
                     'role' => 'user',

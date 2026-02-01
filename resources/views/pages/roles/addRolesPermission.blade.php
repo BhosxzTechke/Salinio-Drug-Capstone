@@ -101,21 +101,24 @@
 
                 <!-- LEFT: GROUP LIST -->
                 <div class="permission-sidebar">
-                    @foreach ($permissionGroups as $index => $group)
-                        @php $groupSlug = \Illuminate\Support\Str::slug($group->group_name); @endphp
-                        <div class="permission-group-item {{ $index === 0 ? 'active' : '' }}"
-                             data-group="{{ $groupSlug }}">
-                            <div class="form-check m-0">
-                                <input class="form-check-input group-checkbox"
-                                       type="checkbox"
-                                       id="group_{{ $groupSlug }}">
-                                <label class="form-check-label fw-medium">
-                                    {{ $group->group_name }}
-                                </label>
+                        @foreach ($permissionGroups as $index => $group)
+                            @php $groupSlug = \Illuminate\Support\Str::slug($group->group_name); @endphp
+                            <div class="permission-group-item {{ $index === 0 ? 'active' : '' }}"
+                                data-group="{{ $groupSlug }}">
+                                <div class="form-check m-0">
+                                    <input class="form-check-input group-checkbox"
+                                        type="checkbox"
+                                        id="group_{{ $groupSlug }}">
+                                    <label class="form-check-label fw-medium">
+                                        {{ ucwords(str_replace('', ' ',  $group->group_name)) }}
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
+
+
+
 
                 <!-- RIGHT: PERMISSIONS -->
                 <div class="permission-content">
@@ -128,19 +131,19 @@
                         <div class="permission-panel {{ $index !== 0 ? 'd-none' : '' }}"
                              data-panel="{{ $groupSlug }}">
 
-                            <h6 class="mb-3 fw-semibold">{{ $group->group_name }} Permissions</h6>
+                            <h6 class="mb-3 fw-semibold">{{ ucwords(str_replace('-', ' ', $group->group_name)) }} Permissions</h6>
 
                             <div class="permission-grid">
                                 @foreach ($permissions as $permission)
                                     <div class="permission-box">
                                         <div class="form-check m-0">
                                             <input class="form-check-input permission-checkbox"
-                                                   type="checkbox"
-                                                   name="permission[]"
-                                                   value="{{ $permission->id }}"
-                                                   data-group="{{ $groupSlug }}">
+                                                    type="checkbox"
+                                                    name="permission[]"
+                                                    value="{{ $permission->id }}"
+                                                    data-group="{{ $groupSlug }}">
                                             <label class="form-check-label">
-                                                {{ $permission->name }}
+                                                {{ ucwords(str_replace('-', ' ', $permission->name)) }}
                                             </label>
                                         </div>
                                     </div>

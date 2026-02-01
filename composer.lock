@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c6406447dd701bbfa4f79e4e89e2b22",
+    "content-hash": "e3909bd14fc9065558905aa8ceae4356",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -531,6 +531,68 @@
                 "source": "https://github.com/cloudinary/php-transformation-builder-sdk/tree/1.5.0"
             },
             "time": "2024-05-27T12:26:00+00:00"
+        },
+        {
+            "name": "codemonkey76/laravel-clicksend",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codemonkey76/laravel-clicksend.git",
+                "reference": "7a0813485eb362175b3355c59a03bbcc88ba5d44"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/codemonkey76/laravel-clicksend/zipball/7a0813485eb362175b3355c59a03bbcc88ba5d44",
+                "reference": "7a0813485eb362175b3355c59a03bbcc88ba5d44",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7",
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
+                "php": "^8"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0",
+                "phpunit/phpunit": "^9.0|^10.0|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "ClickSend": "Codemonkey76\\ClickSend\\ClickSendFacade"
+                    },
+                    "providers": [
+                        "Codemonkey76\\ClickSend\\ClickSendServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Codemonkey76\\ClickSend\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shane Poppleton",
+                    "email": "shane@alphasg.com.au",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel wrapper for ClickSend Rest API",
+            "homepage": "https://github.com/codemonkey76/laravel-clicksend",
+            "keywords": [
+                "codemonkey76",
+                "laravel-clicksend"
+            ],
+            "support": {
+                "issues": "https://github.com/codemonkey76/laravel-clicksend/issues",
+                "source": "https://github.com/codemonkey76/laravel-clicksend/tree/v1.0.1"
+            },
+            "time": "2024-03-18T02:52:31+00:00"
         },
         {
             "name": "composer/pcre",
@@ -8352,6 +8414,56 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.3.0"
             },
             "time": "2024-12-21T16:25:41+00:00"
+        },
+        {
+            "name": "twilio/sdk",
+            "version": "8.10.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twilio/twilio-php",
+                "reference": "84fc8e4b2b5ff32d20e73b17718b13e5ed56bc8c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/84fc8e4b2b5ff32d20e73b17718b13e5ed56bc8c",
+                "reference": "84fc8e4b2b5ff32d20e73b17718b13e5ed56bc8c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "guzzlehttp/guzzle": "^6.3 || ^7.0",
+                "phpunit/phpunit": ">=7.0 < 10"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "An HTTP client to execute the API requests"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Twilio\\": "src/Twilio/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Twilio API Team",
+                    "email": "api@twilio.com"
+                }
+            ],
+            "description": "A PHP wrapper for Twilio's API",
+            "homepage": "https://github.com/twilio/twilio-php",
+            "keywords": [
+                "api",
+                "sms",
+                "twilio"
+            ],
+            "time": "2026-01-07T09:28:54+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

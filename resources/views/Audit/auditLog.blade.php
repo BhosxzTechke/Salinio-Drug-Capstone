@@ -35,23 +35,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                 @php $i = 1 @endphp
+                    @php $i = 1 @endphp
 
-                    @foreach($activities as $key => $log)
-            <tr>
+                        @foreach($activities as $key => $log)
+                <tr>
 
-                
-                <td>{{ $i++ }}</td>
-                <td>{{ optional($log->causer)->name ?? 'System' }}</td>
-                <td>{{ $log->description }}</td>
-                <td>{{ $log->created_at }}</td>
-            </tr>
-                    @endforeach
-                </tbody>
+                    
+                    <td>{{ $i++ }}</td>
+                    <td>{{ optional($log->causer)->name ?? 'System' }}</td>
+                    <td>{{ $log->description }}</td>
+                    <td>{{ $log->created_at }}</td>
+                </tr>
+                        @endforeach
+                    </tbody>
             </table>
 
             <div class="d-flex justify-content-center">
-                {{ $activities->links() }}
             </div>
         </div>
     </div>

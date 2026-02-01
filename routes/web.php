@@ -26,6 +26,7 @@ use App\Http\Controllers\backend\RoleController;
 use App\Http\Controllers\backend\SubCategoryController;
 use App\Http\Controllers\backend\AuditController;
 use App\Http\Controllers\backend\ReportController;
+use App\Http\Controllers\backend\ReturnShipmentController as BackendReturnShipmentController;
 use App\Http\Controllers\backend\RiderController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\frontend\AboutController;
@@ -37,6 +38,7 @@ use App\Http\Controllers\frontend\CategoryController as FrontendCategoryControll
 use App\Http\Controllers\frontend\ContactController;
 use App\Http\Controllers\frontend\CustomerRegisteredController;
 use App\Http\Controllers\frontend\OrderController as FrontendOrderController;
+use App\Http\Controllers\frontend\ReturnShipmentController;
 use App\Http\Controllers\frontend\WishlistController;
 use App\Http\Controllers\SupplierConfirmationController;
 use App\Models\HeroSlider;  
@@ -163,15 +165,15 @@ use Illuminate\Support\Facades\Mail;
 
                     ///////////////////////////// REGISTER CUSTOMER /////////////////////////
         
-         Route::controller(CustomerRegisteredController::class)->group(function () {
+                Route::controller(CustomerRegisteredController::class)->group(function () {
 
 
-            route::get('/customer/register', 'create')->name('customer.register.form');
+                    route::get('/customer/register', 'create')->name('customer.register.form');
 
-                // REGISTER CUSTOMER
-            Route::post('/customer/Register', 'customerRegister')->name('customer.register');            
+                        // REGISTER CUSTOMER
+                    Route::post('/customer/Register', 'customerRegister')->name('customer.register');            
 
-        });
+                });
 
 
 
@@ -1419,14 +1421,45 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
 
 
 
-     
-    // ORDER DETAILS VIEWING
-
-
 });
 
 
+                ////  OUTBOUND RETURN
+            ///////////// FRONTEND
+            //////////// RETURN SHIPMENT
+            Route::post('/customer/requests', [ReturnShipmentController::class, 'CustomerReturnRequest'])
+                ->name('store.return.requests');
 
+                /// hand to courier item
+            Route::post('/customer/pack-item/{return_requestID}', [ReturnShipmentController::class, 'HandToCourier'])
+                ->name('hand.to.courier');
+
+                
+
+
+
+            ///////////// BACKEND
+            //////////// RETURN SHIPMENT
+            Route::controller(BackendReturnShipmentController::class)->group(function () {
+
+            route::get('/Customer/Request/pending', 'CustomerRequestPending')->name('customer.request.pending');
+
+            route::get('/Customer/Returning/item', 'CustomerReturningItem')->name('customer.returning.item');
+
+            Route::post('/request/approve/{orderId}', [BackendReturnShipmentController::class, 'MarkAsReturnApproved']);
+
+        });
+
+            ///////////// BACKEND
+            //////////// RETURN SHIPMENT STATUS WITHOUT RELOAD PAGE
+            Route::get('/return-shipment/{shipmentId}/status', [BackendReturnShipmentController::class, 'getReturnShipmentStatus'])
+                ->name('return.shipment.status');
+
+                    
+
+
+
+                        
             // Admin route
             Route::post('/admin/chat/send', [ChatController::class, 'sendAdmin'])
                 ->middleware('auth:web'); // web guard
@@ -1464,32 +1497,32 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
             /////////// CART CHECKOUT //////////////
 
 
-        });
+                });
 
 
-         Route::controller(FrontendOrderController::class)->group(function () {
+                Route::controller(FrontendOrderController::class)->group(function () {
+                            
+                    ////// PRODUCT DETAILS CART /////////////////
+
+                    route::get('/ecommerce/payment', 'EcommercePayment')->middleware('auth:customer')->name('cart.payment');
+
+
+                    route::post('/ecommerce/checkout', 'EcommerceCheckout')->name('cart.checkout');
+
+
+
+                    // Change addreess
+
+                    route::post('/ecommerce/change/address', 'updateAddress')->name('cart.updateAddress');
+
+
+                        ////////// Cash Payment success /////////////
+                    route::get('/ecommerce/{id}/success', 'SuccesfullyOrder')->name('success.order');
+
+
+                    ////////// AFTER PAYPAL PAYMENT /////////////
+
                     
-            ////// PRODUCT DETAILS CART /////////////////
-
-            route::get('/ecommerce/payment', 'EcommercePayment')->middleware('auth:customer')->name('cart.payment');
-
-
-            route::post('/ecommerce/checkout', 'EcommerceCheckout')->name('cart.checkout');
-
-
-
-            // Change addreess
-
-             route::post('/ecommerce/change/address', 'updateAddress')->name('cart.updateAddress');
-
-
-                ////////// Cash Payment success /////////////
-            route::get('/ecommerce/{id}/success', 'SuccesfullyOrder')->name('success.order');
-
-
-             ////////// AFTER PAYPAL PAYMENT /////////////
-
-            
 
 
                 Route::get('/Ecommerce/Payment/success', 'PaypalSuccess')->name('paypal.success');

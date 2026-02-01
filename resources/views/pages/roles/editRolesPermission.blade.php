@@ -106,7 +106,7 @@
                                        data-group="{{ $groupSlug }}"
                                        {{ App\Models\User::roleHasPermissions($roles, $permissions) ? 'checked' : '' }}>
                                 <label class="form-check-label fw-medium">
-                                    {{ $group->group_name }}
+                                        {{ ucwords(str_replace('', ' ',   $group->group_name)) }}
                                 </label>
                             </div>
                         </div>
@@ -122,10 +122,10 @@
                         @endphp
 
                         <div class="permission-panel {{ $index !== 0 ? 'd-none' : '' }}"
-                             data-panel="{{ $groupSlug }}">
+                                data-panel="{{ $groupSlug }}">
 
                             <h6 class="fw-semibold mb-3">
-                                {{ $group->group_name }} Permissions
+                                {{ ucwords(str_replace('', ' ',   $group->group_name)) }} Permissions
                             </h6>
 
                             <div class="permission-grid">
@@ -133,13 +133,13 @@
                                     <div class="permission-box">
                                         <div class="form-check m-0">
                                             <input class="form-check-input permission-checkbox"
-                                                   type="checkbox"
-                                                   name="permission[]"
-                                                   value="{{ $permission->name }}"
-                                                   data-group="{{ $groupSlug }}"
-                                                   {{ $roles->hasPermissionTo($permission->name) ? 'checked' : '' }}>
+                                                    type="checkbox"
+                                                    name="permission[]"
+                                                    value="{{ $permission->name }}"
+                                                    data-group="{{ $groupSlug }}"
+                                                    {{ $roles->hasPermissionTo($permission->name) ? 'checked' : '' }}>
                                             <label class="form-check-label">
-                                                {{ $permission->name }}
+                                                {{ ucwords(str_replace('-', ' ',  $permission->name)) }}
                                             </label>
                                         </div>
                                     </div>

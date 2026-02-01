@@ -472,14 +472,39 @@
                         @endif
 
 
-                        <li><a href="{{ route('return.order') }}">Return Orders</a></li>
-
-
                         
                                 </ul>
                             </div>
                         </li>
                     @endif
+
+
+
+
+
+
+                    
+                        <li>
+                        <a href="#Returnorders" data-bs-toggle="collapse">
+                            <i class="mdi mdi-package-variant"></i>
+                            <span> Manage Return Orders </span>
+                            <span class="menu-arrow"></span>
+                        </a>
+
+
+                        <div class="collapse" id="Returnorders">
+                            <ul class="nav-second-level">
+
+                                <li><a href="{{ route('customer.request.pending') }}">Return Order Request</a></li>
+
+
+                                <li><a href="{{ route('customer.returning.item') }}">Return Order Item</a></li>
+
+                        
+                                </ul>
+                            </div>
+                        </li>
+
 
 
 
@@ -592,20 +617,6 @@
             {{-- @endif --}}
 
 
-          @if(Auth::user()->can('manage-commerce-settings'))
-               <li><a href="{{ route('commerce.settings') }}"><i class="mdi mdi-cart-outline"></i><span> Commerce Settings</span></a>
-            
-        </li>
-        @endif
-
-
-
-        {{-- <li class="menu-title mt-2">GENERAL SETTINGS</li> --}}
-
-
-
-        {{-- @if(Auth::user()->can('all-reports-section')) --}}
-            <li class="menu-title mt-2">Reports</li>
 
 
             {{-- @if(Auth::user()->can('reports-menu')) --}}
@@ -628,16 +639,16 @@
 
 
                         {{-- @if(Auth::user()->can('view-weekly-sales-report')) --}}
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('weekly.reports') }}">Weekly Sales Report</a>
-                        </li>
+                        </li> --}}
                         {{-- @endif --}}
 
 
                         {{-- @if(Auth::user()->can('view-monthly-sales-report')) --}}
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('monthly.reports') }}">Monthly Sales Report</a>
-                        </li>
+                        </li> --}}
                         {{-- @endif --}}
 
 
@@ -651,6 +662,32 @@
                     </div>
                 </li>
             {{-- @endif --}}
+
+
+
+
+
+
+
+
+
+
+          @if(Auth::user()->can('manage-commerce-settings'))
+               <li><a href="{{ route('commerce.settings') }}"><i class="mdi mdi-cart-outline"></i><span> Commerce Settings</span></a>
+            
+        </li>
+        @endif
+
+
+
+        {{-- <li class="menu-title mt-2">GENERAL SETTINGS</li> --}}
+
+
+
+        {{-- @if(Auth::user()->can('all-reports-section')) --}}
+            {{-- <li class="menu-title mt-2">Reports</li> --}}
+
+
 
 
         {{-- @endif --}}
@@ -771,11 +808,51 @@
 
 
 
-    @if(Auth::user()->can('custom-section'))
-        <li class="menu-title mt-2">Custom</li>
+        {{-- <li class="menu-title mt-2">Custom</li> --}}
 
 
-        @if(Auth::user()->can('carousel-banner-menu'))
+
+
+
+
+        <li><a href="{{ route('view.admin.chat') }}"><i class="mdi mdi-cart-outline"></i><span> Chat Customer</span></a>
+
+
+
+
+        {{-- <li class="menu-title mt-2">GENERAL SETTINGS</li> --}}
+
+
+
+
+
+
+
+
+
+@if(Auth::user()->can('general-settings-section'))
+
+        <li class="menu-title mt-2">GENERAL SETTINGS</li>
+
+
+
+
+
+
+
+
+            
+        @if(Auth::user()->can('change-logo-name-menu'))
+                <li><a href="{{ route('business.name')}}"><i class="mdi mdi-cart-outline"></i><span> Change Title System</span></a>
+                
+            </li>
+            @endif
+
+
+
+
+
+                
                 <li>
                     <a href="#HeroSlider" data-bs-toggle="collapse">
                         <i class="mdi mdi-image-multiple"></i>
@@ -800,54 +877,12 @@
                     </ul>
                 </div>
             </li>
-        @endif
 
 
 
 
-        <li><a href="{{ route('view.admin.chat') }}"><i class="mdi mdi-cart-outline"></i><span> Chat Customer</span></a>
 
-
-
-
-        {{-- <li class="menu-title mt-2">GENERAL SETTINGS</li> --}}
-
-
-        @if(Auth::user()->can('change-logo-name-menu'))
-            <li>
-                <a href="#businessName" data-bs-toggle="collapse">
-                    <i class="mdi mdi-rename-box"></i>
-                    <span>Modify Logo Name </span>
-                    <span class="menu-arrow"></span>
-                </a>
-
-
-            <div class="collapse" id="businessName">
-                <ul class="nav-second-level">
-
-                    @if(Auth::user()->can('change-business-name'))
-                    <li>
-                        <a href="{{ route('business.name')}}">Change Logo Name</a>
-                    </li>
-                    @endif
-                        
-                    </ul>
-                </div>
-            </li>
-        @endif
-
-
-    @endif
-
-
-
-
-@if(Auth::user()->can('general-settings-section'))
-
-        <li class="menu-title mt-2">GENERAL SETTINGS</li>
-
-
-            @if(Auth::user()->can('roles-menu'))
+                        @if(Auth::user()->can('roles-menu'))
 
                 <li>
                     <a href="#roles" data-bs-toggle="collapse">

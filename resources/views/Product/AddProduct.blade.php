@@ -154,59 +154,11 @@
             </div>
         </div>
 
-        {{-- Target Gender --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="target_gender">Target Gender <span class="text-danger">*</span></label>
-                <select name="target_gender"
-                        class="form-control @error('target_gender') is-invalid @enderror"
-                        id="target_gender">
-                    <option selected disabled>Select Gender</option>
-                    @foreach (['Unisex', 'Male', 'Female'] as $gender)
-                        <option value="{{ $gender }}" {{ old('target_gender') == $gender ? 'selected' : '' }}>
-                            {{ $gender }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('target_gender')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
 
-        {{-- Age Group --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="age_group">Age Group <span class="text-danger">*</span></label>
-                <select name="age_group"
-                        class="form-control @error('age_group') is-invalid @enderror"
-                        id="age_group">
-                    <option selected disabled>Select Age Group</option>
-                    @foreach (['All', 'Kids', 'Adults', 'Seniors'] as $group)
-                        <option value="{{ $group }}" {{ old('age_group') == $group ? 'selected' : '' }}>
-                            {{ $group }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('age_group')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
 
-        {{-- Health Concern --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="health_concern">Health Concern</label>
-                <input type="text" name="health_concern"
-                       value="{{ old('health_concern') }}"
-                       class="form-control @error('health_concern') is-invalid @enderror"
-                       id="health_concern">
-                @error('health_concern')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
+ 
+
+
 
         {{-- Selling Price --}}
         <div class="col-md-6">
@@ -238,12 +190,78 @@
             </div>
         </div>
 
-        {{-- Expiration Switch --}}
-        <div class="form-check form-switch mb-3">
-            <input type="checkbox" class="form-check-input" id="has_expiration" name="has_expiration"
-                   value="1" {{ old('has_expiration', true) ? 'checked' : '' }}>
-            <label class="form-check-label" for="has_expiration">Has Expiration</label>
+
+                        {{-- FOR ECOMMERCE PART --}}
+
+
+
+    {{-- Expiration Switch --}}
+    <div class="form-check form-switch mb-3">
+        <input type="checkbox" class="form-check-input" id="has_expiration" name="has_expiration"
+                value="1" {{ old('has_expiration', true) ? 'checked' : '' }}>
+        <label class="form-check-label" for="has_expiration">Has Expiration</label>
+    </div>
+
+        {{-- Target Gender --}}
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label for="target_gender">Target Gender <span class="text-danger">*</span></label>
+                <select name="target_gender"
+                        class="form-control @error('target_gender') is-invalid @enderror"
+                        id="target_gender">
+                    <option selected disabled>Select Gender</option>
+                    @foreach (['Unisex', 'Male', 'Female'] as $gender)
+                        <option value="{{ $gender }}" {{ old('target_gender') == $gender ? 'selected' : '' }}>
+                            {{ $gender }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('target_gender')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
         </div>
+
+
+
+
+                {{-- Age Group --}}
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="age_group">Age Group <span class="text-danger">*</span></label>
+                    <select name="age_group"
+                            class="form-control @error('age_group') is-invalid @enderror"
+                            id="age_group">
+                        <option selected disabled>Select Age Group</option>
+                        @foreach (['All', 'Kids', 'Adults', 'Seniors'] as $group)
+                            <option value="{{ $group }}" {{ old('age_group') == $group ? 'selected' : '' }}>
+                                {{ $group }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('age_group')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+
+
+
+                    {{-- Health Concern --}}
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label for="health_concern">Health Concern</label>
+                <input type="text" name="health_concern"
+                       value="{{ old('health_concern') }}"
+                       class="form-control @error('health_concern') is-invalid @enderror"
+                       id="health_concern">
+                @error('health_concern')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+        </div>
+
 
         {{-- Description --}}
         <div class="col-md-12">

@@ -119,29 +119,39 @@
                         $allItem = Cart::content();
                         $ProductsItem = $allItem->where('options', '!=', null);
 
+
                         
                         @endphp
 
 
                 <tbody id="cart-body">
                     @foreach ($ProductsItem as $item)
+
+                    
+                    @php   $inventory = App\Models\Inventory::find($item->id); @endphp
+
+
                     <tr>
                         <td class="fw-medium">{{ $item->name }}</td>
 
                         <td>
                             <form method="POST" action="{{ url('/pos/ChangeQty/' . $item->rowId )}}" class="d-flex gap-1">
                                 @csrf
-                                <input type="number" name="qty" value="{{ $item->qty }}" min="1" class="form-control form-control-sm qty-input">
+                                <input type="number" name="qty" value="{{ $item->qty }}" min="1" max="{{ $inventory->quantity }}" class="form-control form-control-sm qty-input">
                                 <button class="btn btn-success btn-sm">
                                     <i class="fas fa-check"></i>
                                 </button>
                             </form>
                         </td>
 
+
+
                         <td>₱{{ number_format($item->price,2) }}</td>
                         <td class="fw-semibold">₱{{ number_format($item->subtotal,2) }}</td>
 
-                        <td>
+
+                        {{--  if may nag error add / on removeprd in last --}}
+                        <td>        
                             <form action="{{ url('/pos-RemovePrd/' . $item->rowId) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
