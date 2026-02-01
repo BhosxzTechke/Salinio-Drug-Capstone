@@ -1318,6 +1318,15 @@ use Illuminate\Support\Facades\Mail;
 
         Route::get('/product/{product_id}', 'ProductDetails')->name('product.show');
 
+
+                            Route::get('/privacy-policy', 'PrivacyPolicy')->name('policy.show');
+
+
+                    Route::get('/terms-of-service', 'TermsAndServices')->name('terms.show');
+
+
+                    
+
     });
 
 
@@ -1344,37 +1353,33 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-   
-     Route::controller(ContactController::class)->group(function () {
+        
+            Route::controller(ContactController::class)->group(function () {
 
-     Route::get('/Contact/page', 'ContactShow')->name('contact.show');
-
-
-     Route::post('/Contact/message', 'send')->name('contact.send');
-   });
+            Route::get('/Contact/page', 'ContactShow')->name('contact.show');
 
 
-     Route::controller(AboutController::class)->group(function () {
-
-     Route::get('/About/page', 'AboutShow')->name('about.show');
-
-
-   });
+            Route::post('/Contact/message', 'send')->name('contact.send');
+        });
 
 
+            Route::controller(AboutController::class)->group(function () {
 
-        Route::controller(FrontendBrandController::class)->group(function () {
+            Route::get('/About/page', 'AboutShow')->name('about.show');
 
-     Route::get('/Brand/page/{id}', 'BrandShow')->name('brand.show');
+
+        });
 
 
 
-   });
+                Route::controller(FrontendBrandController::class)->group(function () {
 
-   
+                    Route::get('/Brand/page/{id}', 'BrandShow')->name('brand.show');
 
 
-   
+                });
+
+        
 
 
     // Route::middleware(['auth', 'customer'])->group(function () {

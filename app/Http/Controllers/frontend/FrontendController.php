@@ -367,6 +367,34 @@ class FrontendController extends Controller
         }
 
 
+
+
+
+
+
+
+        //////////////////////////// CONFIDENTIAL PAGE IN FRONTEND //////////////////// 
+
+
+            public function PrivacyPolicy(){
+
+
+                return view('Ecommerce.EcommercePage.ConfidentialPage.PrivacyPolicy');
+
+
+            }
+
+
+            public function TermsAndServices(){
+
+                    return view('Ecommerce.EcommercePage.ConfidentialPage.TermsAndService');
+
+            
+            }
+
+
+
+
         
 
 }
