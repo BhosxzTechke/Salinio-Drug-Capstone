@@ -43,7 +43,7 @@ class ChatController extends Controller
 
                     Chat::create([
                         'sender_id' => $senderId,
-                        'receiver_id' => 5,
+                        'receiver_id' => 1,
                         'message' => $request->message
                     ]);
 
@@ -77,7 +77,7 @@ class ChatController extends Controller
             {
                 $customerId = Auth::guard('customer')->id(); // logged-in customer
                 $adminId = User::value('id'); // first user in users table (admin)
-
+    
                 $messages = Chat::where(function($q) use ($customerId, $adminId) {
                     $q->where('sender_id', $customerId)
                     ->where('receiver_id', $adminId);
