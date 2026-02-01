@@ -10,9 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
-    //
 
-    
+
+
+
+
+        /// customer admin
+    //
             public function sendAdmin(Request $request)
             {
                 $senderId = Auth::guard('web')->user()->id; // admin ID
@@ -26,7 +30,12 @@ class ChatController extends Controller
                 return response()->json(['success' => true]);
             }
 
+
+
+
                         
+
+        /// customer chat
             
                 public function sendCustomer(Request $request)
                 {
@@ -43,38 +52,50 @@ class ChatController extends Controller
 
                         
 
-        public function fetchAdmin($customerId)
-        {
-            $adminId = Auth::guard('web')->id(); // admin
-
-            $messages = Chat::where(function($q) use ($adminId, $customerId) {
-                $q->where('sender_id', $adminId)
-                ->where('receiver_id', $customerId);
-            })->orWhere(function($q) use ($adminId, $customerId) {
-                $q->where('sender_id', $customerId)
-                ->where('receiver_id', $adminId);
-            })->orderBy('created_at')->get();
-
-            return response()->json($messages);
-        }
 
 
 
-                public function fetchCustomer()
-        {
-            $customerId = Auth::guard('customer')->id(); // logged-in customer
-            $adminId = User::value('id'); // first user in users table (admin)
+                //// Getting Admin Messages Automatically without Reloading the page
+            public function fetchAdmin($customerId)
+            {
+                $adminId = Auth::guard('web')->id(); // admin
 
-            $messages = Chat::where(function($q) use ($customerId, $adminId) {
-                $q->where('sender_id', $customerId)
-                ->where('receiver_id', $adminId);
-            })->orWhere(function($q) use ($customerId, $adminId) {
-                $q->where('sender_id', $adminId)
-                ->where('receiver_id', $customerId);
-            })->orderBy('created_at')->get();
+                $messages = Chat::where(function($q) use ($adminId, $customerId) {
+                    $q->where('sender_id', $adminId)
+                    ->where('receiver_id', $customerId);
+                })->orWhere(function($q) use ($adminId, $customerId) {
+                    $q->where('sender_id', $customerId)
+                    ->where('receiver_id', $adminId);
+                })->orderBy('created_at')->get();
 
-            return response()->json($messages);
-        }
+                return response()->json($messages);
+            }
+
+
+                //// Getting Customer Messages Automatically without Reloading the page
+                    public function fetchCustomer()
+            {
+                $customerId = Auth::guard('customer')->id(); // logged-in customer
+                $adminId = User::value('id'); // first user in users table (admin)
+
+                $messages = Chat::where(function($q) use ($customerId, $adminId) {
+                    $q->where('sender_id', $customerId)
+                    ->where('receiver_id', $adminId);
+                })->orWhere(function($q) use ($customerId, $adminId) {
+                    $q->where('sender_id', $adminId)
+                    ->where('receiver_id', $customerId);
+                })->orderBy('created_at')->get();
+
+                return response()->json($messages);
+            }
+
+
+
+
+
+
+
+
 
                                     
                 public function adminChats()

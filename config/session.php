@@ -18,7 +18,12 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'file'),
+    'driver' => env('SESSION_DRIVER', 'database'),
+
+    'secure' =>env('SESSION_SECURE_COOKIE',true),
+    'same_site' =>env('SESSION_SAME_SITE','lax'),
+
+
 
     /*
     |--------------------------------------------------------------------------
