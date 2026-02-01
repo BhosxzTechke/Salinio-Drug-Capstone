@@ -24,11 +24,20 @@
 
 
 
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+    window.authCustomerId = @json(Auth::guard('customer')->id());
+    </script>
+
+
 <script>
 function loadMessages(){
     const adminId = $('#receiver_id').val();
-    const authId = {{ Auth::guard('customer')->id() }};
+    const authId = window.authCustomerId;
+
 
     $.get('/customer/chat/fetch', function(data){
         let html = '';
@@ -47,24 +56,24 @@ function loadMessages(){
     });
 }
 
-loadMessages();
-setInterval(loadMessages,3000);
-
-$('#chat-form').submit(function(e){
-    e.preventDefault();
-    const adminId = $('#receiver_id').val();
-    const message = $('#message').val().trim();
-    if(!message) return;
-
-    $.post('/customer/chat/send', {
-        _token:'{{ csrf_token() }}',
-        receiver_id: adminId,
-        message: message
-    }, function(){
-        $('#message').val('');
         loadMessages();
-    });
-});
-</script>
+        setInterval(loadMessages,3000);
+
+        $('#chat-form').submit(function(e){
+            e.preventDefault();
+            const adminId = $('#receiver_id').val();
+            const message = $('#message').val().trim();
+            if(!message) return;
+
+            $.post('/customer/chat/send', {
+                _token:'{{ csrf_token() }}',
+                receiver_id: adminId,
+                message: message
+            }, function(){
+                $('#message').val('');
+                loadMessages();
+            });
+        });
+        </script>
 
 @endsection
