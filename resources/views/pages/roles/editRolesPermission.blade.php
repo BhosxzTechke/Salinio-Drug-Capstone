@@ -89,6 +89,9 @@
             <!-- Split Layout -->
             <div class="permission-layout">
 
+
+
+
                 <!-- LEFT: GROUP LIST -->
                 <div class="permission-sidebar">
                     @foreach ($permissionGroups as $index => $group)
@@ -98,20 +101,25 @@
                         @endphp
 
                         <div class="permission-group-item {{ $index === 0 ? 'active' : '' }}"
-                             data-group="{{ $groupSlug }}">
-                            <div class="form-check m-0">
-                                <input class="form-check-input group-checkbox"
-                                       type="checkbox"
-                                       id="group_{{ $groupSlug }}"
-                                       data-group="{{ $groupSlug }}"
-                                       {{ App\Models\User::roleHasPermissions($roles, $permissions) ? 'checked' : '' }}>
-                                <label class="form-check-label fw-medium">
-                                        {{ ucwords(str_replace('', ' ',   $group->group_name)) }}
-                                </label>
+                                data-group="{{ $groupSlug }}">
+                                <div class="form-check m-0">
+                                    <input class="form-check-input group-checkbox"
+                                        type="checkbox"
+                                        id="group_{{ $groupSlug }}"
+                                        data-group="{{ $groupSlug }}"
+                                        {{ App\Models\User::roleHasPermissions($roles, $permissions) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-medium">
+                                            {{ ucwords(str_replace('-', ' ',   $group->group_name)) }}
+                                    </label>
                             </div>
                         </div>
+
+                        
                     @endforeach
                 </div>
+
+
+
 
                 <!-- RIGHT: PERMISSIONS -->
                 <div class="permission-content">
@@ -127,6 +135,7 @@
                             <h6 class="fw-semibold mb-3">
                                 {{ ucwords(str_replace('', ' ',   $group->group_name)) }} Permissions
                             </h6>
+
 
                             <div class="permission-grid">
                                 @foreach ($permissions as $permission)
@@ -164,9 +173,11 @@
     </div>
 </div>
 
+
+
 {{-- =====================
-   JS LOGIC
-===================== --}}
+    JS LOGIC
+    ===================== --}}
 <script>
 $(document).ready(function () {
 
@@ -203,38 +214,47 @@ $(document).ready(function () {
         updateStates();
     });
 
-    function updateStates() {
-        // Groups
-        $('.group-checkbox').each(function () {
-            let group = $(this).data('group');
-            let perms = $('.permission-checkbox[data-group="' + group + '"]');
-            let checked = perms.filter(':checked').length;
 
-            if (checked === 0) {
-                $(this).prop('checked', false).prop('indeterminate', false);
-            } else if (checked === perms.length) {
-                $(this).prop('checked', true).prop('indeterminate', false);
-            } else {
-                $(this).prop('checked', false).prop('indeterminate', true);
+
+            function updateStates() {
+                // Groups
+                $('.group-checkbox').each(function () {
+                    let group = $(this).data('group');
+                    let perms = $('.permission-checkbox[data-group="' + group + '"]');
+                    let checked = perms.filter(':checked').length;
+
+                    if (checked === 0) {
+                        $(this).prop('checked', false).prop('indeterminate', false);
+                    } else if (checked === perms.length) {
+                        $(this).prop('checked', true).prop('indeterminate', false);
+                    } else {
+                        $(this).prop('checked', false).prop('indeterminate', true);
+                    }
+                });
+
+
+
+                // Select All
+                let total = $('.permission-checkbox').length;
+                let checkedTotal = $('.permission-checkbox:checked').length;
+
+                if (checkedTotal === 0) {
+                    $('#custome_selectAll').prop('checked', false).prop('indeterminate', false);
+                } else if (checkedTotal === total) {
+                    $('#custome_selectAll').prop('checked', true).prop('indeterminate', false);
+                } else {
+                    $('#custome_selectAll').prop('checked', false).prop('indeterminate', true);
+                }
             }
+
+            // Init on load
+            updateStates();
         });
-
-        // Select All
-        let total = $('.permission-checkbox').length;
-        let checkedTotal = $('.permission-checkbox:checked').length;
-
-        if (checkedTotal === 0) {
-            $('#custome_selectAll').prop('checked', false).prop('indeterminate', false);
-        } else if (checkedTotal === total) {
-            $('#custome_selectAll').prop('checked', true).prop('indeterminate', false);
-        } else {
-            $('#custome_selectAll').prop('checked', false).prop('indeterminate', true);
-        }
-    }
-
-    // Init on load
-    updateStates();
-});
 </script>
+
+
+
+
+
 
 @endsection

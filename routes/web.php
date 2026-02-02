@@ -196,12 +196,12 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        // Route::middleware('auth')->group(function () {
+        //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-// });  
+        // });  
 
 
 
@@ -233,38 +233,6 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-
-
-
-        /////////////////     MANAGE EMPLOYEE       ////////////////////
-
-        //  Route::controller(EmployeesController::class)->group(function () {
-        //     //Showing Data in table
-        //     Route::get('/employee', 'EmployeeTable')->name('all.employee')->middleware('permission:All Staff');
-
-
-        //     //Add Employee Form 
-        //     Route::get('/employee/create', 'AddFormEmployee')->name('employee.create')->middleware('permission:Add Staff');
-
-        //     //Add Employee Form 
-        //     Route::post('/employee/store', 'StoreFormEmployee')->name('employee.store');
-
-
-        //     //Edit Employee Form 
-        //     Route::get('/employee/edit/{id}', 'EditEmployee')->name('employee.edit');
-
-            
-        //    //Delete Employee Form 
-        //     Route::get('/employee/delete/{id}', 'DeleteEmployee')->name('employee.delete');
-
-
-        //      //Update Employee Form 
-        //     Route::put('/employee/update', 'UpdateEmployee')->name('employee.update');
-
-   
-        // });
-
-
         Route::get('/test-email', function () {
             Mail::raw('Test email from Salinio Drug Pharmacy system.', function ($message) {
                 $message->to('tarucjohneric19@gmail.com')
@@ -286,25 +254,23 @@ use Illuminate\Support\Facades\Mail;
 
 
                 // form customer
-             Route::get('/customer/create', 'AddFormCustomer')->name('create.customer')->middleware('permission:add-customer');
+            Route::get('/customer/create', 'AddFormCustomer')->name('create.customer')->middleware('permission:add-customer');
 
 
-             
                 // store customer
-             Route::post('/customer/store', 'StoreFormCustomer')->name('store.customer');
+            Route::post('/customer/store', 'StoreFormCustomer')->name('store.customer');
 
 
                 // Editing customer
-             Route::get('/customer/edit{id}', 'EditFormCustomer')->name('edit.customer')->middleware('permission:edit-customer');
+            Route::get('/customer/edit{id}', 'EditFormCustomer')->name('edit.customer')->middleware('permission:edit-customer');
 
 
               // Editing customer
-             Route::put('/customer/update', 'UpdateFormCustomer')->name('update.customer');
+            Route::put('/customer/update', 'UpdateFormCustomer')->name('update.customer');
 
 
-             Route::get('/customer/delete/{id}', 'DeleteCustomer')->name('delete.customer')->middleware('permission:delete-customer');
+            Route::get('/customer/delete/{id}', 'DeleteCustomer')->name('delete.customer')->middleware('permission:delete-customer');
 
-   
         });
 
 
@@ -313,22 +279,22 @@ use Illuminate\Support\Facades\Mail;
         Route::controller(SupplierController::class)->group(function () {
 
             //Showing Data in table
-            Route::get('/supplier', 'SupplierTable')->name('all.supplier')->middleware('permission:view-all-suppliers');
+            Route::get('/supplier', 'SupplierTable')->name('all.supplier');
 
              //Showing AddSupplier Form 
-            Route::get('/supplier/create', 'AddFormSupplier')->name('supplier.create')->middleware('permission:add-supplier');
+            Route::get('/supplier/create', 'AddFormSupplier')->name('supplier.create');
 
              //Store Supplier fORM 
             Route::post('/supplier/store', 'StoreFormSupplier')->name('store.supplier');
 
 
                        //Edit Supplier Form 
-            Route::get('/supplier/edit/{id}', 'EditFormSupplier')->name('edit.supplier')->middleware('permission:edit-supplier');
+            Route::get('/supplier/edit/{id}', 'EditFormSupplier')->name('edit.supplier');
 
 
 
                                  //Dekete Supplier Form 
-            Route::get('/supplier/delete/{id}', 'DeleteFormSupplier')->name('delete.supplier')->middleware('permission:delete-supplier');
+            Route::get('/supplier/delete/{id}', 'DeleteFormSupplier')->name('delete.supplier');
 
 
 
@@ -337,11 +303,10 @@ use Illuminate\Support\Facades\Mail;
 
 
          //View Supplier fORM 
-            Route::get('/supplier/details/{id}', 'DetailsSupplier')->name('details.supplier')->middleware('permission:view-supplier-details');
+            Route::get('/supplier/details/{id}', 'DetailsSupplier')->name('details.supplier');
 
             
 
-   
         });
 
 
@@ -710,7 +675,7 @@ use Illuminate\Support\Facades\Mail;
             'name'    => $request->name,
             'qty' => $request->qty ?? 1, // fallback to 1 if null
             'price'   => $request->price,  // selling price
-            'weight'  => 0,  // ✅ Add this line
+            'weight'  => 0,  // Add this line
                 'options' => [
                     'code' => $request->code,
                     'cost_price' => $request->cost_price ?? 0, // store cost price separately
@@ -838,7 +803,7 @@ use Illuminate\Support\Facades\Mail;
             Route::controller(PosController::class)->group(function () {
 
             //Showing Data in TABLE
-            Route::get('/pos', 'ViewPos')->name('pos')->middleware('permission:view-pos-page');
+            Route::get('/pos', 'ViewPos')->name('pos');
 
             
             //Add Data in CART Content
@@ -869,14 +834,17 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-                //////////////////////////////// POS CASHIER SYSTEM ///////////////////////
-            Route::controller(PosController::class)->group(function () {
+                        //////////////////////////////// POS CASHIER SYSTEM ///////////////////////
+                    Route::controller(PosController::class)->group(function () {
 
-            // Submit Walkin Payment
-            Route::post('/pos/Payment', 'PaymentWalkin')->name('payment.walkin');
+                    // Submit Walkin Payment
+                    Route::post('/pos/Payment', 'PaymentWalkin')->name('payment.walkin');
 
 
-        });
+                });
+
+
+                
 
                 Route::get('/pos/confirm/{id}', [PosController::class, 'confirm'])->name('pos.confirm');
 
@@ -959,8 +927,10 @@ use Illuminate\Support\Facades\Mail;
                     // ->middleware(['auth', 'role:Admin']); // only admin can assign
 
 
+
+                    
             // Pending Orders TABLE
-            Route::get('/Order/Pending', 'PendingOrders')->name('pending.order')->middleware('permission:view-pending-orders');
+            Route::get('/Order/Pending', 'PendingOrders')->name('pending.order');
 
 
             Route::get('/orders/MarkAsOrderConfirmed/{id}', [OrderController::class, 'MarkAsConfirmOrder'])->name('confirm.Mark.Order');
@@ -998,21 +968,25 @@ use Illuminate\Support\Facades\Mail;
 
 
             // Shipped Orders TABLE
-            Route::get('/Order/Shipped', 'AllShippedOrders')->name('all.ship.order')->middleware('permission:view-all-shipping-orders');
+            Route::get('/Order/Shipped', 'AllShippedOrders')->name('all.ship.order');
 
 
 
             // Cancel Orders TABLE
-            Route::get('/Order/Cancel', 'AllCancelOrders')->name('all.cancel.order')->middleware('permission:view-all-cancel-orders');
+            Route::get('/Order/Cancel', 'AllCancelOrders')->name('all.cancel.order');
                 
 
 
             // Complete Orders TABLE
-            Route::get('/Order/complete', 'CompleteOrders')->name('complete.order')->middleware('permission:view-complete-orders');
+            Route::get('/Order/complete', 'CompleteOrders')->name('complete.order');
 
 
             // Return Orders TABLE
             Route::get('/Order/Return', 'ReturnOrders')->name('return.order');
+
+
+
+
 
 
             //Show Order Details Form
@@ -1055,8 +1029,15 @@ use Illuminate\Support\Facades\Mail;
 
 
             //Add Permissions
-            Route::get('/create/permission', 'AddPermission')->name('add.permission')->middleware('permission:view-all-permissions');
+            Route::get('/create/permission', 'AddPermission')->name('add.permission');
             
+
+
+            //// Middleware dummy so di mo mkakaklimutan
+                        // Route::get('/create/permission', 'AddPermission')->name('add.permission')->middleware('permission:view-all-permissions');
+
+
+
             //Store Permissions
             Route::post('/store/permission', 'StorePermission')->name('permission.store');
 
@@ -1173,7 +1154,7 @@ use Illuminate\Support\Facades\Mail;
 
         Route::controller(AdminController::class)->group(function () {
 
-            Route::get('/BusinessName', 'BusinessName')->name('business.name')->middleware('permission:change-business-name');
+            Route::get('/BusinessName', 'BusinessName')->name('business.name');
 
                 // update business name without table
             Route::post('/BusinessName/update', 'StoreBusinessName')->name('businesstitle.update');
@@ -1319,13 +1300,16 @@ use Illuminate\Support\Facades\Mail;
         Route::get('/product/{product_id}', 'ProductDetails')->name('product.show');
 
 
-                            Route::get('/privacy-policy', 'PrivacyPolicy')->name('policy.show');
+
+        ////////////////////// CONFIDENTIAL PAGE
+
+        Route::get('/privacy-policy', 'PrivacyPolicy')->name('policy.show');
 
 
-                    Route::get('/terms-of-service', 'TermsAndServices')->name('terms.show');
+        Route::get('/terms-of-service', 'TermsAndServices')->name('terms.show');
 
 
-                    
+
 
     });
 

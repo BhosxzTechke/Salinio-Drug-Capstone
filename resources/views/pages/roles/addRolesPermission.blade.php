@@ -86,6 +86,8 @@
                     </select>
                 </div>
 
+
+
                 <div class="col-md-4 d-flex align-items-end">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="custome_selectAll">
@@ -99,56 +101,63 @@
             <!-- Split Layout -->
             <div class="permission-layout">
 
+
                 <!-- LEFT: GROUP LIST -->
                 <div class="permission-sidebar">
                         @foreach ($permissionGroups as $index => $group)
-                            @php $groupSlug = \Illuminate\Support\Str::slug($group->group_name); @endphp
-                            <div class="permission-group-item {{ $index === 0 ? 'active' : '' }}"
+                            @php $groupSlug = \Illuminate\Support\Str::slug($group->group_name); 
+                            
+                            @endphp
+
+                        <div class="permission-group-item {{ $index === 0 ? 'active' : '' }}"
                                 data-group="{{ $groupSlug }}">
                                 <div class="form-check m-0">
                                     <input class="form-check-input group-checkbox"
                                         type="checkbox"
-                                        id="group_{{ $groupSlug }}">
+                                        id="group_{{ $groupSlug }}"
+                                        data-group="{{ $groupSlug }}">
                                     <label class="form-check-label fw-medium">
-                                        {{ ucwords(str_replace('', ' ',  $group->group_name)) }}
+                                            {{ ucwords(str_replace('-', ' ',   $group->group_name)) }}
                                     </label>
-                                </div>
                             </div>
+                        </div>
+
+
                         @endforeach
                     </div>
 
 
 
 
-                <!-- RIGHT: PERMISSIONS -->
-                <div class="permission-content">
-                    @foreach ($permissionGroups as $index => $group)
-                        @php
-                            $groupSlug = \Illuminate\Support\Str::slug($group->group_name);
-                            $permissions = \App\Models\User::getPermissionByGroup($group->group_name);
-                        @endphp
+                    <!-- RIGHT: PERMISSIONS -->
+                    <div class="permission-content">
+                        @foreach ($permissionGroups as $index => $group)
+                            @php
+                                $groupSlug = \Illuminate\Support\Str::slug($group->group_name);
+                                $permissions = \App\Models\User::getPermissionByGroup($group->group_name);
+                            @endphp
 
-                        <div class="permission-panel {{ $index !== 0 ? 'd-none' : '' }}"
-                             data-panel="{{ $groupSlug }}">
+                            <div class="permission-panel {{ $index !== 0 ? 'd-none' : '' }}"
+                                data-panel="{{ $groupSlug }}">
 
-                            <h6 class="mb-3 fw-semibold">{{ ucwords(str_replace('-', ' ', $group->group_name)) }} Permissions</h6>
+                                <h6 class="mb-3 fw-semibold">{{ ucwords(str_replace('-', ' ', $group->group_name)) }} Permissions</h6>
 
-                            <div class="permission-grid">
-                                @foreach ($permissions as $permission)
-                                    <div class="permission-box">
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input permission-checkbox"
-                                                    type="checkbox"
-                                                    name="permission[]"
-                                                    value="{{ $permission->id }}"
-                                                    data-group="{{ $groupSlug }}">
-                                            <label class="form-check-label">
-                                                {{ ucwords(str_replace('-', ' ', $permission->name)) }}
-                                            </label>
+                                <div class="permission-grid">
+                                    @foreach ($permissions as $permission)
+                                        <div class="permission-box">
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input permission-checkbox"
+                                                        type="checkbox"
+                                                        name="permission[]"
+                                                        value="{{ $permission->id }}"
+                                                        data-group="{{ $groupSlug }}">
+                                                <label class="form-check-label">
+                                                    {{ ucwords(str_replace('-', ' ', $permission->name)) }}
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                @endforeach
-                            </div>
+                                    @endforeach
+                                </div>
 
                         </div>
                     @endforeach
@@ -169,7 +178,7 @@
 </div>
 
 {{-- =====================
-   JS LOGIC
+    JS LOGIC
 ===================== --}}
 <script>
 $(document).ready(function () {
@@ -186,19 +195,66 @@ $(document).ready(function () {
         }
     });
 
-    // Select all
+    // Select All
     $('#custome_selectAll').on('change', function () {
-        $('.group-checkbox, .permission-checkbox').prop('checked', this.checked);
+        $('.group-checkbox, .permission-checkbox')
+            .prop('checked', this.checked)
+            .prop('indeterminate', false);
     });
 
     // Group checkbox
     $('.group-checkbox').on('change', function () {
-        let group = $(this).attr('id').replace('group_', '');
+        let group = $(this).data('group');
         $('.permission-checkbox[data-group="' + group + '"]')
             .prop('checked', this.checked);
+
+        updateStates();
     });
 
-});
+    // Permission checkbox
+    $('.permission-checkbox').on('change', function () {
+        updateStates();
+    });
+
+
+
+            function updateStates() {
+                // Groups
+                $('.group-checkbox').each(function () {
+                    let group = $(this).data('group');
+                    let perms = $('.permission-checkbox[data-group="' + group + '"]');
+                    let checked = perms.filter(':checked').length;
+
+                    if (checked === 0) {
+                        $(this).prop('checked', false).prop('indeterminate', false);
+                    } else if (checked === perms.length) {
+                        $(this).prop('checked', true).prop('indeterminate', false);
+                    } else {
+                        $(this).prop('checked', false).prop('indeterminate', true);
+                    }
+                });
+
+
+
+                // Select All
+                let total = $('.permission-checkbox').length;
+                let checkedTotal = $('.permission-checkbox:checked').length;
+
+                if (checkedTotal === 0) {
+                    $('#custome_selectAll').prop('checked', false).prop('indeterminate', false);
+                } else if (checkedTotal === total) {
+                    $('#custome_selectAll').prop('checked', true).prop('indeterminate', false);
+                } else {
+                    $('#custome_selectAll').prop('checked', false).prop('indeterminate', true);
+                }
+            }
+
+            // Init on load
+            updateStates();
+        });
 </script>
+
+
+
 
 @endsection

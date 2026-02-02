@@ -129,57 +129,24 @@
             @enderror
         </div>
 
-        {{-- Target Gender --}}
-        <div class="col-md-6 mb-3">
-            <label for="target_gender">Target Gender <span class="text-danger">*</span></label>
-            <select name="target_gender" class="form-control @error('target_gender') is-invalid @enderror">
-                @php $genderOptions = ['Unisex','Male','Female']; @endphp
-                @foreach($genderOptions as $option)
-                    <option value="{{ $option }}" {{ old('target_gender', $product->target_gender) == $option ? 'selected' : '' }}>
-                        {{ $option }}
-                    </option>
-                @endforeach
-            </select>
-            @error('target_gender')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
 
-        {{-- Age Group --}}
-        <div class="col-md-6 mb-3">
-            <label for="age_group">Age Group <span class="text-danger">*</span></label>
-            <select name="age_group" class="form-control @error('age_group') is-invalid @enderror">
-                @php $ageOptions = ['All','Kids','Adults','Seniors']; @endphp
-                @foreach($ageOptions as $option)
-                    <option value="{{ $option }}" {{ old('age_group', $product->age_group) == $option ? 'selected' : '' }}>
-                        {{ $option }}
-                    </option>
-                @endforeach
-            </select>
-            @error('age_group')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
 
-        {{-- Health Concern --}}
-        <div class="col-md-6 mb-3">
-            <label for="health_concern">Health Concern</label>
-            <input type="text" name="health_concern" class="form-control @error('health_concern') is-invalid @enderror"
-                   value="{{ old('health_concern', $product->health_concern) }}">
-            @error('health_concern')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
+                    {{-- Selling Price --}}
+            <div class="col-md-6 mb-3">
+                <label for="selling_price">Selling Price <span class="text-danger">*</span></label>
+                <input type="text" name="selling_price" class="form-control @error('selling_price') is-invalid @enderror"
+                    value="{{ old('selling_price', $product->selling_price) }}">
+                @error('selling_price')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
-        {{-- Selling Price --}}
-        <div class="col-md-6 mb-3">
-            <label for="selling_price">Selling Price <span class="text-danger">*</span></label>
-            <input type="text" name="selling_price" class="form-control @error('selling_price') is-invalid @enderror"
-                   value="{{ old('selling_price', $product->selling_price) }}">
-            @error('selling_price')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
+
+                    
+
+
+
+
 
         {{-- Prescription Required --}}
         <div class="col-md-6 mb-3">
@@ -193,39 +160,117 @@
             @enderror
         </div>
 
-        {{-- Description --}}
-        <div class="col-md-12 mb-3">
-            <label for="description">Description <span class="text-danger">*</span></label>
-            <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="3">{{ old('description', $product->description) }}</textarea>
-            @error('description')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+
+
+                    {{-- Expiration Switch --}}
+            <div class="form-check form-switch mb-3">
+                <input type="checkbox" class="form-check-input" id="has_expiration" name="has_expiration"
+                    value="1" {{ old('has_expiration', $product->has_expiration) == 1 ? 'checked' : '' }}>
+                <label class="form-check-label" for="has_expiration">Has Expiration</label>
+            </div>
+
+
+
+            
+        {{-- TOGGLE TO OPEN ECOMMERCE PART --}}
+
+
+        <div class="form-check form-switch mb-4">
+            <input class="form-check-input" type="checkbox" id="is_ecommerce" name="is_ecommerce" value="1"
+                {{ old('is_ecommerce') ? 'checked' : '' }}>
+            <label class="form-check-label" for="is_ecommerce">
+                Ecommerce Product
+            </label>
         </div>
 
-        {{-- Expiration Switch --}}
-        <div class="form-check form-switch mb-3">
-            <input type="checkbox" class="form-check-input" id="has_expiration" name="has_expiration"
-                   value="1" {{ old('has_expiration', $product->has_expiration) == 1 ? 'checked' : '' }}>
-            <label class="form-check-label" for="has_expiration">Has Expiration</label>
+
+
+
+
+            {{-- FOR ECOMMERCE PART --}}
+        <div id="ecommerce-fields">
+
+            
+
+            {{-- Target Gender --}}
+            <div class="col-md-6 mb-3">
+                <label for="target_gender">Target Gender <span class="text-danger">*</span></label>
+                <select name="target_gender" id="target_gender" class="form-control @error('target_gender') is-invalid @enderror">
+                    @php $genderOptions = ['Unisex','Male','Female']; @endphp
+                    @foreach($genderOptions as $option)
+                        <option value="{{ $option }}" {{ old('target_gender', $product->target_gender) == $option ? 'selected' : '' }}>
+                            {{ $option }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('target_gender')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Age Group --}}
+            <div class="col-md-6 mb-3">
+                <label for="age_group">Age Group <span class="text-danger">*</span></label>
+                <select name="age_group" id="age_group" class="form-control @error('age_group') is-invalid @enderror">
+                    @php $ageOptions = ['All','Kids','Adults','Seniors']; @endphp
+                    @foreach($ageOptions as $option)
+                        <option value="{{ $option }}" {{ old('age_group', $product->age_group) == $option ? 'selected' : '' }}>
+                            {{ $option }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('age_group')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Health Concern --}}
+            <div class="col-md-6 mb-3">
+                <label for="health_concern">Health Concern</label>
+                <input type="text" id="health_concern" name="health_concern" class="form-control @error('health_concern') is-invalid @enderror"
+                    value="{{ old('health_concern', $product->health_concern) }}">
+                @error('health_concern')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+
+
+            {{-- Description --}}
+            <div class="col-md-12 mb-3">
+                <label for="description">Description <span class="text-danger">*</span></label>
+                <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" rows="3">{{ old('description', $product->description) }}</textarea>
+                @error('description')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+
         </div>
 
-        {{-- Product Image --}}
-        <div class="col-md-6 mb-3">
-            <label for="product_image">Product Image <span class="text-danger">*</span></label>
-            <input type="file" name="product_image" class="form-control @error('product_image') is-invalid @enderror">
-            @error('product_image')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
 
-        {{-- Current Image --}}
-        <div class="col-md-6 mb-3">
-            <label>Current Image</label>
-            <img src="{{ $product->product_image ? asset($product->product_image) : url('uploads/noimage.png') }}"
-                 class="rounded-circle avatar-lg img-thumbnail" alt="product-image">
-        </div>
+
+            {{-- Product Image --}}
+            <div class="col-md-6 mb-3">
+                <label for="product_image">Product Image </label>
+                <input type="file" name="product_image" class="form-control @error('product_image') is-invalid @enderror">
+                @error('product_image')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Current Image --}}
+            <div class="col-md-6 mb-3">
+                <label>Current Image</label>
+                <img src="{{ $product->product_image ? asset($product->product_image) : url('uploads/noimage.png') }}"
+                    class="rounded-circle avatar-lg img-thumbnail" alt="product-image">
+            </div>
 
     </div> <!-- end row -->
+
+
+
+
 
     <div class="text-end">
         <button type="submit" class="btn btn-success">Update Product</button>
@@ -251,6 +296,32 @@
 
 
 
+                <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const toggle = document.getElementById('is_ecommerce');
+                    const ecommerceFields = document.getElementById('ecommerce-fields');
+                    const requiredFields = ['target_gender', 'age_group','description'];
+
+                    function toggleEcommerceFields() {
+                        if (toggle.checked) {
+                            ecommerceFields.style.display = 'block';
+                            requiredFields.forEach(id => {
+                                document.getElementById(id).setAttribute('required', 'required', 'required');
+                            });
+
+                        } else {
+                            ecommerceFields.style.display = 'none';
+                            requiredFields.forEach(id => {
+                                document.getElementById(id).removeAttribute('required');
+                            });
+                        }
+                    }
+
+                    toggleEcommerceFields();
+                    toggle.addEventListener('change', toggleEcommerceFields);
+                });
+</script>
+
 
 
 
@@ -269,6 +340,7 @@
                     </script>
                                 
 
+
 <script type="text/javascript">
 $(document).ready(function () {
     $('#myForm').validate({
@@ -278,30 +350,38 @@ $(document).ready(function () {
                 minlength: 3,
                 maxlength: 100
             },
-            category_id: {
-                required: true
-            },
-            subcategory_id: {
-                required: true
-            },
-            brand_id: {
-                required: true
-            },
-            dosage_form: {
-                required: true
-            },
+            category_id: { required: true },
+            subcategory_id: { required: true },
+            brand_id: { required: true },
+            dosage_form: { required: true },
+
+
+
+            //  Ecommerce only
             age_group: {
-                required: true
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
             },
             target_gender: {
-                required: true
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
             },
             health_concern: {
-                required: true
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
             },
-            prescription_required: {
-                required: true
+
+            description: {
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
             },
+
+
+            prescription_required: { required: true },
             description: {
                 required: true,
                 minlength: 10
@@ -312,71 +392,45 @@ $(document).ready(function () {
                 min: 0
             },
             product_image: {
-                required: true,
                 extension: "jpg|jpeg|png|webp"
             }
+
+
         },
 
         messages: {
-            product_name: {
-                required: 'Please enter product name',
-                minlength: 'Product name must be at least 3 characters',
-                maxlength: 'Product name must not exceed 100 characters'
-            },
-            category_id: {
-                required: 'Please select a category'
-            },
-            subcategory_id: {
-                required: 'Please select a subcategory'
-            },
-            brand_id: {
-                required: 'Please select a brand'
-            },
-            dosage_form: {
-                required: 'Please select a dosage form'
-            },
             age_group: {
-                required: 'Please select an age group'
+                required: 'Age group is required for ecommerce products'
             },
             target_gender: {
-                required: 'Please select a target gender'
+                required: 'Target gender is required for ecommerce products'
             },
             health_concern: {
-                required: 'Please select a health concern'
-            },
-            prescription_required: {
-                required: 'Please select if prescription is required'
-            },
+                required: 'Health concern is required for ecommerce products'
+            }
             description: {
-                required: 'Please enter a description',
-                minlength: 'Description must be at least 10 characters'
-            },
-            selling_price: {
-                required: 'Please enter a selling price',
-                number: 'Please enter a valid number',
-                min: 'Price cannot be negative'
-            },
-            product_image: {
-                required: 'Please select a product image',
-                extension: 'Only image files (jpg, jpeg, png, webp) are allowed'
+                required: 'Description is required for ecommerce products'
             }
         },
 
         errorElement: 'span',
         errorPlacement: function (error, element) {
             error.addClass('invalid-feedback');
-            if (element.prop('type') === 'checkbox' || element.prop('type') === 'radio') {
-                element.closest('.form-group').append(error);
-            } else {
-                element.closest('.form-group').append(error);
-            }
+            element.closest('.form-group').append(error);
         },
-        highlight: function (element, errorClass, validClass) {
+        highlight: function (element) {
             $(element).addClass('is-invalid');
         },
-        unhighlight: function (element, errorClass, validClass) {
+        unhighlight: function (element) {
             $(element).removeClass('is-invalid');
         }
+    });
+
+    // Revalidate when toggle changes
+    $('#is_ecommerce').on('change', function () {
+        $('#age_group, #target_gender, #health_concern, #description').each(function () {
+            $(this).valid();
+        });
     });
 });
 </script>

@@ -18,18 +18,16 @@ class RoleController extends Controller
         // Fetch all permissions from the database
         $permissions = Permission::orderBy('group_name', 'asc')->get();
 
-
-
         // Return a view with the permissions data
         return view('pages.permissions.allPermissions', compact('permissions'));
     }
 
 
-    public function AddPermission(){
+        public function AddPermission(){
 
-        return view('pages.permissions.addPermission');
+            return view('pages.permissions.addPermission');
 
-    } // End Method 
+        } // End Method 
 
 
     public function StorePermission(Request $request){
@@ -241,6 +239,9 @@ public function UpdateRoles(Request $request)
 
 
 
+
+
+
     public function AddRolesPermission()
     {
         // Fetch all roles and permissions
@@ -296,7 +297,7 @@ public function UpdateRoles(Request $request)
         ];
 
         // Redirect back with a success message
-        return redirect()->route('all.roles')->with($notification);
+        return redirect()->route('all.roles.permission')->with($notification);
     }
 
 

@@ -48,8 +48,10 @@
                 <td>{{ $item->name }}</td>
                 <td>
                     @foreach($item->permissions as $perm)
-                        <span class="badge bg-primary me-1">{{ $perm->name }}</span>
+                        <span class="badge bg-primary me-1">{{ ucwords(str_replace('-', ' ',   $perm->name)) }}</span>
                     @endforeach
+
+
                 </td>   
                 <td>
                     @if($item->name === 'Super Admin')

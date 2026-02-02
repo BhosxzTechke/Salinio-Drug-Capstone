@@ -77,18 +77,16 @@ class User extends Authenticatable
     /**
      * Get the roles associated with the user.
      */
-    public static function getpermissionGroups() {
+        public static function getpermissionGroups() {
 
-            $PermissionGroups = DB::table('permissions')
-                ->select('group_name')
-                ->groupBy('group_name')
-                ->get();
-                
-            return $PermissionGroups;
+                $PermissionGroups = DB::table('permissions')
+                    ->select('group_name')
+                    ->groupBy('group_name')
+                    ->get();
+                    
+                return $PermissionGroups;
 
-
-
-    }
+        }
 
 
 
@@ -103,7 +101,6 @@ class User extends Authenticatable
 
 
         return $PermissionGroups;
-
 
 
     }

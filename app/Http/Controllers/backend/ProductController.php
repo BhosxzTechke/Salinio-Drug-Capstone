@@ -56,45 +56,43 @@ class ProductController extends Controller
 
 public function StoreProduct(Request $request)
 {
-    // Validate input
-    $validated = $request->validate([
-        'product_name' => [
-            'required',
-            'string',
-            'max:100',
-                Rule::unique('products')->where(function ($query) use ($request) {
-                    $query->where('brand_id', $request->brand_id);
-                    if ($request->filled('dosage_form')) {
-                        $query->where('dosage_form', $request->dosage_form);
-                    } else {
-                        $query->whereNull('dosage_form');
-                    }
-                })
-                ->ignore($request->id),
-        ],
+$validated = $request->validate([
+    'product_name' => [
+        'required',
+        'string',
+        'max:100',
+        Rule::unique('products')->where(function ($query) use ($request) {
+            $query->where('brand_id', $request->brand_id);
 
+            if ($request->filled('dosage_form')) {
+                $query->where('dosage_form', $request->dosage_form);
+            } else {
+                $query->whereNull('dosage_form');
+            }
+        })->ignore($request->id),
+    ],
 
+    'category_id' => 'required|integer|exists:categories,id',
+    'subcategory_id' => 'required|integer|exists:subcategories,id',
+    'brand_id' => 'required|integer|exists:brands,id',
+    'dosage_form' => 'nullable|string|max:50',
 
-        'category_id' => 'required|integer|exists:categories,id',
-        'subcategory_id' => 'required|integer|exists:subcategories,id',
-        'brand_id' => 'required|integer|exists:brands,id',
-        'description' => 'required|string|min:10',
-        'dosage_form' => 'nullable|string|max:50',
-        'target_gender' => 'required|string|max:50',
-        'age_group' => 'required|string|max:50',
-        'health_concern' => 'nullable|string|max:100',
-        'selling_price' => 'required|numeric|min:0',
-        'prescription_required' => 'nullable|boolean',
-        'product_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:20480', // 20MB max
+    // 🔥 Ecommerce-only
+    'is_ecommerce' => 'nullable|boolean',
+    'description' => 'required_if:is_ecommerce,1|nullable|string|min:1',
+    'target_gender' => 'required_if:is_ecommerce,1|string|max:50',
+    'age_group' => 'required_if:is_ecommerce,1|string|max:50',
+    'health_concern' => 'nullable|string|max:100',
 
-    ], [
-            'product_name.unique' => 'A product with the same name, brand, and dosage form already exists.',
-            'product_name.required' => 'Please enter the product name.',
-            'description.required' => 'Please enter a description (minimum 10 characters).',
-            'product_image.image' => 'Uploaded file must be an image.',
-            'product_image.mimes' => 'Image must be a JPG, JPEG, PNG, or WEBP file.',
-            'product_image.max' => 'Image must not exceed 20MB.',
-        ]);
+    'selling_price' => 'required|numeric|min:0',
+    'prescription_required' => 'nullable|boolean',
+    'product_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:20480',
+], [
+    'product_name.unique' => 'A product with the same name, brand, and dosage form already exists.',
+    'target_gender.required_if' => 'Target gender is required for ecommerce products.',
+    'age_group.required_if' => 'Age group is required for ecommerce products.',
+]);
+
 
 
     try {
@@ -130,12 +128,17 @@ public function StoreProduct(Request $request)
             'category_id' => $validated['category_id'],
             'subcategory_id' => $validated['subcategory_id'],
             'brand_id' => $validated['brand_id'],
-            'description' => $validated['description'],
             'has_expiration' => $request->has('has_expiration'),
             'dosage_form' => $validated['dosage_form'],
-            'target_gender' => $validated['target_gender'],
-            'age_group' => $validated['age_group'],
-            'health_concern' => $validated['health_concern'],
+
+            
+        // ECOMMERCE FIELDS PART
+            'target_gender' => $validated['target_gender'] ?? null,
+            'age_group' => $validated['age_group'] ?? null,
+            'health_concern' => $validated['health_concern'] ?? null,
+            'description' => $validated['description'] ?? null,
+
+
             'selling_price' => $validated['selling_price'],
             'prescription_required' => $validated['prescription_required'] ?? 0,
         ]);
@@ -272,12 +275,18 @@ public function UpdateProduct(Request $request)
             'brand_id'              => 'required|integer|exists:brands,id',
             'description'           => 'required|string|min:10',
             'dosage_form'           => 'required|string|max:50',
-            'target_gender'         => 'required|string|max:50',
-            'age_group'             => 'required|string|max:50',
-            'health_concern'        => 'nullable|string|max:100',
+
+            /// ECOMMERCE FIELDS VALIDATION PART
+            'target_gender' => 'required_if:is_ecommerce,1|string|max:50',
+            'age_group' => 'required_if:is_ecommerce,1|string|max:50',
+            'description' => 'required_if:is_ecommerce,1|nullable|string|min:10',
+            'health_concern' => 'nullable|string|max:100',
+
+
+
             'selling_price'         => 'required|numeric|min:0',
             'prescription_required' => 'nullable|boolean',
-            'product_image'         => 'required|image|mimes:jpg,jpeg,png,webp|max:20480',
+            'product_image'         => 'image|mimes:jpg,jpeg,png,webp|max:20480',
         ], [
             'product_name.unique' => 'A product with the same name, brand, and dosage form already exists.',
             'product_name.required' => 'Please enter the product name.',
@@ -300,15 +309,20 @@ public function UpdateProduct(Request $request)
             'category_id'           => $request->input('category_id'),
             'subcategory_id'        => $request->input('subcategory_id'),
             'brand_id'              => $request->input('brand_id'),
-            'description'           => $request->input('description'),
             'has_expiration'        => $request->has('has_expiration'),
             'dosage_form'           => $request->input('dosage_form'),
-            'target_gender'         => $request->input('target_gender'),
-            'age_group'             => $request->input('age_group'),
-            'health_concern'        => $request->input('health_concern'),
+
+            /// ECOMMERCE FIELDS FOR UPDATE
+            'target_gender'         => $request->input('target_gender') ?? null,
+            'age_group'             => $request->input('age_group') ?? null,
+            'health_concern'        => $request->input('health_concern') ?? null,
+            'description'           => $request->input('description') ?? null,
+
             'selling_price'         => $request->input('selling_price'),
             'prescription_required' => $request->input('prescription_required') ?? 0,
         ];
+
+
 
         // Handle Cloudinary image update
         if ($request->hasFile('product_image')) {

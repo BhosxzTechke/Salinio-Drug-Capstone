@@ -14,15 +14,19 @@
                                 <div class="page-title-box">
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
-
+                                                <a href="{{ route('add.heroslider') }}" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#login-modal">Add Slider</a>
                                         </ol>
 
                                     </div>
-                                    <h4 class="page-title">Hero Slide Table</h4>
+                                    <h4 class="page-title">Banner & Slider</h4>
                                 </div>
                             </div>
                         </div>     
                         <!-- end page title --> 
+
+
+
+
 
                         <div class="row">
                             <div class="col-12">

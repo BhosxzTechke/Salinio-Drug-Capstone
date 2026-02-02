@@ -17,11 +17,11 @@
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
                                             <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                            <li class="breadcrumb-item active">Business Name</li>
+                                            <li class="breadcrumb-item active">Title System</li>
                                         </ol>
                                     </div>
                                     
-                                    <h4 class="page-title">Update Business Name</h4>
+                                    <h4 class="page-title">Change Title Name</h4>
                                 </div>
                             </div>
                         </div>     
@@ -45,12 +45,11 @@
                     <input type="hidden" name="id" value="{{ $businessTitle->id }}">
 
 
-                    <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Business Name Info</h5>
+                    <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Title Name</h5>
                     <div class="row">
                         <div class="col-md-6">
 
                             <div class="mb-3">
-                                <label for="brand" class="">Business Title Name</label>
                                 <input type="text" value="{{ $businessTitle->business_name }}" name="business_name" class="form-control @error('brand') is-invalid @enderror" id="brand" placeholder="Enter Business name">
                         
                                 @error('brand')

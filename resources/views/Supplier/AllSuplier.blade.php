@@ -59,17 +59,14 @@
 
 
                                                     <td>
-                                                        @if(Auth::user()->can('edit-supplier'))
-                                                        <a href="{{ route('edit.supplier', $data->id )}}" class="btn btn-success rounded-pill waves-effect waves-light" title="Edit"><i class="fa-solid fa-square-pen"></i> Edit</a>
-                                                        @endif
+                                                        <a href="{{ route('edit.supplier', $data->id )}}" class="btn btn-success rounded-pill waves-effect waves-light" title="Edit"><i class="fa-solid fa-square-pen">
+                                                            </i> Edit</a>
 
-                                                        @if(Auth::user()->can('delete-supplier'))
-                                                        <a href="{{ route('delete.supplier', $data->id ) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash"></i> Delete</a>
-                                                        @endif
+                                                        <a href="{{ route('delete.supplier', $data->id ) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash">
+                                                            </i> Delete</a>
 
-                                                        @if(Auth::user()->can('view-supplier-details'))
-                                                        <a href="{{ route('details.supplier', $data->id ) }}" class="btn btn-primary rounded-pill waves-effect waves-light" id="details"  title="Details"><i class="fa-solid fa-circle-info"></i> Details</a>
-                                                        @endif
+                                                        <a href="{{ route('details.supplier', $data->id ) }}" class="btn btn-primary rounded-pill waves-effect waves-light" id="details"  title="Details"><i class="fa-solid fa-circle-info">
+                                                            </i> Details</a>
                                                         
                                                     </td>
                                                 </tr>

@@ -26,32 +26,28 @@
 <div class="row">
     
 
-  <div class="col-lg-8 col-xl-12">
-<div class="card">
-    <div class="card-body">
-                                    
-                                      
-                                         
-                                           
+    <div class="col-lg-8 col-xl-12">
+    <div class="card">
+        <div class="card-body">
+                                        
+        <!-- end timeline content-->
 
-    <!-- end timeline content-->
+        <div class="tab-pane" id="settings">
+            <form id="myForm" method="post" action="{{ route('permission.store') }}" enctype="multipart/form-data">
+                @csrf
 
-    <div class="tab-pane" id="settings">
-        <form id="myForm" method="post" action="{{ route('permission.store') }}" enctype="multipart/form-data">
-            @csrf
+                <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Add Permission</h5>
 
-            <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Add Permission</h5>
-
-            <div class="row">
+                <div class="row">
 
 
-    <div class="col-md-6">
-        <div class="form-group mb-3">
-            <label for="firstname" class="form-label">Permission Name</label>
-            <input type="text" name="name" class="form-control"   >
-           
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label for="firstname" class="form-label">Permission Name</label>
+                <input type="text" name="name" class="form-control"   >
+            
+            </div>
         </div>
-    </div>
 
 
                 <div class="col-md-6">
@@ -63,22 +59,25 @@
     <option value="audit">Audit Trail</option>
     <option value="backup">Backup</option>
     <option value="brand">Brand</option>
-    <option value="category">Category</option>
+    <option value="categories">Category</option>
+    <option value="chat-customer">Chat Customer</option>
+    <option value="customer-orders">Customer Orders</option>
     <option value="commerce">Commerce</option>
+    <option value="dashboard">Dashboard</option>
     <option value="expense">Expense</option>
     <option value="inventory">Inventory</option>
-    <option value="orders">Orders</option>
-    <option value="return-order">Return Orders</option>
-    <option value="permission">Roles and Permission</option>
-    <option value="pos">POS</option>
-    <option value="product">Product</option>
-    <option value="purchase-order">Purchase Order</option>
+    <option value="permissions">Permissions</option>
+    <option value="point-of-sale">POS</option>
+    <option value="products">Product</option>
+    <option value="purchase-orders">Purchase Order</option>
     <option value="reports">Reports</option>
+    <option value="returns">Return Orders</option>
     <option value="roles">Roles</option>
-    <option value="inventory">Inventory</option>
     <option value="sub-category">Sub-Category</option>
-    <option value="supplier">Supplier</option>
-    <option value="user-account">User Account</option>
+    <option value="suppliers">Suppliers</option>
+    <option value="system-settings">System Settings</option>
+    <option value="user-accounts">User Accounts</option>
+
 </select>
 
         </div>

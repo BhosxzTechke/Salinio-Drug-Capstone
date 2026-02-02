@@ -3,6 +3,13 @@
 @section('admin')
 
 
+<style>
+    #ecommerce-fields {
+        display: none;
+    }
+</style>
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 
@@ -57,6 +64,11 @@
     <h5 class="mb-4 text-uppercase">
         <i class="mdi mdi-account-circle me-1"></i> Product Info
     </h5>
+
+
+
+
+
 
     <div class="row">
 
@@ -191,9 +203,6 @@
         </div>
 
 
-                        {{-- FOR ECOMMERCE PART --}}
-
-
 
     {{-- Expiration Switch --}}
     <div class="form-check form-switch mb-3">
@@ -202,79 +211,106 @@
         <label class="form-check-label" for="has_expiration">Has Expiration</label>
     </div>
 
-        {{-- Target Gender --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="target_gender">Target Gender <span class="text-danger">*</span></label>
-                <select name="target_gender"
-                        class="form-control @error('target_gender') is-invalid @enderror"
-                        id="target_gender">
-                    <option selected disabled>Select Gender</option>
-                    @foreach (['Unisex', 'Male', 'Female'] as $gender)
-                        <option value="{{ $gender }}" {{ old('target_gender') == $gender ? 'selected' : '' }}>
-                            {{ $gender }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('target_gender')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
+
+
+
+    
+        {{-- TOGGLE TO OPEN ECOMMERCE PART --}}
+
+
+        <div class="form-check form-switch mb-4">
+            <input class="form-check-input" type="checkbox" id="is_ecommerce" name="is_ecommerce" value="1"
+                {{ old('is_ecommerce') ? 'checked' : '' }}>
+            <label class="form-check-label" for="is_ecommerce">
+                Ecommerce Product
+            </label>
         </div>
 
 
 
+                        {{-- FOR ECOMMERCE PART --}}
+        <div id="ecommerce-fields">
 
-                {{-- Age Group --}}
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="age_group">Age Group <span class="text-danger">*</span></label>
-                    <select name="age_group"
-                            class="form-control @error('age_group') is-invalid @enderror"
-                            id="age_group">
-                        <option selected disabled>Select Age Group</option>
-                        @foreach (['All', 'Kids', 'Adults', 'Seniors'] as $group)
-                            <option value="{{ $group }}" {{ old('age_group') == $group ? 'selected' : '' }}>
-                                {{ $group }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('age_group')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
+
+                        {{-- Target Gender --}}
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="target_gender">Target Gender <span class="text-danger">*</span></label>
+                                <select name="target_gender"
+                                        class="form-control @error('target_gender') is-invalid @enderror"
+                                        id="target_gender">
+                                    <option selected disabled>Select Gender</option>
+                                    @foreach (['Unisex', 'Male', 'Female'] as $gender)
+                                        <option value="{{ $gender }}" {{ old('target_gender') == $gender ? 'selected' : '' }}>
+                                            {{ $gender }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('target_gender')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+
+
+
+                                {{-- Age Group --}}
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="age_group">Age Group <span class="text-danger">*</span></label>
+                                    <select name="age_group"
+                                            class="form-control @error('age_group') is-invalid @enderror"
+                                            id="age_group">
+                                        <option selected disabled>Select Age Group</option>
+                                        @foreach (['All', 'Kids', 'Adults', 'Seniors'] as $group)
+                                            <option value="{{ $group }}" {{ old('age_group') == $group ? 'selected' : '' }}>
+                                                {{ $group }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('age_group')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+
+
+
+                                    {{-- Health Concern --}}
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="health_concern">Health Concern</label>
+                                <input type="text" name="health_concern"
+                                    value="{{ old('health_concern') }}"
+                                    class="form-control @error('health_concern') is-invalid @enderror"
+                                    id="health_concern">
+                                @error('health_concern')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+
+
+
+
+                        {{-- Description --}}
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label for="description">Description <span class="text-danger">*</span></label>
+                                <textarea name="description"
+                                        class="form-control @error('description') is-invalid @enderror"
+                                        rows="3" id="description">{{ old('description') }}</textarea>
+                                @error('description')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+
                 </div>
-            </div>
-
-
-
-
-                    {{-- Health Concern --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="health_concern">Health Concern</label>
-                <input type="text" name="health_concern"
-                       value="{{ old('health_concern') }}"
-                       class="form-control @error('health_concern') is-invalid @enderror"
-                       id="health_concern">
-                @error('health_concern')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-
-
-        {{-- Description --}}
-        <div class="col-md-12">
-            <div class="form-group mb-3">
-                <label for="description">Description <span class="text-danger">*</span></label>
-                <textarea name="description"
-                          class="form-control @error('description') is-invalid @enderror"
-                          rows="3" id="description">{{ old('description') }}</textarea>
-                @error('description')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
 
 
 
@@ -295,24 +331,24 @@
 
 
 
-        {{-- Preview --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label>Preview</label>
-                <img id="showImage" src="{{ url('uploads/noimage.png') }}"
-                     class="rounded-circle avatar-lg img-thumbnail"
-                     alt="profile-image">
+            {{-- Preview --}}
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label>Preview</label>
+                    <img id="showImage" src="{{ url('uploads/noimage.png') }}"
+                        class="rounded-circle avatar-lg img-thumbnail"
+                        alt="profile-image">
+                </div>
             </div>
+
+        </div> <!-- end row -->
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-success waves-effect waves-light mt-2">
+                <i class="mdi mdi-content-save"></i> Save Product
+            </button>
         </div>
-
-    </div> <!-- end row -->
-
-    <div class="text-end">
-        <button type="submit" class="btn btn-success waves-effect waves-light mt-2">
-            <i class="mdi mdi-content-save"></i> Save Product
-        </button>
-    </div>
-</form>
+    </form>
 
 
 
@@ -325,6 +361,10 @@
                             </div> <!-- end col -->
                         </div>
                         <!-- end row-->
+
+
+
+
 
                     </div> <!-- container -->
 
@@ -353,13 +393,37 @@
 
 
 
+                <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const toggle = document.getElementById('is_ecommerce');
+                    const ecommerceFields = document.getElementById('ecommerce-fields');
+                    const requiredFields = ['target_gender', 'age_group','description'];
+
+                    function toggleEcommerceFields() {
+                        if (toggle.checked) {
+                            ecommerceFields.style.display = 'block';
+                            requiredFields.forEach(id => {
+                                document.getElementById(id).setAttribute('required', 'required', 'required');
+                            });
+
+                        } else {
+                            ecommerceFields.style.display = 'none';
+                            requiredFields.forEach(id => {
+                                document.getElementById(id).removeAttribute('required');
+                            });
+                        }
+                    }
+
+                    toggleEcommerceFields();
+                    toggle.addEventListener('change', toggleEcommerceFields);
+                });
+</script>
 
 
 
 
 
 
-                            
 <script type="text/javascript">
 $(document).ready(function () {
     $('#myForm').validate({
@@ -369,30 +433,41 @@ $(document).ready(function () {
                 minlength: 3,
                 maxlength: 100
             },
-            category_id: {
-                required: true
-            },
-            subcategory_id: {
-                required: true
-            },
-            brand_id: {
-                required: true
-            },
-            dosage_form: {
-                required: true
-            },
+            category_id: { required: true },
+            subcategory_id: { required: true },
+            brand_id: { required: true },
+            dosage_form: { required: true },
+
+
+
+            //  Ecommerce only
             age_group: {
-                required: true
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
             },
             target_gender: {
-                required: true
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
             },
             health_concern: {
-                required: true
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
             },
-            prescription_required: {
-                required: true
+
+            description: {
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
             },
+
+
+
+
+
+            prescription_required: { required: true },
             description: {
                 required: true,
                 minlength: 10
@@ -409,69 +484,41 @@ $(document).ready(function () {
         },
 
         messages: {
-            product_name: {
-                required: 'Please enter product name',
-                minlength: 'Product name must be at least 3 characters',
-                maxlength: 'Product name must not exceed 100 characters'
-            },
-            category_id: {
-                required: 'Please select a category'
-            },
-            subcategory_id: {
-                required: 'Please select a subcategory'
-            },
-            brand_id: {
-                required: 'Please select a brand'
-            },
-            dosage_form: {
-                required: 'Please select a dosage form'
-            },
             age_group: {
-                required: 'Please select an age group'
+                required: 'Age group is required for ecommerce products'
             },
             target_gender: {
-                required: 'Please select a target gender'
+                required: 'Target gender is required for ecommerce products'
             },
             health_concern: {
-                required: 'Please select a health concern'
-            },
-            prescription_required: {
-                required: 'Please select if prescription is required'
-            },
+                required: 'Health concern is required for ecommerce products'
+            }
             description: {
-                required: 'Please enter a description',
-                minlength: 'Description must be at least 10 characters'
-            },
-            selling_price: {
-                required: 'Please enter a selling price',
-                number: 'Please enter a valid number',
-                min: 'Price cannot be negative'
-            },
-            product_image: {
-                required: 'Please select a product image',
-                extension: 'Only image files (jpg, jpeg, png, webp) are allowed'
+                required: 'Description is required for ecommerce products'
             }
         },
 
         errorElement: 'span',
         errorPlacement: function (error, element) {
             error.addClass('invalid-feedback');
-            if (element.prop('type') === 'checkbox' || element.prop('type') === 'radio') {
-                element.closest('.form-group').append(error);
-            } else {
-                element.closest('.form-group').append(error);
-            }
+            element.closest('.form-group').append(error);
         },
-        highlight: function (element, errorClass, validClass) {
+        highlight: function (element) {
             $(element).addClass('is-invalid');
         },
-        unhighlight: function (element, errorClass, validClass) {
+        unhighlight: function (element) {
             $(element).removeClass('is-invalid');
         }
     });
+
+    // Revalidate when toggle changes
+    $('#is_ecommerce').on('change', function () {
+        $('#age_group, #target_gender, #health_concern, #description').each(function () {
+            $(this).valid();
+        });
+    });
 });
 </script>
-
 
 
 

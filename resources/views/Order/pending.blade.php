@@ -81,32 +81,24 @@
 
 
 <td>
-    {{-- Own Rider Logic --}}
-    @if($data->courier === 'own_rider')
-        @if($data->delivery_status === 'pending')
-            <a href="{{ route('assigned.Riders', $data->id) }}" class="btn btn-sm btn-info">Assign</a>
-            <a href="{{ route('details', $data->id) }}" class="btn btn-sm btn-secondary">View Details</a>
-            <button class="btn btn-sm btn-danger mark-cancelled-order" data-id="{{ $data->id }}">Cancel</button>
-        @elseif($data->delivery_status === 'assigned')
-            <span class="badge bg-primary">Assigned</span>
-            <a href="{{ route('rider.show', $data->rider_id) }}" class="btn btn-sm btn-outline-info">View Rider</a>
-            <a href="{{ route('details', $data->id) }}" class="btn btn-sm btn-secondary">View Details</a>
-        @endif
 
 
 
         {{-- J&T Logic --}}
-        @elseif($data->courier === 'jnt')
+        @if($data->courier === 'jnt')
+
             {{-- No tracking number & pending --}}
-            @if(!$data->tracking_number && $data->delivery_status === 'pending')
-                <a href="{{ route('confirm.Mark.Order', $data->id)}}" class="btn btn-sm btn-success mark-Confirm-Order">Confirm Order</a>
-                <a href="{{ route('details', $data->id) }}" class="btn btn-sm btn-secondary">View Details</a>
-                <button class="btn btn-sm btn-danger mark-cancelled-order" data-id="{{ $data->id }}">Cancel</button>
+                @if(!$data->tracking_number && $data->delivery_status === 'pending')
+                    <a href="{{ route('confirm.Mark.Order', $data->id)}}" class="btn btn-sm btn-success mark-Confirm-Order">Confirm Order</a>
+                    <a href="{{ route('details', $data->id) }}" class="btn btn-sm btn-secondary">View Details</a>
+                    <button class="btn btn-sm btn-danger mark-cancelled-order" data-id="{{ $data->id }}">Cancel</button>
 
 
-                
-            {{-- Ready for shipment (tracking may or may not exist) --}}
-            @elseif($data->delivery_status === 'ready_for_shipment')
+
+                    {{-- AFTER CONFIRM THE STATUS IS READY FOR SHIPMENT NA SO ELSE IF RUN --}}
+                    
+                {{-- Ready for shipment (tracking may or may not exist) --}}
+                @elseif($data->delivery_status === 'ready_for_shipment')
 
 
                     <input type="text"
@@ -114,11 +106,6 @@
                         data-order-id="{{ $data->id }}"
                         placeholder="Enter J&T Tracking Number"
                         value="{{ $tracking_number ?? '' }}">
-{{-- 
-                <button class="btn btn-sm btn-success save-tracking-btn"
-                        data-order-id="{{ $data->id }}">
-                    {{ $data->tracking_number ? 'Update Tracking' : 'Save Tracking' }}
-                </button> --}}
 
                     <button class="btn btn-sm btn-outline-primary print-label-btn {{ $tracking_number ? '' : 'd-none' }}"
                             data-order-id="{{ $data->id }}">
@@ -131,14 +118,13 @@
                     </button>
 
 
-        @else
-            <span class="text-muted">Waiting for tracking number</span>
-        @endif
+                @else
+                    <span class="text-muted">Waiting for tracking number</span>
+                @endif
 
-    {{-- Other couriers --}}
-    @else
-        <span class="text-muted">Delivery status: {{ ucfirst($data->delivery_status) }}</span>
     @endif
+
+
 </td>
 
 
