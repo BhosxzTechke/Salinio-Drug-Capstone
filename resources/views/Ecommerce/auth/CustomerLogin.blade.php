@@ -2,6 +2,22 @@
 
 @section('content')
 
+
+  <style>
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: #111827; /* gray-900 */
+      box-shadow: 0 0 0px 1000px white inset;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+
+
+  </style>
+
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 <div class="min-h-screen relative bg-gradient-to-r from-green-200 via-blue-100 to-white flex items-center justify-center overflow-hidden">
@@ -28,6 +44,7 @@
 
 
         <div class="bg-white rounded-md shadow-sm -space-y-px">
+
           <div class="form-group mb-4">
             <label for="email" class="sr-only">Email / Name / Phone</label>
             <input id="login" name="login" type="login" autocomplete="login" required
