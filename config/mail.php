@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'resend'),
+    'default' => env('MAIL_MAILER', 'sendgrid'),
 
     /*
     |--------------------------------------------------------------------------
@@ -53,22 +53,23 @@ return [
                                     ],
 
 
-                        'resend' => [
-                            'transport' => 'resend',
+                            'sendgrid' => [
+                            'transport' => 'sendgrid',
+                            'api_key' => env('SENDGRID_API_KEY'),
                         ],
 
 
 
-                        'mailtrap' => [
-                            'transport' => 'smtp',
-                            'host' => env('MAILTRAP_HOST', 'sandbox.smtp.mailtrap.io'),
-                            'port' => env('MAILTRAP_PORT', 2525),
-                            'encryption' => env('MAIL_ENCRYPTION', null),
-                            'username' => env('MAILTRAP_USERNAME'),
-                            'password' => env('MAILTRAP_PASSWORD'),
-                            'timeout' => null,
-                            'auth_mode' => null,
-                        ],
+                        // 'mailtrap' => [
+                        //     'transport' => 'smtp',
+                        //     'host' => env('MAILTRAP_HOST', 'sandbox.smtp.mailtrap.io'),
+                        //     'port' => env('MAILTRAP_PORT', 2525),
+                        //     'encryption' => env('MAIL_ENCRYPTION', null),
+                        //     'username' => env('MAILTRAP_USERNAME'),
+                        //     'password' => env('MAILTRAP_PASSWORD'),
+                        //     'timeout' => null,
+                        //     'auth_mode' => null,
+                        // ],
                         
 
 

@@ -559,27 +559,26 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-    Route::controller(PurchaseOrderController::class)->group(function () {
+            Route::controller(PurchaseOrderController::class)->group(function () {
 
 
-    //Showing form for purchase order
-    Route::get('/Purchase/Order', 'ShowPurchaseOrder')->name('purchase.order')->middleware('permission:create-purchase-order');
+            //Showing form for purchase order
+            Route::get('/Purchase/Order', 'ShowPurchaseOrder')->name('purchase.order');
 
-    Route::get('/Purchase/test', 'TestPurchaseCart');
-
-
-    // Submit purchase order
-
-    Route::post('/Purchase/Order', 'SavePurchaseOrder')->name('save.purchaseOrder');
+            Route::get('/Purchase/test', 'TestPurchaseCart');
 
 
-    /// get all and put in the table for viewing only
-    Route::get('all/Purchase/Order', 'AllPurchaseOrder')->name('all.purchase.order')->middleware('permission:view-all-purchase-order');
+            // Submit purchase order
+
+            Route::post('/Purchase/Order', 'SavePurchaseOrder')->name('save.purchaseOrder');
 
 
-    /// get all and Have a received button IN TABLE
-    Route::get('all/Pending/Order', 'AllPendingOrder')->name('all.pending.order')->middleware('permission:view-all-pending-order');
+            /// get all and put in the table for viewing only
+            Route::get('all/Purchase/Order', 'AllPurchaseOrder')->name('all.purchase.order');
 
+
+            /// get all and Have a received button IN TABLE
+            Route::get('all/Pending/Order', 'AllPendingOrder')->name('all.pending.order');
 
 
 
