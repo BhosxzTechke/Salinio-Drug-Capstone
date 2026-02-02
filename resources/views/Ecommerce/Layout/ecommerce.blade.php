@@ -36,6 +36,8 @@
 
 <body class="bg-gray-100 overflow-x-hidden">
 
+
+
 <!-- GLOBAL FULLSCREEN LOADER -->
 <div id="global-loader" aria-hidden="true"
      class="hidden fixed inset-0 z-[9999] items-center justify-center bg-black bg-opacity-60"
@@ -146,44 +148,48 @@
 
 
 
-<div class="min-h-screen flex flex-col">
 
 
 <!-- Page Content -->
-    <main class="flex-1 w-full px-4 py-4 pb-32 sm:px-6 lg:px-10">
+    <main class="flex-1 px-0 py-0 pb-0 sm:px-6 lg:px-0">
 
+    {{-- 
+        <!-- PAGE CONTENT -->
+            <main class="flex-1 px-4 py-4 pb-24 sm:px-6 lg:px-10"> --}}
 
-        {{-- <!-- PAGE CONTENT -->
-        <main class="flex-1 px-4 py-4 pb-24 sm:px-6 lg:px-10">
-            --}}
 
 
         @yield('content')
 
 
-@php
-    $customer = auth()->guard('customer')->user();
-@endphp
+        @php
+            $customer = auth()->guard('customer')->user();
+        @endphp
 
-<script
-    src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
-    data-name="wonderchat-seo"
-    data-address="app.wonderchat.io"
-    data-id="cmkxnhttc0n0wi5krxp0dqty9"
-    data-widget-size="small"
-    data-widget-button-size="normal"
+        <script
+            src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
+            data-name="wonderchat-seo"
+            data-address="app.wonderchat.io"
+            data-id="cmkxnhttc0n0wi5krxp0dqty9"
+            data-widget-size="small"
+            data-widget-button-size="normal"
 
-    {{-- Visitor data --}}
-    @if($customer)
-        data-user-id="customer_{{ $customer->id }}"
-        data-user-name="{{ $customer->name }}"
-        data-user-email="{{ $customer->email }}"
-    @endif
+            {{-- Visitor data --}}
+            @if($customer)
+                data-user-id="customer_{{ $customer->id }}"
+                data-user-name="{{ $customer->name }}"
+                data-user-email="{{ $customer->email }}"
+            @endif
 
-    defer
-></script>
+            defer
+        ></script>
 
 
+
+</main>
+
+
+    @include('Ecommerce.Layout.footer')
 
 
 
@@ -215,11 +221,6 @@
         });
     </script> --}}
 
-</main>
-
-
-
-    @include('Ecommerce.Layout.footer')
 
     
 

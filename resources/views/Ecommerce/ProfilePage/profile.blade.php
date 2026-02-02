@@ -2,10 +2,8 @@
 
 @section('content')
 
-
-{{-- 
         <!-- center horizontally only -->
-        <div class="max-w-7xl mx-auto"> --}}
+    <div class="max-w-7xl pb-5 pt-2 mx-auto"> 
 
 
 
