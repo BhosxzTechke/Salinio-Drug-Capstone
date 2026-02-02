@@ -28,7 +28,7 @@ class SupplierConfirmationController extends Controller
                     ->whereNull('supplier_confirmed_at')
                     ->firstOrFail();
 
-                return view('supplier.confirm', compact('purchase'));
+                return view('Supplier.confirm', compact('purchase'));
             }
 
 
@@ -57,7 +57,7 @@ class SupplierConfirmationController extends Controller
                     'status' => 'confirmed',
                 ]);
 
-                return view('supplier.confirm-success');
+                return view('Supplier.confirm-success');
             }
 
 
