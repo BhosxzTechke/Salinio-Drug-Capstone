@@ -580,77 +580,112 @@ public function UpdateAdmin(Request $request)
 
     // all backup database
 
-            public function BackupDatabase() {
+
+            // public function BackupDatabase() {
 
 
-                return view('backup.backup_database')->with('files',File::files(storage_path('app/POS-Ecommerce')));
-            }
+            //     return view('backup.backup_database')->with('files',File::files(storage_path('app/POS-Ecommerce')));
+            // }
 
 
-public function BackupNow()
-{
-    // Ensure directory exists
-    if (!file_exists(storage_path('app\\POS-Ecommerce'))) {
-        mkdir(storage_path('app\\POS-Ecommerce'), 0755, true);
+                //             public function BackupNow()
+                // {
+                //     // Ensure directory exists
+                //     if (!file_exists(storage_path('app\\POS-Ecommerce'))) {
+                //         mkdir(storage_path('app\\POS-Ecommerce'), 0755, true);
+                //     }
+
+
+                //     // Dispatch job instead of running backup inline
+                //     dispatch(new RunBackup());
+
+                //     $notification = [
+                //         'message' => 'Backup started in background. Check logs for progress.',
+                //         'alert-type' => 'success'
+                //     ];
+
+                //     return redirect()->back()->with($notification);
+                // }
+
+
+
+                public function BackupDatabase()
+                {
+                    $path = storage_path('app/POS-Ecommerce');
+
+                    if (!file_exists($path)) {
+                        return view('backup.backup_database')->with('files', []);
+                    }
+
+                    return view('backup.backup_database')->with('files', File::files($path));
+                }
+
+
+
+                public function BackupNow()
+                    {
+                        $backupPath = storage_path('app/POS-Ecommerce');
+
+                        if (!file_exists($backupPath)) {
+                            mkdir($backupPath, 0755, true);
+                        }
+
+                        dispatch(new RunBackup());
+
+                        $notification = [
+                            'message' => 'Backup started in background. Check logs for progress.',
+                            'alert-type' => 'success'
+                        ];
+
+                        return redirect()->back()->with($notification);
+                    }
+
+
+
+
+                    public function DownloadDatabase($getFilename)
+                    {
+                        $path = storage_path('app/POS-Ecommerce/' . $getFilename);
+
+                        if (!file_exists($path)) {
+                            return redirect()->back()->with([
+                                'message' => 'File not found.',
+                                'alert-type' => 'error'
+                            ]);
+                        }
+
+                        return response()->download($path);
+                    }
+
+
+
+
+                    public function DeleteDatabase($getFilename){
+
+                    $path = storage_path('app\\POS-Ecommerce/'.$getFilename);
+
+                    if (file_exists($path)) {
+                            storage::delete('POS-Ecommerce/'.$getFilename);
+
+                            $notification = array(
+                                'message' => 'Database Deleted Successfully',
+                                'alert-type' => 'success'
+                            );  
+
+                            return redirect()->back()->with($notification);
+                        } else {
+                            $notification = array(
+                                'message' => 'No Database Found',
+                                'alert-type' => 'error'
+                            );  
+
+                            return redirect()->back()->with($notification);
+                        }
+
+
+
+
     }
-
-    // Dispatch job instead of running backup inline
-    dispatch(new RunBackup());
-
-    $notification = [
-        'message' => 'Backup started in background. Check logs for progress.',
-        'alert-type' => 'success'
-    ];
-
-    return redirect()->back()->with($notification);
-}
-
-
-
-
-        public function DownloadDatabase($getFilename)
-        {
-            $path = storage_path('app/POS-Ecommerce/' . $getFilename);
-
-            if (!file_exists($path)) {
-                return redirect()->back()->with([
-                    'message' => 'File not found.',
-                    'alert-type' => 'error'
-                ]);
-            }
-
-            return response()->download($path);
-        }
-
-
-
-
-    public function DeleteDatabase($getFilename){
-
-    $path = storage_path('app\\POS-Ecommerce/'.$getFilename);
-
-    if (file_exists($path)) {
-            storage::delete('POS-Ecommerce/'.$getFilename);
-
-            $notification = array(
-                'message' => 'Database Deleted Successfully',
-                'alert-type' => 'success'
-            );  
-
-            return redirect()->back()->with($notification);
-        } else {
-            $notification = array(
-                'message' => 'No Database Found',
-                'alert-type' => 'error'
-            );  
-
-            return redirect()->back()->with($notification);
-        }
-
-
-
-
- }
 
 
 
