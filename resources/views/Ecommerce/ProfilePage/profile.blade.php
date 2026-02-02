@@ -3,18 +3,20 @@
 @section('content')
 
 
+{{-- 
+        <!-- center horizontally only -->
+        <div class="max-w-7xl mx-auto"> --}}
 
 
-<div class="min-h-screen bg-base-200 p-6 pb-16 flex justify-center bg-slate-50">
-<div class="min-h-screen flex flex-col bg-slate-50">
-    <!-- Profile Header -->
-    <div class="card bg-base-100 shadow-xl mb-6 bg-slate-50">
-      <div class="card-body flex flex-col md:flex-row items-center gap-6">
-        <div class="avatar">
-          <div class="w-24 rounded-full">
-            <img src="{{ asset(Auth::guard('customer')->user()->image ?? 'uploads/noimage.png') }}" alt="User Avatar" />
-          </div>
-        </div>
+
+        <!-- Profile Header -->
+        <div class="card bg-base-100 shadow-xl mb-6 bg-slate-50">
+          <div class="card-body flex flex-col md:flex-row items-center gap-6">
+            <div class="avatar">
+              <div class="w-24 rounded-full">
+                <img src="{{ asset(Auth::guard('customer')->user()->image ?? 'uploads/noimage.png') }}" alt="User Avatar" />
+              </div>
+            </div>
         <div class="flex-1 text-center md:text-left">
           <h2 class="text-2xl font-bold">{{ Auth::guard('customer')->user()->name }}</h2>
           <p class="text-sm text-gray-500">{{ Auth::guard('customer')->user()->email }}</p>
@@ -51,7 +53,7 @@
 
 
     <!-- Tabs -->
-    <div role="tablist" class="tabs tabs-bordered w-full h-10 sm:h-12 md:h-14 lg:h-16">
+    <div role="tablist" class="tabs tabs-bordered w-full ">
     
     
       <input type="radio" name="profile_tabs" role="stab" class="tab text-green-500 [checked]:text-black text-xs sm:text-sm md:text-base lg:text-lg"  aria-label="Account Info" checked />
@@ -64,21 +66,21 @@
 
 
             
-            <div>
-              <label class="label text-gray-600">Name</label>
-              <input type="text" value="{{ Auth::guard('customer')->user()->name }}" class="input input-bordered w-full bg-white" readonly/>
-            </div>
-            <div>
-              <label class="label text-gray-600">Email</label>
-              <input type="email" value="{{ Auth::guard('customer')->user()->email }}" class="input input-bordered w-full bg-white" readonly/>
-            </div>
-            <div>
-              <label class="label text-gray-600">Phone</label>
-              <input type="tel" value="{{ Auth::guard('customer')->user()->phone }}" class="input input-bordered w-full bg-white" readonly/>
+                <div>
+                  <label class="label text-gray-800">Name</label>
+                  <input type="text" value="{{ Auth::guard('customer')->user()->name }}" class="input input-bordered w-full bg-white" readonly/>
+                </div>
+                <div>
+                  <label class="label text-gray-800">Email</label>
+                  <input type="email" value="{{ Auth::guard('customer')->user()->email }}" class="input input-bordered w-full bg-white" readonly/>
+                </div>
+                <div>
+                  <label class="label text-gray-800">Phone</label>
+                  <input type="tel" value="{{ Auth::guard('customer')->user()->phone }}" class="input input-bordered w-full bg-white" readonly/>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
 
 
@@ -161,7 +163,12 @@
 
 
 
+
+
+
 <!-- Cancel / Refund -->
+
+
               <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">
 
                 {{-- Pending orders can be cancelled --}}
@@ -226,23 +233,28 @@
 
 
 
-<!-- Tab -->
-<input 
-  type="radio" 
-  name="profile_tabs" 
-  role="tab" 
-  class="tab text-green-500 [checked]:text-black text-xs sm:text-sm md:text-base lg:text-lg" 
-  aria-label="Cancelled Orders" 
-/>
+
+
+                            {{-- CANCEL ORDER PART  --}}
 
 
 
+    <!-- Tab -->
+    <input 
+      type="radio" 
+      name="profile_tabs" 
+      role="tab" 
+      class="tab text-green-500 [checked]:text-black text-xs sm:text-sm md:text-base lg:text-lg" 
+      aria-label="Cancelled Orders" 
+    />
 
-<!-- Tab Panel -->
+
+<!-- Cancel Order Panel -->
 <div role="tabpanel" class="tab-content mt-4">
-<div class="rounded-2xl border border-base-300 shadow-sm overflow-hidden">
-  <div class="overflow-x-auto">
-    <table class="table-auto w-full text-sm border-collapse">
+  <div class="rounded-2xl border border-gray-200 shadow-sm overflow-hidden bg-white">
+    <div class="overflow-x-auto">
+      <table class="table-auto w-full text-sm border-collapse">
+
       
       <!-- Header -->
       <thead class="bg-base-200/70 text-gray-900 bg-white uppercase text-xs tracking-wide hidden md:table-header-group">
@@ -251,103 +263,74 @@
           <th class="px-6 py-3 text-center">Order Date</th>
           <th class="px-6 py-3 text-right">Total Amount</th>
           <th class="px-6 py-3 text-center">Order Status</th>
-          <th class="px-6 py-3 text-center">View Items</th> <!-- ✅ New Column -->
+          <th class="px-6 py-3 text-center">View Items</th> <!--  New Column -->
         </tr>
       </thead>
 
       <!-- Body -->
-      <tbody class="divide-y divide-base-300 bg-white">
-        @foreach($orderCancel as $order)
-          @foreach ($order->orderdetails as $detail)
-            <tr class="flex flex-col md:table-row border-b md:border-0 p-4 md:p-0 hover:bg-base-100/50 transition" id="order-row-{{ $order->id }}" >
+<tbody class="divide-y divide-base-300 bg-white">
 
-              <!-- Order Number -->
-              <td class="md:table-cell px-0 md:px-3 py-1 font-medium text-gray-900">
+@forelse($orderCancel as $order)
+    @foreach ($order->orderdetails as $detail)
+        <tr class="flex flex-col md:table-row border-b md:border-0 p-4 md:p-0 hover:bg-base-100/50 transition">
+
+            <td class="md:table-cell px-0 md:px-3 py-1 font-medium text-gray-900">
                 <span class="md:hidden font-semibold block">Order #:</span>
-                {{ $order->invoice_no ?? 'Unknown' }} 
-              </td>
+                {{ $order->invoice_no ?? 'Unknown' }}
+            </td>
 
-              <!-- Order Date -->   
-              <td class="md:table-cell px-0 md:px-6 py-2 text-gray-600 md:text-center">
+            <td class="md:table-cell px-0 md:px-6 py-2 text-gray-600 md:text-center">
                 <span class="md:hidden font-semibold block">Date:</span>
                 {{ $order->order_date }}
-              </td>
+            </td>
 
-              <!-- Total Amount -->
-              <td class="md:table-cell px-0 md:px-6 py-2 font-semibold text-gray-900 md:text-right">
+            <td class="md:table-cell px-0 md:px-6 py-2 font-semibold text-gray-900 md:text-right">
                 <span class="md:hidden font-semibold block">Total:</span>
                 @if($detail->product && $detail->product->selling_price !== null)
-                  ₱{{ number_format($detail->product->selling_price * $detail->quantity, 2) }}
+                    ₱{{ number_format($detail->product->selling_price * $detail->quantity, 2) }}
                 @else
-                  N/A
-                @endif   
-                         </td>
+                    N/A
+                @endif
+            </td>
 
-              <!-- Order Status -->
-                <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">
-                <span class="md:hidden font-semibold block">Status:</span>
+            <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">
                 <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-300">
-                  {{ $order->order_status }}  
+                    {{ $order->order_status }}
                 </span>
-                </td>
+            </td>
 
-
-
-        
-
-              <!-- ✅ View Item Button -->
-              <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">
-                <a href="{{ route('customer.view.item', $order->id ) }}" 
-                   class="btn btn-primary btn-xs">
-                  View Items
+            <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">
+                <a href="{{ route('customer.view.item', $order->id ) }}" class="btn btn-primary btn-xs">
+                    View Items
                 </a>
-              </td>
+            </td>
 
-            </tr>
-          @endforeach
+        </tr>
     @endforeach
 
+@empty
+    <tr>
+        <td colspan="7" class="text-center py-6 text-gray-500">
+            No orders found.
+        </td>
+    </tr>
+@endforelse
+
+</tbody>
 
 
-        
-      </tbody>
 
+        </table>
+      </div>
+    </div>
 
-    </table>
-  </div>
-</div>
-
-</div>
-
-{{-- 
-
-
-      
-      <input type="radio" name="profile_tabs" role="tab" class="tab text-green-500 [checked]:text-black" aria-label="Addresses" />
-      <div role="tabpanel" class="tab-content mt-4">
-        <div class="card bg-base-100 shadow">
-          <div class="card-body space-y-4">
-
-            @foreach($address as $CustomerAddress)
-            <div class="border p-4 rounded-lg">
-              <p class="font-semibold">Home</p>
-              <p class="text-sm text-gray-500">{{ $CustomerAddress->full_address }}</p>
-              <button class="btn btn-ghost btn-sm mt-2">Edit</button>
-            </div>
-            @endforeach
-
-
-            <button class="btn btn-primary mt-4">+ Add New Address</button>
-          </div>
-        </div>
-      </div> --}}
+    </div>
 
 
 
 
     </div>
   </div>
-</div>
 
 
 

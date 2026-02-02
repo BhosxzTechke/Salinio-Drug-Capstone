@@ -29,19 +29,22 @@
 
             </div>
 
-            <!-- Categories -->
+            <!-- SUB Categories -->
             <div>
-                <h2 class="font-semibold mb-2 text-gray-900">Categories</h2>
+                <h2 class="font-semibold mb-2 text-gray-900">Sub Categories</h2>
                 <div class="max-h-40 overflow-y-auto space-y-1">
-                    @foreach($allCategories as $cat)
+                    @foreach($allSubCategories as $cat)
                         <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="categories[]" value="{{ $cat->id }}"
-                                {{ collect(request('categories'))->contains($cat->id) ? 'checked' : '' }}>
-                            <span class="text-gray-700">{{ $cat->category_name }}</span>
+                            <input type="checkbox" name="subcategories[]" value="{{ $cat->id }}"
+                                {{ collect(request('subcategories'))->contains($cat->id) ? 'checked' : '' }}>
+                            <span class="text-gray-700">{{ $cat->name }}</span>
                         </label>
                     @endforeach
                 </div>
             </div>
+
+
+
 
             <!-- Brands -->
             <div>

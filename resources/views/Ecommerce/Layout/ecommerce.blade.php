@@ -145,8 +145,19 @@
 
 
 
+
+<div class="min-h-screen flex flex-col">
+
+
 <!-- Page Content -->
-<main class="w-screen px-0 py-0 m-0">
+    <main class="flex-1 w-full px-4 py-4 pb-32 sm:px-6 lg:px-10">
+
+
+        {{-- <!-- PAGE CONTENT -->
+        <main class="flex-1 px-4 py-4 pb-24 sm:px-6 lg:px-10">
+            --}}
+
+
         @yield('content')
 
 

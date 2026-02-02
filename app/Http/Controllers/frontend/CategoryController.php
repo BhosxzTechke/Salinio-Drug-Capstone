@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Inventory;
+use App\Models\Subcategory;
 use Illuminate\Support\Facades\DB;
 
 
@@ -20,19 +21,16 @@ class CategoryController extends Controller
     //
 public function CategoryProduct(Request $request, $slug)
 {
+
+
+/// this code will the one na mag rerecognize kung saang page category based sa slug -- milk / health
     $category = Category::where('slug', $slug)->firstOrFail();
+
+
 
     $productIds = Product::where('category_id', $category->id)
         ->orWhere('subcategory_id', $category->id)
         ->pluck('id');
-
-
-
-    // $inventoryQuery = Inventory::whereIn('product_id', $productIds)
-    //     ->where('quantity', '>', 10)
-    //     ->select('product_id', DB::raw('SUM(quantity) as total_quantity'), 'selling_price')
-    //     ->groupBy('product_id', 'selling_price');
-
 
 
         $today = now()->toDateString();
@@ -55,37 +53,28 @@ public function CategoryProduct(Request $request, $slug)
 
 
 
-    // Price range
-    if ($request->filled('price_min')) {
-        $inventoryQuery->where('selling_price', '>=', $request->price_min);
-    }
-    if ($request->filled('price_max')) {
-        $inventoryQuery->where('selling_price', '<=', $request->price_max);
-    }
+            // Price range
+            if ($request->filled('price_min')) {
+                $inventoryQuery->where('selling_price', '>=', $request->price_min);
+            }
+            if ($request->filled('price_max')) {
+                $inventoryQuery->where('selling_price', '<=', $request->price_max);
+            }
 
-// Prescription filter (Rx / OTC)
-if ($request->filled('prescription_required')) {
-    $productIds = Product::whereIn('id', $productIds)
-        ->where('prescription_required', true)
-        ->pluck('id');
+        // Prescription filter (Rx / OTC)
+        if ($request->filled('prescription_required')) {
+            $productIds = Product::whereIn('id', $productIds)
+                ->where('prescription_required', true)
+                ->pluck('id');
 
-    $inventoryQuery->whereIn('product_id', $productIds);
-}
-
-
-
-    // if ($request->has('otc')) {
-    //     $productIds = Product::whereIn('id', $productIds)
-    //         ->where('type', 'OTC')
-    //         ->pluck('id');
-    //     $inventoryQuery->whereIn('product_id', $productIds);
-    // }
+            $inventoryQuery->whereIn('product_id', $productIds);
+        }
 
 
 
     // Category filter
-    if ($request->filled('categories')) {
-        $catProductIds = Product::whereIn('category_id', $request->categories)->pluck('id');
+    if ($request->filled('subcategories')) {
+        $catProductIds = Product::whereIn('subcategory_id', $request->subcategories)->pluck('id');
         $inventoryQuery->whereIn('product_id', $catProductIds);
     }
 
@@ -102,11 +91,6 @@ if ($request->filled('prescription_required')) {
     }
 
 
-    //     // Health concern filter
-    // if ($request->filled('age_group')) {
-    //     $age_group = Product::whereIn('age_group', $request->age_group)->pluck('id');
-    //     $inventoryQuery->whereIn('product_id', $age_group);
-    // }
 
 
         /*
@@ -145,7 +129,7 @@ if ($request->filled('prescription_required')) {
 
     $inventory = $inventoryQuery->latest()->paginate(12);
 
-    $allCategories = Category::all();
+    $allSubCategories = Subcategory::all();
     $brands = Brand::all();
 
 
@@ -173,7 +157,7 @@ if ($request->filled('prescription_required')) {
         return response()->view('Ecommerce.Partials.product_grid', compact('inventory'))->render();
     }
 
-    return view('Ecommerce.category_product', compact('category', 'inventory', 'allCategories', 'brands', 'healthConcerns', 'age_group', 'target_gender'));
+    return view('Ecommerce.category_product', compact('category', 'inventory', 'allSubCategories', 'brands', 'healthConcerns', 'age_group', 'target_gender'));
 }
 
 
