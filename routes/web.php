@@ -600,7 +600,7 @@ use Illuminate\Support\Facades\Mail;
     Route::post('/Save/Order/Deliveries', 'SaveOrderdeliveries')->name('save.deliveries');
 
 
-    Route::get('All/deliveries', 'CompleteDeliveries')->name('deliveries.index')->middleware('permission:view-all-received-order');
+    Route::get('All/deliveries', 'CompleteDeliveries')->name('deliveries.index');
 
 
 });
