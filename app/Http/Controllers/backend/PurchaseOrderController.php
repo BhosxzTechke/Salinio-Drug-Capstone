@@ -94,7 +94,7 @@ public function SavePurchaseOrder(Request $request)
 
 
         foreach ($cart as $item) {
-            $cost = $item->options->cost_price ?? 0;
+            $cost = $item->options->cost_price ?? 0;    
             $selling = $item->price ?? 0;
 
             if ($selling <= $cost) {
