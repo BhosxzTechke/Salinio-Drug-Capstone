@@ -871,7 +871,7 @@ use Illuminate\Support\Facades\Mail;
         ////////////////////////////////  INVENTORY /////////////////////
             Route::controller(InventoryController::class)->group(function () {
 
-        Route::get('/All/Inventory', 'Inventory')->name('show.inventory')->middleware('permission:view-all-inventory');
+        Route::get('/All/Inventory', 'Inventory')->name('show.inventory');
 
 
         });
