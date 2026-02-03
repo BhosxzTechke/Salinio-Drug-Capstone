@@ -14,7 +14,6 @@
                                 <div class="page-title-box">
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
-                                           <a href="{{ route('add.expense')}}"><button type="button" class="btn btn-success rounded-pill waves-effect waves-light">Add Expense</button></a>
                                         </ol>
 
 @php 

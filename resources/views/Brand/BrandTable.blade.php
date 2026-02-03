@@ -15,11 +15,9 @@
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
 
-                                        @if(Auth::user()->can('add-brand'))
                                             <a href=" {{route('brand.create')}}">
                                         <button type="button" class="btn btn-info">Add Brand</button>
                                                 </a>
-                                        @endif
 
                                         </ol>
 
@@ -65,12 +63,9 @@
 
                                         
                                                     <td>
-                                                        @if(Auth::user()->can('edit-brand'))
                                                         <a href="{{ route('edit.brand', $data->id) }}" class="btn btn-success rounded-pill waves-effect waves-light"><i class="fa-solid fa-square-pen"></i> Edit</a>
-                                                        @endif
-                                                        @if(Auth::user()->can('delete-brand'))
+                                                        
                                                         <a href="{{ route('delete.brand', $data->id) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash"></i> Delete</a>
-                                                        @endif
                                                     </td>
                                                 </tr>
                                                     @endforeach

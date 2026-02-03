@@ -148,8 +148,11 @@
     </div> <!-- end row --> --}}
 
     <div class="text-end">
-        <button type="submit" name="submit" class="btn btn-success waves-effect waves-light mt-2">
-            <i class="mdi mdi-content-save"></i> Save Changes
+
+        <button type="submit"
+                    class="btn btn-dark"
+                    onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                    <i class="mdi mdi-content-save"></i> Add New User
         </button>
     </div>
 </form>

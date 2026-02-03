@@ -89,7 +89,11 @@
 
             {{-- No tracking number & pending --}}
                 @if(!$data->tracking_number && $data->delivery_status === 'pending')
-                    <a href="{{ route('confirm.Mark.Order', $data->id)}}" class="btn btn-sm btn-success mark-Confirm-Order">Confirm Order</a>
+
+                    <a href="{{ route('confirm.Mark.Order', $data->id)}}"  class="btn btn-sm btn-success mark-Confirm-Order" onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();"
+                        >Confirm Order</a>
+
+
                     <a href="{{ route('details', $data->id) }}" class="btn btn-sm btn-secondary">View Details</a>
                     <button class="btn btn-sm btn-danger mark-cancelled-order" data-id="{{ $data->id }}">Cancel</button>
 
@@ -113,7 +117,7 @@
                     </button>
 
                     <button class="btn btn-sm btn-outline-warning pickup-btn {{ $tracking_number ? '' : 'd-none' }}"
-                        data-order-id="{{ $data->id }}">
+                        data-order-id="{{ $data->id }}" onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
                         Pickup
                     </button>
 

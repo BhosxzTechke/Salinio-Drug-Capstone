@@ -62,9 +62,11 @@
         </div> <!-- end row -->
 
         <div class="text-end">
-            <button type="submit" class="btn btn-success waves-effect waves-light mt-2">
-                <i class="mdi mdi-content-save"></i> Save
-            </button>
+                        <button type="submit"
+                                class="btn btn-dark"
+                                onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                            Add Role
+                        </button>
         </div>
     </form>
 </div>

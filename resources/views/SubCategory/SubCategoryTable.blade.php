@@ -15,11 +15,9 @@
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
 
-                                            @if(Auth::user()->can('add-subcategory'))
                                                     <a href="{{ route('sub-category.create') }}">
                                             <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#login-modal">Add Sub-Category</button>
                                                 </a>   
-                                @endif
                                         </ol>
 
                                     </div>
@@ -49,28 +47,26 @@
 
                                         </thead>
                                         
-                                        
-                                            <tbody>
+                    
+                        <tbody>
 
-                                            @php $sl = 1 @endphp
-                                            @foreach ($SubCatData as $data)
-                                                <tr>
-                                                    <td>{{ $sl++ }}</td>
-                                                    <td>{{ $data->name }}</td>
-                                                    <td>{{ $data->category->category_name ?? '' }}</td>
-                                                    <td>
-                                                        @if(Auth::user()->can('edit-subcategory'))
-                                                        <a href="{{ route('edit.sub-category', $data->id) }}" class="btn btn-success rounded-pill waves-effect waves-light"><i class="fa-solid fa-square-pen"></i> Edit</a>
-                                                        @endif
+                        @php $sl = 1 @endphp
+                        @foreach ($SubCatData as $data)
+                            <tr>
+                                <td>{{ $sl++ }}</td>
+                                <td>{{ $data->name }}</td>
+                                <td>{{ $data->category->category_name ?? '' }}</td>
+                                <td>
+                                    <a href="{{ route('edit.sub-category', $data->id) }}" class="btn btn-success rounded-pill waves-effect waves-light"><i class="fa-solid fa-square-pen">
+                                        </i> Edit</a>
 
-                                                        @if(Auth::user()->can('delete-subcategory'))
-                                                        <a href="{{ route('delete.sub-category', $data->id) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash"></i> Delete</a>
-                                                        @endif
+                                    <a href="{{ route('delete.sub-category', $data->id) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash">
+                                        </i> Delete</a>
 
 
-                                                    </td>
-                                                </tr>
-                                                    @endforeach
+                                </td>
+                            </tr>
+                                @endforeach
 
 
 

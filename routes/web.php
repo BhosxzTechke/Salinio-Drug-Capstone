@@ -410,7 +410,7 @@ use Illuminate\Support\Facades\Mail;
             Route::controller(CategoryController::class)->group(function () {
 
             //Showing Data in table
-            Route::get('/category/list', 'CategoryTable')->name('category.list')->middleware('permission:view-all-categories');
+            Route::get('/category/list', 'CategoryTable')->name('category.list');
 
 
              //Showing Data in table
@@ -418,7 +418,7 @@ use Illuminate\Support\Facades\Mail;
 
             
             //Edit Data in table
-            Route::get('/category/edit/{id}', 'CategoryEdit')->name('edit.category')->middleware('permission:edit-category');
+            Route::get('/category/edit/{id}', 'CategoryEdit')->name('edit.category');
 
 
             //Update Data in table
@@ -442,11 +442,11 @@ use Illuminate\Support\Facades\Mail;
         Route::controller(SubCategoryController::class)->group(function () {
 
             //Showing Data in table
-            Route::get('/sub-category/list', 'SubCategoryTable')->name('sub-category.list')->middleware('permission:view-all-subcategories');
+            Route::get('/sub-category/list', 'SubCategoryTable')->name('sub-category.list');
 
 
             //Showing form
-            Route::get('/sub-category/create', 'SubCategoryCreate')->name('sub-category.create')->middleware('permission:add-subcategory');
+            Route::get('/sub-category/create', 'SubCategoryCreate')->name('sub-category.create');
 
 
             //Store Data in table
@@ -454,7 +454,7 @@ use Illuminate\Support\Facades\Mail;
             
 
             //Edit Data in table
-            Route::get('/sub-category/edit/{id}', 'EditSubCategory')->name('edit.sub-category')->middleware('permission:edit-subcategory');
+            Route::get('/sub-category/edit/{id}', 'EditSubCategory')->name('edit.sub-category');
 
 
             //Update Data in table
@@ -462,7 +462,7 @@ use Illuminate\Support\Facades\Mail;
 
 
             //Delete Data in table
-            Route::get('/sub-category/delete/{id}', 'DeleteSubCategory')->name('delete.sub-category')->middleware('permission:delete-subcategory');
+            Route::get('/sub-category/delete/{id}', 'DeleteSubCategory')->name('delete.sub-category');
       });
 
 
@@ -475,17 +475,17 @@ use Illuminate\Support\Facades\Mail;
             Route::controller(BrandController::class)->group(function () {
 
             //Showing Data in table
-            Route::get('/brand/list', 'BrandTable')->name('brand.list')->middleware('permission:view-all-brands');
+            Route::get('/brand/list', 'BrandTable')->name('brand.list');
 
 
             //Showing form
-            Route::get('/brand/create', 'CreateBrand')->name('brand.create')->middleware('permission:add-brand');
+            Route::get('/brand/create', 'CreateBrand')->name('brand.create');
 
             //Store Data in table
             Route::post('/brand/store', 'StoreBrand')->name('brand.store');
 
             //Edit Data in table
-            Route::get('/brand/edit/{id}', 'EditBrand')->name('edit.brand')->middleware('permission:edit-brand');
+            Route::get('/brand/edit/{id}', 'EditBrand')->name('edit.brand');
 
                 
             //Update Data in table
@@ -493,7 +493,7 @@ use Illuminate\Support\Facades\Mail;
 
 
             //Delete Data in table
-            Route::get('/brand/delete/{id}', 'DeleteBrand')->name('delete.brand')->middleware('permission:delete-brand');
+            Route::get('/brand/delete/{id}', 'DeleteBrand')->name('delete.brand');
             
 
  });
@@ -509,10 +509,10 @@ use Illuminate\Support\Facades\Mail;
             Route::controller(ProductController::class)->group(function () {
 
             //Showing Data in table
-            Route::get('/product/list', 'ProductTable')->name('product.list')->middleware('permission:view-all-products');
+            Route::get('/product/list', 'ProductTable')->name('product.list');
 
              //Showing form 
-            Route::get('/product/create', 'FormDropdownProduct')->name('add.product')->middleware('permission:add-products');
+            Route::get('/product/create', 'FormDropdownProduct')->name('add.product');
 
 
             //Store Data in table
@@ -521,7 +521,7 @@ use Illuminate\Support\Facades\Mail;
 
             //Edit Data in Form
                             
-            Route::get('/product/edit/{id}', 'EditProduct')->name('edit.product')->middleware('permission:edit-products');
+            Route::get('/product/edit/{id}', 'EditProduct')->name('edit.product');
 
             //Update Data in table
             Route::put('/product/update', 'UpdateProduct')->name('update.product');
@@ -529,7 +529,7 @@ use Illuminate\Support\Facades\Mail;
 
 
             //Delete Data in table
-            Route::get('/product/delete/{id}', 'DeleteProduct')->name('delete.product')->middleware('permission:delete-products');
+            Route::get('/product/delete/{id}', 'DeleteProduct')->name('delete.product');
 
                 
 
@@ -743,7 +743,7 @@ use Illuminate\Support\Facades\Mail;
             Route::controller(ExpenseController::class)->group(function () {
 
             //Showing add expense form
-            Route::get('/add//expense', 'AddExpense')->name('add.expense')->middleware('permission:add-expense');
+            Route::get('/add//expense', 'AddExpense')->name('add.expense');
 
         
             Route::post('/store//expense', 'StoreExpense')->name('store.expense');
@@ -761,13 +761,13 @@ use Illuminate\Support\Facades\Mail;
             //Showing today's expense
 
 
-            Route::get('/today/expense', 'TodayExpense')->name('todays.expense')->middleware('permission:view-today-expense');
+            Route::get('/today/expense', 'TodayExpense')->name('todays.expense');
 
 
-            Route::get('/month/expense', 'MonthExpense')->name('month.expense')->middleware('permission:view-monthly-expense');
+            Route::get('/month/expense', 'MonthExpense')->name('month.expense');
 
 
-            Route::get('/year/expense', 'YearExpense' )->name('year.expense')->middleware('permission:view-yearly-expense');
+            Route::get('/year/expense', 'YearExpense' )->name('year.expense');
             
         });
 

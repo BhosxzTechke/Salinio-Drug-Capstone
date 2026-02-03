@@ -13,19 +13,32 @@
                             <div class="col-12">
                                 <div class="page-title-box">
                                     <div class="page-title-right">
-                                        <ol class="breadcrumb m-0">
-                                                <a href="{{ route('add.heroslider') }}" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#login-modal">Add Slider</a>
-                                        </ol>
+   
 
                                     </div>
-                                    <h4 class="page-title">Banner & Slider</h4>
                                 </div>
                             </div>
                         </div>     
                         <!-- end page title --> 
 
 
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Hero Section Preview</h5>
+                                        <ol class="breadcrumb m-0">
+                                                <a href="{{ route('add.heroslider') }}" type="button" class="btn btn-dark">Add Slider</a>
+                                        </ol>
 
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-muted">This section manages the banner and slider images that appear at the top of your website.</p>
+                                        <img src="{{ asset('Banner-presentation.png') }}" height="150px" alt="Hero Section Example">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
                         <div class="row">
@@ -97,25 +110,6 @@
 
                 </div> <!-- content -->
 
-                <!-- Footer Start -->
-                <footer class="footer">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <script>document.write(new Date().getFullYear())</script> &copy; UBold theme by <a href="">Coderthemes</a> 
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-md-end footer-links d-none d-sm-block">
-                                    <a href="javascript:void(0);">About Us</a>
-                                    <a href="javascript:void(0);">Help</a>
-                                    <a href="javasc
-                                    ript:void(0);">Contact Us</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-                <!-- end Footer -->
 
             </div>
 

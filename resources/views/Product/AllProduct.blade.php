@@ -21,13 +21,9 @@
                                         <a href="{{ route('import.product') }}"><button type="button" class="btn btn-info rounded-pill waves-effect waves-light me-2"><i class="mdi mdi-cloud-outline me-1"></i> Import </button></a>
                                             @endif --}}
 
-                                        @if(Auth::user()->can('export-products'))
                                             <a href="{{ route('download.export') }}"><button type="button" class="btn btn-danger rounded-pill waves-effect waves-light me-1"><i class="mdi mdi-cloud-outline me-1"></i> Export </button></a>
-                                        @endif
 
-                                        @if(Auth::user()->can('add-products'))
                                             <a href="{{ route('add.product') }}"><button type="button" class="btn btn-dark rounded-pill waves-effect waves-light"><i class="mdi mdi-cloud-outline me-1"></i> Add Product </button></a>
-                                            @endif
                                             
                                         </ol>
 
@@ -73,15 +69,9 @@
                                                     <td>{{ $data->selling_price }}</td>
                                                     <td>
 
-                                                        @If(Auth::user()->can('edit-products'))
                                                         <a href="{{ route('edit.product', $data->id)}}" class="btn btn-success rounded-pill waves-effect waves-light"><i class="fa-solid fa-square-pen"></i> Edit</a>
-                                                        @endif
-                                                        @If(Auth::user()->can('barcode-products'))
                                                         <a href="{{ route('barcode.product', $data->id)}}" class="btn btn-info rounded-pill waves-effect waves-light"><i class="fa-solid fa-square-pen"></i> Barcode </a>
-                                                        @endif
-                                                        @If(Auth::user()->can('delete-products'))
                                                         <a href="{{ route('delete.product', $data->id) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash"></i> Delete</a>
-                                                        @endif
                                                     </td>
                                                 </tr>
                                                     @endforeach

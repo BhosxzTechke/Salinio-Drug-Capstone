@@ -316,16 +316,16 @@
 
 
         {{-- Product Image --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="image">Product Image <span class="text-danger">*</span></label>
-                <input type="file" name="product_image"
-                       id="image" class="form-control @error('product_image') is-invalid @enderror">
-                @error('product_image')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="image">Product Image <span class="text-danger">*</span></label>
+                    <input type="file" name="product_image"
+                        id="image" class="form-control @error('product_image') is-invalid @enderror">
+                    @error('product_image')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
-        </div>
 
 
 
@@ -344,9 +344,11 @@
         </div> <!-- end row -->
 
         <div class="text-end">
-            <button type="submit" class="btn btn-success waves-effect waves-light mt-2">
-                <i class="mdi mdi-content-save"></i> Save Product
-            </button>
+                <button type="submit"
+                        class="btn btn-dark"
+                        onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                    Save Product
+                </button>
         </div>
     </form>
 

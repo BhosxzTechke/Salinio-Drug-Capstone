@@ -157,7 +157,12 @@
 
 
                     <div class="text-end">
-                        <button type="submit" name="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Update Changes</button>
+                    
+                            <button type="submit"
+                                    class="btn btn-dark"
+                                    onclick="this.disabled=true; this.innerText='Updating...'; this.form.submit();">
+                                    <i class="mdi mdi-content-save"></i> Update User
+                        </button>
                     </div>
                     
                 </form>

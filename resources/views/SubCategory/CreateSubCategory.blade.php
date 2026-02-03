@@ -17,11 +17,11 @@
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
                                             <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                            <li class="breadcrumb-item active">Sub-Category</li>
+                                            <li class="breadcrumb-item active">Sub Category</li>
                                         </ol>
                                     </div>
                                     
-                                    <h4 class="page-title">Sub-Category Form</h4>
+                                    <h4 class="page-title">Sub Category Form</h4>
                                 </div>
                             </div>
                         </div>     
@@ -77,8 +77,13 @@
                     </div> <!-- end row -->
     
 
-                                <div class="text-end">
-                                    <button type="submit" name="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Save Changes</button>
+                        <div class="text-end">
+                                <button type="submit"
+                                        class="btn btn-dark"
+                                        onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                                    Save Sub Category
+                                </button>
+
                                 </div>
                                                     
                                                 </form>

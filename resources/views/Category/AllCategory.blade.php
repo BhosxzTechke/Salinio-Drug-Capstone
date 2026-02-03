@@ -14,10 +14,12 @@
                                 <div class="page-title-box">
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
-                                            @if(Auth::user()->can('add-category'))
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#login-modal">Add Category</button>
-                                            @endif
-                                        </ol>
+                                            
+                                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#login-modal">Add Category</button>
+    
+                                
+                            
+                            </ol>
 
                                     </div>
                                     <h4 class="page-title">Category Table</h4>
@@ -55,13 +57,9 @@
                                                     <td>{{ $sl++ }}</td>
                                                     <td>{{ $data->category_name }}</td>
                                                     <td>
-                                                        @if(Auth::user()->can('edit-category'))
                                                         <a href="{{ route('edit.category', $data->id) }}" class="btn btn-success rounded-pill waves-effect waves-light"><i class="fa-solid fa-square-pen"></i> Edit</a>
-                                                        @endif
 
-                                                        @if(Auth::user()->can('delete-category'))
                                                         <a href="{{ route('delete.category', $data->id) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash"></i> Delete</a>
-                                                        @endif
                                                         
                                                     </td>
                                                 </tr>
@@ -103,9 +101,13 @@
 
                                         
 
-                                        <div class="mb-2 text-center">
-                                            <button class="btn rounded-pill btn-primary" type="submit">Save </button>
-                                        </div>
+                            <div class="mb-2 text-center">
+                                        <button type="submit"
+                                                class="btn btn-dark"
+                                                onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                                            Save Category
+                                        </button>    
+                            </div>
 
                                     </form>
                                 </div>

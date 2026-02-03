@@ -273,7 +273,11 @@
 
 
     <div class="text-end">
-        <button type="submit" class="btn btn-success">Update Product</button>
+                <button type="submit"
+                        class="btn btn-dark"
+                        onclick="this.disabled=true; this.innerText='Updating...'; this.form.submit();">
+                    Update Product
+                </button>
     </div>
 </form>
 

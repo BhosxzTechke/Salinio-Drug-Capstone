@@ -134,25 +134,28 @@
             @enderror
         </div>
 
-        {{-- Preview --}}
-        <div class="col-md-12">
-            <div class="mb-3 text-center">
-                <img 
-                    id="showImages" 
-                    src="{{ url('uploads/noimage.png') }}" 
-                    class="rounded-circle avatar-lg img-thumbnail" 
-                    alt="supplier-image"
-                >
-            </div>
-        </div>
-    </div> <!-- end row -->
+                        {{-- Preview --}}
+                        <div class="col-md-12">
+                            <div class="mb-3 text-center">
+                                <img 
+                                    id="showImages" 
+                                    src="{{ url('uploads/noimage.png') }}" 
+                                    class="rounded-circle avatar-lg img-thumbnail" 
+                                    alt="supplier-image"
+                                >
+                            </div>
+                        </div>
+                    </div> <!-- end row -->
 
-    <div class="text-end">
-        <button type="submit" class="btn btn-success waves-effect waves-light mt-2">
-            <i class="mdi mdi-content-save"></i> Save Supplier
-        </button>
-    </div>
-</form>
+                    <div class="text-end">
+
+                        <button type="submit"
+                                class="btn btn-dark"
+                                onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                            Save Supplier
+                        </button>
+                    </div>
+                </form>
 
 
 

@@ -102,11 +102,14 @@
 
                                                     </div> <!-- end row -->
     
-                                                    @if(Auth::user()->can('add-expense'))
                                                     <div class="text-end">
-                                                        <button type="submit" name="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Save Changes</button>
+                                                            <button type="submit"
+                                                                        class="btn btn-dark"
+                                                                        onclick="this.disabled=true; this.innerText='Adding...'; this.form.submit();">
+                                                                    Add Expense
+                                                                </button>
+
                                                     </div>
-                                                    @endif
                                                     
                                                 </form>
                                             </div>

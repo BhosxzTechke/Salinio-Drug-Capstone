@@ -53,8 +53,8 @@
                 <div class="col-md-6">
         <div class="form-group mb-3">
             <label for="firstname" class="form-label">Group Name </label>
-<select name="group_name" class="form-select" id="example-select">
-    <option selected disabled>Select Group</option>
+            <select name="group_name" class="form-select" id="example-select">
+                <option selected disabled>Select Group</option>
 
     <option value="audit">Audit Trail</option>
     <option value="backup">Backup</option>
@@ -85,18 +85,21 @@
 
 
 
-            </div> <!-- end row -->
- 
-        
-            
-            <div class="text-end">
-                <button type="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Save</button>
-            </div>
-        </form>
-    </div>
-    <!-- end settings content-->
-    
-                                       
+                            </div> <!-- end row -->
+                
+                        
+                            
+                            <div class="text-end">
+                                <button type="submit"
+                                        class="btn btn-primary"
+                                        onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                                    Save Product
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- end settings content-->
+                    
                                     </div>
                                 </div> <!-- end card-->
 
@@ -107,6 +110,9 @@
                     </div> <!-- container -->
 
                 </div> <!-- content -->
+
+
+
 
 
 <script type="text/javascript">

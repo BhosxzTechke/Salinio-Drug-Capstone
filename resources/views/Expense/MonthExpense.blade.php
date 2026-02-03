@@ -14,7 +14,6 @@
                                 <div class="page-title-box">
                                     <div class="page-title-right">
                                         <ol class="breadcrumb m-0">
-                                           <a href="{{ route('add.expense')}}"><button type="button" class="btn btn-success rounded-pill waves-effect waves-light">Add Expense</button></a>
                                         </ol>
 
 @php 
@@ -25,7 +24,7 @@ $MonthExpense = App\Models\Expense::where('month', $month)->sum('amount');
 @endphp
 
                                     </div>
-                                    <h4 class="page-title">Month Expense: ₱{{ $MonthExpense }}</h4>
+                                    <h4 class="page-title">Monthly Expense: ₱{{ $MonthExpense }}</h4>
                                 </div>
                             </div>
                         </div>     
