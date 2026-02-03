@@ -51,7 +51,8 @@ class Order extends Model
         'assigned_at',
         'delivered_at',
         'courier',
-        'tracking_number'
+        'tracking_number',
+        'paypal_order_id'
             
 
     ];

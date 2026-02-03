@@ -871,10 +871,10 @@ use Illuminate\Support\Facades\Mail;
         ////////////////////////////////  INVENTORY /////////////////////
             Route::controller(InventoryController::class)->group(function () {
 
-        Route::get('/All/Inventory', 'Inventory')->name('show.inventory');
+            Route::get('/All/Inventory', 'Inventory')->name('show.inventory');
 
 
-        });
+            });
 
 
 
@@ -1513,13 +1513,13 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
                     
 
 
-                Route::get('/Ecommerce/Payment/success', 'PaypalSuccess')->name('paypal.success');
-                /// it update to complete 
+                    Route::get('/Ecommerce/Payment/success', 'PaypalSuccess')->name('paypal.success');
+                    /// it update to complete 
 
-                //// it will go you to success page
-                 route::get('/ecommerce/{id}/Paypal', 'successPaypal')->name('successfully.paypal.order');
+                    //// it will go you to success page
+                    route::get('/ecommerce/{id}/Paypal', 'successPaypal')->name('successfully.paypal.order');
 
-                Route::get('/pos/Payment/cancel', 'PaypalCancel')->name('paypal.cancel');
+                    Route::get('/pos/Payment/cancel', 'PaypalCancel')->name('paypal.cancel');
 
 
             });

@@ -50,6 +50,7 @@ class OrderController extends Controller
 
 
 
+
 public function EcommerceCheckout(Request $request)
 {
     try {
@@ -62,76 +63,78 @@ public function EcommerceCheckout(Request $request)
                 'message' => 'The payment amount must be greater than or equal to the total due.',
                 'alert-type' => 'error'
             ];
-            return back()->with($notification);
-        }
-
-
-        
-
-
-        $cartInstance = Cart::instance('ecommerce');
-        $cartTotal = floatval(str_replace(',', '', $cartInstance->total()));
-        $subTotal = floatval(str_replace(',', '', $cartInstance->subtotal()));
-        $vat = floatval(str_replace(',', '', $cartInstance->tax()));
-        $due = $request->pay - $cartTotal;
-
-        if ($request->payment_method === 'paypal') {
-            $provider = new PayPalClient;
-            $provider->setApiCredentials(config('paypal'));
-            $token = $provider->getAccessToken();
-            $provider->setAccessToken($token);
+                        return back()->with($notification);
+                    }
 
 
 
-            $paypalOrder = $provider->createOrder([
-                "intent" => "CAPTURE",
-                "application_context" => [
-                    "return_url" => route("paypal.success"),
-                    "cancel_url" => route("paypal.cancel"),
-                    "shipping_preference" => "NO_SHIPPING",
-                ],
-                "purchase_units" => [
-                    [
-                        "amount" => [
-                            "currency_code" => "PHP",
-                            "value" => number_format($cartTotal, 2, '.', ''),
-                        ]
-                    ]
-                ]
-            ]);
+                    $cartInstance = Cart::instance('ecommerce');
+                    $cartTotal = floatval(str_replace(',', '', $cartInstance->total()));
+                    $subTotal = floatval(str_replace(',', '', $cartInstance->subtotal()));
+                    $vat = floatval(str_replace(',', '', $cartInstance->tax()));
+                    $due = $request->pay - $cartTotal;
+
+                    
+
+                        if ($request->payment_method === 'paypal') {
+                            $provider = new PayPalClient;
+                            $provider->setApiCredentials(config('paypal'));
+                            $token = $provider->getAccessToken();
+                            $provider->setAccessToken($token);
 
 
 
-            foreach ($paypalOrder['links'] as $link) {
-                if ($link['rel'] === 'approve') {
-                    session(['checkout_data' => $request->all()]);
-                    return redirect()->away($link['href']);
+                            $paypalOrder = $provider->createOrder([
+                                "intent" => "CAPTURE",
+                                "application_context" => [
+                                    "return_url" => route("paypal.success"),
+                                    "cancel_url" => route("paypal.cancel"),
+                                    "shipping_preference" => "NO_SHIPPING",
+                                ],
+                                "purchase_units" => [
+                                    [
+                                        "amount" => [
+                                            "currency_code" => "PHP",
+                                            "value" => number_format($cartTotal, 2, '.', ''),
+                                        ]
+                                    ]
+                                ]
+                            ]);
+
+
+
+                        foreach ($paypalOrder['links'] as $link) {
+                            if ($link['rel'] === 'approve') {
+                                session(['checkout_data' => $request->all()]);
+                                return redirect()->away($link['href']);
+                            }
+                        }
+
+
+                        $notification = [
+                            'message' => 'Unable to initiate PayPal payment. Please try again.',
+                            'alert-type' => 'error'
+                        ];
+                        return back()->with($notification);
+                    }
+
+
+                    /// IF NOT PAYPAL CASH PUPUNTA SAS FUNCTION AN TO
+
+                    return $this->processOrder($request);
+
+                } catch (\Throwable $th) {
+                    $notification = [
+                        'message' => 'Something went wrong: ' . $th->getMessage(),
+                        'alert-type' => 'error'
+                    ];
+                    return back()->with($notification);
                 }
-            }
-
-
-            $notification = [
-                'message' => 'Unable to initiate PayPal payment. Please try again.',
-                'alert-type' => 'error'
-            ];
-            return back()->with($notification);
-        }
-
-        return $this->processOrder($request);
-
-    } catch (\Throwable $th) {
-        $notification = [
-            'message' => 'Something went wrong: ' . $th->getMessage(),
-            'alert-type' => 'error'
-        ];
-        return back()->with($notification);
-    }
 }
 
 
 
-
-
+                    // if paypal success
                 /////////// ITO UNG KUKUHA NG URL
                 public function paypalSuccess(Request $request)
                 {
@@ -156,15 +159,17 @@ public function EcommerceCheckout(Request $request)
                 }
 
                 return redirect()->route('cart.checkout')->with('error', 'Payment was not successful.');
-                }
+    }
 
 
 
 
-
+/// if cash
 
 private function processOrder(Request $request)
 {
+
+
     DB::beginTransaction();
 
     try {
@@ -190,6 +195,7 @@ private function processOrder(Request $request)
         $subTotal  = (float) str_replace(',', '', $cartInstance->subtotal());
         $vat       = (float) str_replace(',', '', $cartInstance->tax());
 
+
         //  KEEP REQUEST-BASED DATA (PAYPAL DEPENDS ON THIS)
         $order = Order::create([
             'customer_id'     => $request->customer_id ?? '',
@@ -209,7 +215,7 @@ private function processOrder(Request $request)
             'courier' => $request->shipping_method == 'own_rider' ? 'own_rider' : 'jnt',
 
 
-            'shipping_address_id' => $request->shipping_address_id ?? '',
+            // 'shipping_address_id' => $request->shipping_address_id ?? '',
 
 
 
@@ -275,9 +281,6 @@ private function processOrder(Request $request)
         }
 
 
-
-
-
         //// Cash success payment
         public function SuccesfullyOrder($id)
         {
@@ -298,6 +301,13 @@ private function processOrder(Request $request)
         public function CancelOrder() {
         return view('Ecommerce.payment.cancel');
         }
+
+
+
+
+
+
+
 
 
 
