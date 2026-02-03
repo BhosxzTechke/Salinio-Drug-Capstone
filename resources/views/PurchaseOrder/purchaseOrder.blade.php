@@ -137,7 +137,11 @@
 
 
             <div class="text-end">
-                <button type="submit" name="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Save Changes</button>
+                    <button type="submit"
+                            class="btn btn-dark"
+                            onclick="this.disabled=true; this.innerText='Creating...'; this.form.submit();">
+                        Create PO
+                    </button>    
             </div>
             
         </form>
@@ -199,23 +203,24 @@
             <td>{{ $data->product_code }}</td>
             <td>{{ $data->selling_price }}</td>
             <td>
-                    <button type="button"
-                            class="btn btn-sm btn-primary add-product"
-                            data-id="{{ $data->id }}"
-                            data-name="{{ $data->product_name }}"
-                            data-code="{{ $data->product_code }}"
-                            data-price="{{ $data->selling_price }}">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </td>
-            </tr>
-            @endforeach
-            </tbody>
-          </table>
-      </div>
+                        <button type="button"
+                                class="btn btn-sm btn-primary add-product"
+                                data-id="{{ $data->id }}"
+                                data-name="{{ $data->product_name }}"
+                                data-code="{{ $data->product_code }}"
+                                data-price="{{ $data->selling_price }}">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            
+                        </td>
+                </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+        </div>
     </div>
-  </div>
-</div>
+    </div>
 
 
 

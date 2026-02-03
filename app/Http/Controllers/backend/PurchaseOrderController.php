@@ -182,30 +182,30 @@ public function SavePurchaseOrder(Request $request)
                 ->map(function ($item) use ($id) {
 
 
-            $receivedQty = delivery_item::whereHas('delivery', function ($q) use ($id) {
-                $q->where('purchase_order_id', $id);
-            })
-            ->where('product_id', $item->product_id)
-            ->sum('quantity_received');
+                $receivedQty = delivery_item::whereHas('delivery', function ($q) use ($id) {
+                    $q->where('purchase_order_id', $id);
+                })
+                ->where('product_id', $item->product_id)
+                ->sum('quantity_received');
 
 
                     // 100  received 
 
-            // Remaining = ordered - received
-            $item->remaining_qty = $item->quantity_ordered - $receivedQty;
+                    // Remaining = ordered - received
+                    $item->remaining_qty = $item->quantity_ordered - $receivedQty;
 
 
 
-            // Auto batch number only if stock still remaining
-            if ($item->remaining_qty > 0) {
-                $item->auto_batch_number = 'BATCH-' . now()->format('Ymd') . '-' . $item->product_id . '-' . strtoupper(Str::random(4));
-            } else {
-                $item->auto_batch_number = null;
-            }
+                    // Auto batch number only if stock still remaining
+                    if ($item->remaining_qty > 0) {
+                        $item->auto_batch_number = 'BATCH-' . now()->format('Ymd') . '-' . $item->product_id . '-' . strtoupper(Str::random(4));
+                    } else {
+                        $item->auto_batch_number = null;
+                    }
 
-            return $item;
+                    return $item;
 
-    });
+            });
 
 
 

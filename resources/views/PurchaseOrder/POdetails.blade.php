@@ -204,6 +204,7 @@
                 value="{{ $data->quantity_ordered }}"
                 name="items[{{ $key }}][quantity_received]"
                 class="form-control quantity_ordered"
+                min="1"
                 max="{{ $data->remaining_qty ?? $data->quantity_ordered }}">
         </td>
 
@@ -253,7 +254,12 @@
     
 
                 <div class="text-end">
-                    <button type="submit" id="submit-button" name="submit" class="btn btn-info waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i>Received </button>
+                    <button type="submit"
+                            class="btn btn-dark"
+                            onclick="this.disabled=true; this.innerText='Receiving...'; this.form.submit();">
+                        Received
+                    </button>    
+
                 </div>
                 
             </form>
