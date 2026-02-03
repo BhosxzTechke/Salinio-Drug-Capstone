@@ -15,7 +15,8 @@ use Codemonkey76\ClickSend\SmsMessage;
 class MockCourierService
 {
 
-    
+
+
     protected $statuses = ['ready_for_shipment', 'picked_up', 'out_for_delivery', 'delivered'];
 
     // Create shipment for order
