@@ -121,6 +121,7 @@
     <form id="myForm" method="POST" action="{{ route('cart.checkout') }}" class="space-y-3">
     @csrf
     
+    
 
             {{-- @php
                 $customer = Auth::guard('customer')->user();
@@ -137,7 +138,7 @@
 
                             {{-- For shipping Address ID --}}
 
-                            {{-- <input type="hidden" name="shipping_address_id" value="{{ $Shipaddress->id }}"> --}}
+                            <input type="text" name="shipping_address_id" value="{{ $Shipaddress->id }}">
 
 
             <p class="text-sm font-medium uppercase mt-6">Payment Method</p>

@@ -1488,41 +1488,39 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
                 });
 
 
-                Route::controller(FrontendOrderController::class)->group(function () {
-                            
-                    ////// PRODUCT DETAILS CART /////////////////
+                
 
-                    route::get('/ecommerce/payment', 'EcommercePayment')->middleware('auth:customer')->name('cart.payment');
-
-
-                    route::post('/ecommerce/checkout', 'EcommerceCheckout')->name('cart.checkout');
+                
 
 
 
-                    // Change addreess
+            Route::middleware('auth:customer')->group(function () {
 
-                    route::post('/ecommerce/change/address', 'updateAddress')->name('cart.updateAddress');
+                Route::get('/checkout', [FrontendOrderController::class, 'EcommercePayment'])
+                    ->name('cart.payment');
 
+                Route::post('/checkout', [FrontendOrderController::class, 'EcommerceCheckout'])
+                    ->name('cart.checkout');
+                                    
 
-                        ////////// Cash Payment success /////////////
-                    route::get('/ecommerce/{id}/success', 'SuccesfullyOrder')->name('success.order');
-
-
-                    ////////// AFTER PAYPAL PAYMENT /////////////
-
-                    
-
-
-                    Route::get('/Ecommerce/Payment/success', 'PaypalSuccess')->name('paypal.success');
-                    /// it update to complete 
-
-                    //// it will go you to success page
-                    route::get('/ecommerce/{id}/Paypal', 'successPaypal')->name('successfully.paypal.order');
-
-                    Route::get('/pos/Payment/cancel', 'PaypalCancel')->name('paypal.cancel');
+                Route::post('/ecommerce/change/address', [FrontendOrderController::class, 'updateAddress'])
+                    ->name('cart.updateAddress');
 
 
-            });
+                    Route::get('/ecommerce/payment/success', [FrontendOrderController::class, 'paypalSuccess'])
+                        ->name('paypal.success');
+
+
+                        /// if cash
+                    Route::get('{id}/success', [FrontendOrderController::class, 'SuccesfullyOrder'])
+                        ->name('success.order');
+                });
+
+                Route::get('/ecommerce/payment/cancel', [FrontendOrderController::class, 'PaypalCancel'])
+                    ->name('paypal.cancel');
+
+
+
 
 
 

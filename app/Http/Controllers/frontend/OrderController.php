@@ -58,6 +58,8 @@ public function EcommerceCheckout(Request $request)
         //     'shipping_address_id' => 'required',
         // ]);
 
+
+            // Validate minimum payment
         if ($request->pay < $request->total) {
             $notification = [
                 'message' => 'The payment amount must be greater than or equal to the total due.',
@@ -74,54 +76,87 @@ public function EcommerceCheckout(Request $request)
                     $vat = floatval(str_replace(',', '', $cartInstance->tax()));
                     $due = $request->pay - $cartTotal;
 
-                    
 
-                        if ($request->payment_method === 'paypal') {
-                            $provider = new PayPalClient;
-                            $provider->setApiCredentials(config('paypal'));
-                            $token = $provider->getAccessToken();
-                            $provider->setAccessToken($token);
+            // --- PAYPAL PAYMENT ---
+            
+            if ($request->payment_method === 'paypal') {
+                $cartInstance = Cart::instance('ecommerce');
+                $cartTotal = (float) str_replace(',', '', $cartInstance->total());
 
-
-
-                            $paypalOrder = $provider->createOrder([
-                                "intent" => "CAPTURE",
-                                "application_context" => [
-                                    "return_url" => route("paypal.success"),
-                                    "cancel_url" => route("paypal.cancel"),
-                                    "shipping_preference" => "NO_SHIPPING",
-                                ],
-                                "purchase_units" => [
-                                    [
-                                        "amount" => [
-                                            "currency_code" => "PHP",
-                                            "value" => number_format($cartTotal, 2, '.', ''),
-                                        ]
-                                    ]
-                                ]
-                            ]);
+                // 1️⃣ Create order first
+                $order = Order::create([
+                    'customer_id'         => $request->customer_id,
+                    'shipping_address_id' => $request->shipping_address_id,
+                    'courier'             => $request->shipping_method ?? 'own_rider',
+                    'order_status'        => 'pending',
+                    'payment_status'      => 'pending',
+                    'payment_method'      => 'paypal',
+                    'total_products'      => $cartInstance->count(),
+                    'sub_total'           => (float) $cartInstance->subtotal(),
+                    'vat'                 => (float) $cartInstance->tax(),
+                    'total'               => $cartTotal,
+                    'pay'                 => $cartTotal,
+                    'due'                 => 0,
+                    'order_date'          => now(),
+                    'invoice_no'          => 'Salinio' . mt_rand(10000000, 99999999),
+                ]);
 
 
+                // --- Store checkout data in session BEFORE redirect ---
+                session([
+                    'checkout_data' => [
+                        'customer_id'         => $request->customer_id,
+                        'shipping_address_id' => $request->shipping_address_id,
+                        'shipping_method'     => $request->shipping_method ?? 'own_rider',
+                        'order_date'          => now(),
+                        'total_products'      => Cart::instance('ecommerce')->count(),
+                        'payment_method'      => $request->payment_method,
+                        'pay_amount'          => $request->pay,
+                    ]
+                ]);
 
-                        foreach ($paypalOrder['links'] as $link) {
-                            if ($link['rel'] === 'approve') {
-                                session(['checkout_data' => $request->all()]);
-                                return redirect()->away($link['href']);
-                            }
-                        }
+                $provider = new PayPalClient;
+                $provider->setApiCredentials(config('paypal'));
+                $provider->setAccessToken($provider->getAccessToken());
+
+                $paypalOrder = $provider->createOrder([
+                    "intent" => "CAPTURE",
+                    "application_context" => [
+                        "return_url" => route('paypal.success'),
+                        "cancel_url" => route('paypal.cancel'),
+                        "shipping_preference" => "NO_SHIPPING",
+                    ],
+                    "purchase_units" => [
+                        [
+                            "amount" => [
+                                "currency_code" => "PHP",
+                                "value" => number_format($cartTotal, 2, '.', ''),
+                            ]
+                        ]
+                    ]
+                ]);
+
+                // 2️⃣ Save PayPal order ID in your database
+                $order->update(['paypal_order_id' => $paypalOrder['id']]);
+
+                $approveLink = collect($paypalOrder['links'])->firstWhere('rel', 'approve');
+                if ($approveLink) {
+                    return redirect()->away($approveLink['href']);
+                }
+
+                return back()->with([
+                    'message' => 'Unable to initiate PayPal payment. Please try again.',
+                    'alert-type' => 'error'
+                ]);
+            }
 
 
-                        $notification = [
-                            'message' => 'Unable to initiate PayPal payment. Please try again.',
-                            'alert-type' => 'error'
-                        ];
-                        return back()->with($notification);
-                    }
+
+            // --- CASH OR OTHER PAYMENT METHODS ---
+            return $this->processOrder($request);
 
 
-                    /// IF NOT PAYPAL CASH PUPUNTA SAS FUNCTION AN TO
 
-                    return $this->processOrder($request);
 
                 } catch (\Throwable $th) {
                     $notification = [
@@ -134,32 +169,140 @@ public function EcommerceCheckout(Request $request)
 
 
 
-                    // if paypal success
-                /////////// ITO UNG KUKUHA NG URL
-                public function paypalSuccess(Request $request)
-                {
-                $provider = new PayPalClient;
-                $provider->setApiCredentials(config('paypal'));
-                $token = $provider->getAccessToken();
-                $provider->setAccessToken($token);
+                                // if paypal success
+            public function paypalSuccess(Request $request)
+            {
+                // Get the PayPal token from query parameters
+                $paypalOrderId = $request->query('token'); // PayPal sends this in URL
+                $payerId       = $request->query('PayerID'); // optional
 
-                $paypalOrderId = $request->get('token');
-                $result = $provider->capturePaymentOrder($paypalOrderId);
 
-                if (isset($result['status']) && $result['status'] === 'COMPLETED') {
-                        // Retrieve original request data
-                        $requestData = session('checkout_data');
-                        $request = new Request($requestData);
-                        $request->merge([
-                        'payment_status' => 'paid',
-                        'payment_method' => 'paypal',
-                        ]);
 
-                        return $this->processOrder($request);
+
+                if (!$paypalOrderId) {
+                    return redirect()->route('cart.checkout')
+                        ->with('error', 'Missing PayPal token.');
                 }
 
-                return redirect()->route('cart.checkout')->with('error', 'Payment was not successful.');
-    }
+                // Find the order created before redirecting to PayPal
+                $order = Order::where('paypal_order_id', $paypalOrderId)->first();
+
+                if (!$order) {
+                    return redirect()->route('cart.checkout')
+                        ->with('error', 'Order not found.');
+                }
+
+                // If already captured, just show the success page
+                if ($order->payment_status === 'paid') {
+                    return view('Ecommerce.payment.success', [
+                        'order'       => $order->load('orderDetails.product'),
+                        'total'       => $order->total,
+                        'OrderNumber' => $order->id,
+                    ]);
+                }
+
+                // Capture payment from PayPal
+                $provider = new PayPalClient;
+                $provider->setApiCredentials(config('paypal'));
+                $provider->setAccessToken($provider->getAccessToken());
+
+                $result = $provider->capturePaymentOrder($paypalOrderId);
+
+
+
+                // 6️⃣ Retrieve checkout session data
+                $checkout = session('checkout_data');
+
+                if (!$checkout) {
+                    return redirect()->route('cart.checkout')
+                        ->with('error', 'Checkout session expired. Please try again.');
+                }
+
+                //  Update order and save details in a transaction
+                $cart = Cart::instance('ecommerce');
+
+
+
+                    // Now meron nang :
+    // $checkout['shipping_address_id']
+    // $checkout['customer_id']
+    // $checkout['shipping_method']
+    // $checkout['pay_amount']
+    // $checkout['order_date']
+
+                DB::transaction(function () use ($order, $checkout, $cart) {
+
+                    // Update main order
+                    $order->update([
+                        'customer_id'         => $checkout['customer_id'] ?? $order->customer_id,
+                        'order_source'        => 'ECOM',
+                        'order_type'          => 'Delivery',
+                        'order_date'          => $checkout['order_date'] ?? now(),
+                        'order_status'        => 'pending',
+                        'total_products'      => $checkout['total_products'] ?? $cart->count(),
+                        'delivery_status'     => 'pending',
+                        'courier'             => $checkout['shipping_method'] ?? 'own_rider',
+                        'shipping_address_id' => $checkout['shipping_address_id'] ?? null,
+                        'payment_method'      => 'paypal',
+                        'payment_status'      => 'paid',
+                        'sub_total'           => (float) $cart->subtotal(),
+                        'vat'                 => (float) $cart->tax(),
+                        'total'               => (float) $cart->total(),
+                        'pay'                 => (float) $cart->total(),
+                        'due'                 => 0,
+                        'invoice_no'          => 'Salinio' . mt_rand(10000000, 99999999),
+                    ]);
+
+                    // Save each order detail
+                    foreach ($cart->content() as $item) {
+                        Orderdetails::create([
+                            'order_id'   => $order->id,
+                            'product_id' => $item->options->product_id,
+                            'quantity'   => $item->qty,
+                            'price'      => $item->price,
+                        ]);
+                    }
+
+                    // Clear cart and forget session
+                    $cart->destroy();
+                    session()->forget('checkout_data');
+                });
+
+                // 8️⃣ Show success page directly
+                return view('Ecommerce.payment.success', [
+                    'order'       => $order->load('orderDetails.product'),
+                    'total'       => $order->total,
+                    'OrderNumber' => $order->id,
+                ]);
+            }
+
+
+
+
+        // public function successPaypal($id)
+        // {
+        // $order = Order::with('orderDetails.product')->findOrFail($id);
+        // $total = $order->total; // Access total directly from the order model
+        // $OrderNumber = $order->id;
+
+        // return view('Ecommerce.payment.success', compact('order', 'total', 'OrderNumber'));
+        // }
+
+
+        
+
+        //// Cash success payment
+        public function SuccesfullyOrder($id)
+        {
+
+        $order = Order::with('orderDetails.product')->findOrFail($id);     
+        $total = $order->total; // Access total directly from the order model
+        $OrderNumber = $order->id;
+
+        return view('Ecommerce.payment.success', compact('order', 'total', 'OrderNumber'));
+
+
+        }
 
 
 
@@ -270,29 +413,6 @@ private function processOrder(Request $request)
 
 
 
-
-        public function successPaypal($id)
-        {
-        $order = Order::with('orderDetails.product')->findOrFail($id);
-        $total = $order->total; // Access total directly from the order model
-        $OrderNumber = $order->id;
-
-        return view('Ecommerce.payment.success', compact('order', 'total', 'OrderNumber'));
-        }
-
-
-        //// Cash success payment
-        public function SuccesfullyOrder($id)
-        {
-
-        $order = Order::with('orderDetails.product')->findOrFail($id);     
-        $total = $order->total; // Access total directly from the order model
-        $OrderNumber = $order->id;
-
-        return view('Ecommerce.payment.success', compact('order', 'total', 'OrderNumber'));
-
-
-        }
 
 
 

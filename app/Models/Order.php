@@ -62,6 +62,15 @@ class Order extends Model
     ];
 
 
+
+                //// HAD RELATIONSHIP WITH ADDRESS TABLE
+        public function shippingAddress()
+        {
+            return $this->belongsTo(Address::class, 'shipping_address_id');
+        }
+
+
+
             // Relationship: order has many shipments
         public function shipments()
         {
@@ -108,12 +117,6 @@ class Order extends Model
         }
 
 
-
-        //// HAD RELATIONSHIP WITH ADDRESS TABLE
-     public function shippingAddress()
-    {
-        return $this->belongsTo(Address::class, 'shipping_address_id');
-    }
 
 
 
