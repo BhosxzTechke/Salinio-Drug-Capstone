@@ -83,7 +83,7 @@ public function EcommerceCheckout(Request $request)
                 $cartInstance = Cart::instance('ecommerce');
                 $cartTotal = (float) str_replace(',', '', $cartInstance->total());
 
-                // 1️⃣ Create order first
+                // 1️ Create order first
                 $order = Order::create([
                     'customer_id'         => $request->customer_id,
                     'shipping_address_id' => $request->shipping_address_id,
@@ -136,13 +136,17 @@ public function EcommerceCheckout(Request $request)
                     ]
                 ]);
 
-                // 2️⃣ Save PayPal order ID in your database
+
+
+                // 2️ Save PayPal order ID in your database
                 $order->update(['paypal_order_id' => $paypalOrder['id']]);
 
                 $approveLink = collect($paypalOrder['links'])->firstWhere('rel', 'approve');
                 if ($approveLink) {
                     return redirect()->away($approveLink['href']);
                 }
+
+                
 
                 return back()->with([
                     'message' => 'Unable to initiate PayPal payment. Please try again.',
@@ -187,6 +191,8 @@ public function EcommerceCheckout(Request $request)
                 // Find the order created before redirecting to PayPal
                 $order = Order::where('paypal_order_id', $paypalOrderId)->first();
 
+
+
                 if (!$order) {
                     return redirect()->route('cart.checkout')
                         ->with('error', 'Order not found.');
@@ -210,6 +216,16 @@ public function EcommerceCheckout(Request $request)
 
 
 
+                                // Extract capture ID For Refund
+                    $captureId = $result['purchase_units'][0]['payments']['captures'][0]['id'] ?? null;
+
+
+                    if (!$captureId) {
+                        return redirect()->route('cart.checkout')
+                            ->with('error', 'Unable to capture PayPal payment.');
+                    }
+
+
                 // 6️⃣ Retrieve checkout session data
                 $checkout = session('checkout_data');
 
@@ -222,7 +238,6 @@ public function EcommerceCheckout(Request $request)
                 $cart = Cart::instance('ecommerce');
 
 
-
                     // Now meron nang :
     // $checkout['shipping_address_id']
     // $checkout['customer_id']
@@ -230,7 +245,11 @@ public function EcommerceCheckout(Request $request)
     // $checkout['pay_amount']
     // $checkout['order_date']
 
-                DB::transaction(function () use ($order, $checkout, $cart) {
+
+
+                DB::transaction(function () use ($order, $checkout, $cart, $captureId) {
+
+                
 
                     // Update main order
                     $order->update([
@@ -250,7 +269,8 @@ public function EcommerceCheckout(Request $request)
                         'total'               => (float) $cart->total(),
                         'pay'                 => (float) $cart->total(),
                         'due'                 => 0,
-                        'invoice_no'          => 'Salinio' . mt_rand(10000000, 99999999),
+                        // 'invoice_no'          => 'Salinio' . mt_rand(10000000, 99999999),
+                        'paypal_capture_id'   =>  $captureId,
                     ]);
 
                     // Save each order detail

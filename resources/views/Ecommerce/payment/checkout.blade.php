@@ -122,7 +122,6 @@
     @csrf
     
     
-
             {{-- @php
                 $customer = Auth::guard('customer')->user();
 
@@ -138,7 +137,7 @@
 
                             {{-- For shipping Address ID --}}
 
-                            <input type="text" name="shipping_address_id" value="{{ $Shipaddress->id }}">
+                            <input type="hidden" name="shipping_address_id" value="{{ $Shipaddress->id ?? '' }}">
 
 
             <p class="text-sm font-medium uppercase mt-6">Payment Method</p>
@@ -151,23 +150,17 @@
 
                     <p class="text-sm font-medium uppercase mt-6">Shipping Method</p>
 
-            <div class="mt-2 space-y-2">
-                {{-- <label class="flex items-center gap-2">
-                    <input type="radio" name="shipping_method" value="own_rider" checked>
-                    <span>Own Rider (Same Day)</span>
-                    <span class="ml-auto text-sm text-gray-600">₱50</span>
-                </label> --}}
+            <div class="form-group mt-2 space-y-2">
 
-                <label class="flex items-center gap-2">
-                    <input type="radio" name="shipping_method" value="jnt">
+
+                <label class="flex items-center gap-2"> 
+                    <input type="radio" name="shipping_method" value="jnt" checked required>
                     <span>J&T Express (1–3 Days)</span>
                     <span class="ml-auto text-sm text-gray-600">₱120</span>
                 </label>
             </div>
 
             <input type="hidden" name="shipping_fee" id="shipping_fee" value="50">
-
-
 
             <br>
 
@@ -272,29 +265,22 @@
                     <span>Total </span> ₱{{ number_format($totalInclusive, 2) }}
             </p>
 
-        </div>
 
-            <button
-            type="submit"
-            class="w-full py-3 mt-6 flex items-center justify-center gap-2 cursor-pointer bg-indigo-500 text-white font-medium hover:bg-indigo-600 transition rounded-lg"
-            >
-            <!-- Lock Icon (Heroicons or Lucide) -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c-1.105 0-2 .895-2 2v3a2 2 0 104 0v-3c0-1.105-.895-2-2-2z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17 11V7a5 5 0 10-10 0v4h10z" />
-            </svg>
-            Place Order
-          </button>
 
+                <button
+                type="submit"
+                onclick="this.disabled=true; this.innerText='Ordering...'; this.form.submit();"
+                class="w-full py-3 mt-6 flex items-center justify-center gap-2 cursor-pointer bg-indigo-500 text-white font-medium hover:bg-indigo-600 transition rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c-1.105 0-2 .895-2 2v3a2 2 0 104 0v-3c0-1.105-.895-2-2-2z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 11V7a5 5 0 10-10 0v4h10z" />
+                </svg>
+                Place Order
+                </button>
 
 
 
-
-
-
-
-
-           <a href="{{ route(('cart.show'))}}"
+            <a href="{{ route(('cart.show'))}}"
             type="submit"
             class="w-full py-3 mt-6 flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-[#303034] via-[#353a41] to-[#292d31] text-white font-medium hover:bg-indigo-600 transition rounded-lg"
             >
@@ -407,6 +393,20 @@
             }
             @endif
             </script>
+
+
+            <script>
+                const form = document.querySelector('myForm');
+                const btn = document.getElementById('placeOrderBtn');
+
+                form.addEventListener('submit', function () {
+                    btn.disabled = true;
+                    btn.innerText = 'Ordering...';
+                });
+                </script>
+
+
+                
             </body>
 </html>
 

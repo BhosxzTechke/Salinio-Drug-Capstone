@@ -1443,6 +1443,17 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
             Route::get('/return-shipment/{shipmentId}/status', [BackendReturnShipmentController::class, 'getReturnShipmentStatus'])
                 ->name('return.shipment.status');
 
+            
+                ///////// ITEM RETURN IN SHOP
+            Route::controller(BackendReturnShipmentController::class)->group(function () {
+
+            route::get('/admin-confirmed/return/{request_id}', 'AdminConfirmReturned')->name('admin.confirmed.return');
+
+            route::post('/admin-confirmed/return/{request_id}', 'ReturnhandleAction')->name('admin.handle.return');
+
+
+            
+        });
                     
 
 

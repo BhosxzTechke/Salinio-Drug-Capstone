@@ -49,9 +49,10 @@
 
 
 
-        {{-- Order table Fillable --}}
+        {{-- Return Shipment table Fillable --}}
     @php $sl = 1 @endphp
     @foreach ($ReturnData as $data)
+    
 
 
     {{-- Return request id have on table request shipment --}}  
@@ -87,18 +88,29 @@
                         data-return-shipment-id="{{ $data->id }}">
 
                         <!-- Status display -->
-                        <button type="button" class="btn btn-sm btn-secondary return-status-btn">
+                        {{-- <button type="button" class="btn btn-sm btn-secondary return-status-btn">
                             {{ ucfirst($data->shipment_status ?? 'In Progress') }}
-                        </button>
+                        </button> --}}
+
+                        <span class="badge badge-pill bg-warning return-status-btn"> {{ ucfirst($data->shipment_status ?? 'In Progress') }}</span>
+
+                        
                     </td>
 
 
+                @if($data->returnRequest->status == 'refunded' || $data->returnRequest->status == 'rejected' )
+
+                    <td><span class="badge badge-pill bg-danger"> {{ $data->returnRequest->status ?? '' }}</span></td>
+
+                @else
 
                 <td class="confirm-pickup-cell" data-return-shipment-id="{{ $data->id }}">
-                    <button type="button" class="btn btn-sm btn-success confirm-pickup-btn" style="display: none;">
-                        Confirm Pickup
-                    </button>
+                        <a href="{{route('admin.confirmed.return', $data->returnRequest->id )}} " type="button" class="btn btn-sm btn-success confirm-pickup-btn" style="display: none;">
+                            Returned Process
+                        </a>
                 </td>
+
+                @endif
 
 
                     
@@ -127,10 +139,10 @@
                     <div>{{ $data->returnRequest->order_id ?? ''}}</div>
                 </div>
 
-             <div class="mb-3">
-                    <strong>Reason:</strong>
-                    <div>{{ ucfirst(str_replace('_',' ', $data->returnRequest->reason ?? '')) }}</div>
-                </div>
+                <div class="mb-3">
+                        <strong>Reason:</strong>
+                        <div>{{ ucfirst(str_replace('_',' ', $data->returnRequest->reason ?? '')) }}</div>
+                    </div>
 
                 <div class="mb-3">
                     <strong>Description:</strong>
@@ -155,13 +167,13 @@
                     </div>
                 </div>
 
-            </div>
+                </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    Close
-                </button>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
 
         </div>
     </div>

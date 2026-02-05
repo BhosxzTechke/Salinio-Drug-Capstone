@@ -16,6 +16,10 @@ class ReturnRequest extends Model
         'quantity',
         'status',
         'photos',
+        'refund_id',
+        'refund_amount',
+        'refunded_at',
+        'received_at'
     ];
 
     protected $casts = [
