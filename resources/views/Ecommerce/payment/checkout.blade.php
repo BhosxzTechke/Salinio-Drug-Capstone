@@ -371,6 +371,84 @@
 
 
 
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+
+
+
+
+@if(Session::has('message'))
+<div id="toast"
+    class="fixed top-5 right-2 max-w-md w-[90%] sm:w-auto bg-white text-gray-900 rounded-2xl shadow-2xl 
+           border border-gray-200 p-4 flex items-center gap-3 animate-toast-in"  style="z-index: 9999;">
+
+
+    <!-- Icon -->
+    @if(Session::get('alert-type') === 'success')
+        <div class="flex-shrink-0 bg-green-100 p-2 rounded-full">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+    @elseif(Session::get('alert-type') === 'error')
+        <div class="flex-shrink-0 bg-red-100 p-2 rounded-full">
+            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </div>
+    @elseif(Session::get('alert-type') === 'warning')
+        <div class="flex-shrink-0 bg-yellow-100 p-2 rounded-full">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86L12 5 5.07 19z" />
+            </svg>
+        </div>
+    @else
+        <div class="flex-shrink-0 bg-blue-100 p-2 rounded-full">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 20h.01" />
+            </svg>
+        </div>
+    @endif
+
+    
+    <!-- Message -->
+    <p class="text-sm sm:text-base font-medium flex-1">
+        {{ Session::get('message') }}
+    </p>
+
+    <!-- Close button -->
+    <button onclick="hideToast()" class="text-gray-400 hover:text-gray-600">
+        ✕
+    </button>
+
+
+
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast').classList.add('hidden');
+    }, 3000);
+</script>
+
+<style>
+    @keyframes slide-in {
+        0% { transform: translateX(100%); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
+    }
+    .animate-slide-in {
+        animation: slide-in 0.3s ease-out;
+    }
+</style>
+@endif
+
+
+
+
+
+
 <script>
             @if(Session::has('message'))
             var type = "{{ Session::get('alert-type','info') }}"

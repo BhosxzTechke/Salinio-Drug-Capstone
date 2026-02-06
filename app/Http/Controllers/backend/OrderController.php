@@ -608,7 +608,7 @@ public function StatusUpdate(Request $request)
             ]);
         }
 
-        // ✅ Mark order completed
+        // Mark order completed
         if ($request->order_status === 'shipped' || strtolower($request->delivery_status) === 'delivered') {
 
             $order->completed_at   = now();

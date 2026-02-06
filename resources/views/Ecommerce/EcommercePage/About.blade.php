@@ -366,6 +366,8 @@
         </div>
       </div>
 
+
+      
       <!-- Image Section -->
       <div class="relative" x-data="{ showImg: false }" x-init="setTimeout(() => showImg = true, 800)">
         <div 
