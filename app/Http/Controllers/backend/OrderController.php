@@ -561,52 +561,54 @@ public function StatusUpdate(Request $request)
 
         $order = Order::with('orderDetails')->findOrFail($request->id);
 
-        foreach ($order->orderDetails as $item) {
+        // foreach ($order->orderDetails as $item) {
 
-            $qtyToDeduct  = $item->quantity;
-            $sellingPrice = $item->product->selling_price;
+        //     $qtyToDeduct  = $item->quantity;
+        //     $sellingPrice = $item->product->selling_price;
 
-            $totalProfit = 0;
-            $totalCost   = 0;
+        //     $totalProfit = 0;
+        //     $totalCost   = 0;
 
-            $batches = Inventory::where('product_id', $item->product_id)
-                ->where('quantity', '>', 0)
-                ->orderBy('received_date', 'asc') // FIFO
-                ->lockForUpdate()
-                ->get();
+        //     $batches = Inventory::where('product_id', $item->product_id)
+        //         ->where('quantity', '>', 0)
+        //         ->orderBy('received_date', 'asc') // FIFO
+        //         ->lockForUpdate()
+        //         ->get();
 
-            foreach ($batches as $batch) {
+        //     foreach ($batches as $batch) {
 
-                if ($qtyToDeduct <= 0) {
-                    break;
-                }
+        //         if ($qtyToDeduct <= 0) {
+        //             break;
+        //         }
 
-                $deduct = min($batch->quantity, $qtyToDeduct);
+        //         $deduct = min($batch->quantity, $qtyToDeduct);
 
-                // Deduct inventory
-                $batch->decrement('quantity', $deduct);
+        //         // Deduct inventory
+        //         $batch->decrement('quantity', $deduct);
 
-                // Calculate cost & profit
-                $batchCost   = $batch->cost_price * $deduct;
-                $batchProfit = ($sellingPrice * $deduct) - $batchCost;
+        //         // Calculate cost & profit
+        //         $batchCost   = $batch->cost_price * $deduct;
+        //         $batchProfit = ($sellingPrice * $deduct) - $batchCost;
 
-                $totalCost   += $batchCost;
-                $totalProfit += $batchProfit;
+        //         $totalCost   += $batchCost;
+        //         $totalProfit += $batchProfit;
 
-                $qtyToDeduct -= $deduct;
-            }
+        //         $qtyToDeduct -= $deduct;
+        //     }
 
-            // ❗ Safety check (optional)
-            if ($qtyToDeduct > 0) {
-                throw new \Exception('Insufficient stock for product ID ' . $item->product_id);
-            }
+        //     // ❗ Safety check (optional)
+        //     if ($qtyToDeduct > 0) {
+        //         throw new \Exception('Insufficient stock for product ID ' . $item->product_id);
+        //     }
 
-            //Update order item ONCE
-            $item->update([
-                'unitcost' => $totalCost / $item->quantity, // average cost
-                'profit'   => $totalProfit,
-            ]);
-        }
+        //     //Update order item ONCE
+        //     $item->update([
+        //         'unitcost' => $totalCost / $item->quantity, // average cost
+        //         'profit'   => $totalProfit,
+        //     ]);
+        // }
+
+
 
         // Mark order completed
         if ($request->order_status === 'shipped' || strtolower($request->delivery_status) === 'delivered') {
@@ -630,15 +632,17 @@ public function StatusUpdate(Request $request)
             }
         }
 
-        $order->delivery_status = strtolower($request->delivery_status);
-        $order->save();
+            $order->delivery_status = strtolower($request->delivery_status);
+            $order->save();
 
-        DB::commit();
+            DB::commit();
 
-        return redirect()->route('complete.order')->with([
-            'message' => 'Complete Order',
-            'alert-type' => 'success',
-        ]);
+            return redirect()->route('complete.order')->with([
+                'message' => 'Complete Order',
+                'alert-type' => 'success',
+            ]);
+
+            
 
     } catch (\Exception $e) {
 
