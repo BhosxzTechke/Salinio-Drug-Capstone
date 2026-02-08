@@ -236,37 +236,47 @@ public function ChangeQty(Request $request, $rowId)
 
 public function AddPos(Request $request)
 {
-    // Get product info
-    $product = Product::find($request->id);
+            // Get product info
+            $product = Product::find($request->id);
 
-    if (!$product) {
-        return redirect()->back()->with([
-            'message' => 'Product not found',
-            'alert-type' => 'error'
-        ]);
-    }
+            if (!$product) {
+                return redirect()->back()->with([
+                    'message' => 'Product not found',
+                    'alert-type' => 'error'
+                ]);
+            }
 
-                // Decide sorting method: FEFO for items with expiration, FIFO for others
+
+        
+
+
+
+
+                // FIFO for 
                 $query = Inventory::where('product_id', $product->id)
-                    ->where('quantity', '>', 0);
+                    ->where('quantity', '>', 0)
+                    ->orderBy('received_date', 'asc');
 
-                if ($product->has_expiration) {
-                    // FEFO: sort by soonest expiration date
-                    $query->whereDate('expiry_date', '>', now()) // skip expired batches
-                        ->orderBy('expiry_date', 'asc');
-                } else {
-                    // FIFO: sort by date received or created
-                    $query->orderBy('created_at', 'asc');
-                }
+                // if ($product->has_expiration) {
+                //     // FEFO: sort by soonest expiration date
+                //     $query->whereDate('expiry_date', '>', now()) // skip expired batches
+                //         ->orderBy('expiry_date', 'asc');
+                // } 
+                //     else {
+                //     // FIFO: sort by date received or created
+                //     $query->orderBy('created_at', 'asc');
+                // }
 
-    $inventoryItem = $query->first();
 
-    if (!$inventoryItem) {
-        return redirect()->back()->with([
-            'message' => 'Product out of stock or expired',
-            'alert-type' => 'error'
-        ]);
-    }
+
+            $inventoryItem = $query->first();
+
+            if (!$inventoryItem) {
+                return redirect()->back()->with([
+                    'message' => 'Product out of stock or expired',
+                    'alert-type' => 'error'
+                ]);
+            }
 
     // Check if requested quantity exceeds available
     if ($request->qty > $inventoryItem->quantity) {
@@ -304,256 +314,116 @@ public function AddPos(Request $request)
             ////////////////////////////      POS WALK IN  ///////////////////////////////
 
 
-// public function PaymentWalkin(Request $request)
-// {
-//             $request->validate([
-//                 'discount' => 'nullable|numeric',
-//                 'pay' => 'required|numeric|min:0',
-//                 'total' => 'required|numeric|min:0',
-
-//             ]);
-
-
-
-//     if ($request->pay < $request->total) {
-//         return back()->with([
-//             'message' => 'The payment amount must be greater than or equal to the total due.',
-//             'alert-type' => 'error'
-//         ]);
-//     }
-
-//     $total = $request->total;
-//     $pay = $request->pay;
-//     $discount = $request->discount ?? 0;
-//     $due = $pay - $total;
-//     $subTotal = $total - $request->vat;
-
-//     DB::beginTransaction();
-
-//     try {
-//         //  Create Order
-//         $order = Order::create([
-//             'order_source'     => 'POS',
-//             'customer_id'      => null, // Walk-in
-//             'order_date'       => Carbon::now(),
-//             'order_status'     => 'complete',
-//             'order_type'     => 'In-Store',
-//             'total_products'   => Cart::count(),
-//             'sub_total'        => $subTotal,
-//             'vat'              => $request->vat,
-//             'vat_status'       => $request->vat_status,
-//             'invoice_no'       => 'INV-' . mt_rand(100000, 999999),
-//             'total'            => $total,
-//             'payment_status'   => 'paid',
-//             'payment_method'   => $request->payment_method,
-//             'pay'              => $pay,
-//             'due'              => $due < 0 ? abs($due) : 0,
-//             'discount'         => $discount,
-//             'change_amount'    => $due > 0 ? $due : 0,
-//             'created_by'       => auth()->id(),
-//         ]);
-
-//         //  Loop through cart and create OrderDetails
-//         foreach (Cart::content() as $item) {
-
-//             // // Create empty order detail first (we’ll update with batch & profit after)
-//             // $orderDetail = Orderdetails::create([
-//             //     'order_id'   => $order->id,
-//             //     'product_id' => $item->options->product_id,
-//             //     'quantity'   => $item->qty,
-//             //     'unitcost'   => 0, // will update after FIFO
-//             //     'total'      => $item->qty * $item->price,
-//             //     'batch_number' => null,
-//             //     'profit'     => 0,
-//             // ]);
-
-//             $quantityToSell = $item->qty;
-//             $sellingPrice = $item->price;
-
-
-//                     $product = Product::find($item->options->product_id);
-
-//                     // FEFO (for medicines with expiration)
-//                     // FIFO (for non-expiring products)
-
-
-                    
-//                     if ($product && $product->has_expiration) {
-//                         // FEFO - First Expired, First Out
-//                         $batches = Inventory::where('product_id', $item->options->product_id)
-//                             ->where('quantity', '>', 0)
-//                             ->whereNotNull('expiry_date')
-//                             ->orderBy('expiry_date', 'asc')
-//                             ->get();
-
-
-                            
-//                     } else {
-//                         // FIFO - First In, First Out
-//                         $batches = Inventory::where('product_id', $item->options->product_id)
-//                             ->where('quantity', '>', 0)
-//                             ->orderBy('received_date', 'asc')
-//                             ->get();
-//                     }
-
-
-//             foreach ($batches as $batch) {
-//                 if ($quantityToSell <= 0) break;
-
-                
-
-//                 $deduct = min($batch->quantity, $quantityToSell);
-
-//                 // Deduct stock
-//                 $batch->decrement('quantity', $deduct);
-
-
-//                 // Calculate profit
-//                 $unitCost = $batch->cost_price;
-//                 $profit = ($sellingPrice - $unitCost) * $deduct;
-
-
-//                 // Update order detail for this batch (if multiple batches, you can optionally split into multiple order_details rows)
-
-//                     //  Create a new order_detail per batch
-//                     Orderdetails::create([
-//                         'order_id'      => $order->id,
-//                         'product_id'    => $item->options['product_id'],
-//                         'quantity'      => $deduct,
-//                         'unitcost'      => $unitCost,
-//                         'total'         => $deduct * $sellingPrice,
-//                         'batch_number'  => $batch->batch_number,
-//                         'profit'        => $profit,
-//                     ]);
-
-//                 $quantityToSell -= $deduct;
-//             }
-
-//             if ($quantityToSell > 0) {
-//                 throw new \Exception("Not enough stock for product: {$item->name}");
-//             }
-//         }
-
-//         // Clear cart
-//         Cart::destroy();
-
-//         DB::commit();
-
-//         return response()->json([
-//             'success' => true,
-//             'order_id' => $order->id
-//         ]);
-
-//     } catch (\Exception $e) {
-//         DB::rollBack();
-//         return back()->with('error', 'Something went wrong: '.$e->getMessage());
-//     }
-// }
-
-
-
 public function PaymentWalkin(Request $request)
 {
-    $request->validate([
-        'pay' => 'required|numeric|min:0',
-        'total' => 'required|numeric|min:0',
-        'discount' => 'nullable|numeric',
-        'vat' => 'required|numeric|min:0',
-        'vat_status' => 'nullable|string',
-        'payment_method' => 'required|string',
-    ]);
+            $request->validate([
+                'discount' => 'nullable|numeric',
+                'pay' => 'required|numeric|min:0',
+                'total' => 'required|numeric|min:0',
+
+            ]);
+
+
 
     if ($request->pay < $request->total) {
         return back()->with([
-            'message' => 'The payment must be greater than or equal to total due.',
+            'message' => 'The payment amount must be greater than or equal to the total due.',
             'alert-type' => 'error'
         ]);
     }
 
-    $cart = Cart::instance('ecommerce');
-
-    if ($cart->count() === 0) {
-        return back()->with([
-            'message' => 'Cart is empty.',
-            'alert-type' => 'error'
-        ]);
-    }
-
-    $pay = $request->pay;
     $total = $request->total;
+    $pay = $request->pay;
     $discount = $request->discount ?? 0;
     $due = $pay - $total;
     $subTotal = $total - $request->vat;
 
+    DB::beginTransaction();
+
     try {
-        $order = DB::transaction(function () use ($request, $cart, $pay, $total, $subTotal, $discount, $due) {
+        //  Create Order
+        $order = Order::create([
+            'order_source'     => 'POS',
+            'customer_id'      => null, // Walk-in
+            'order_date'       => Carbon::now(),
+            'order_status'     => 'complete',
+            'order_type'     => 'In-Store',
+            'total_products'   => Cart::count(),
+            'sub_total'        => $subTotal,
+            'vat'              => $request->vat,
+            'vat_status'       => $request->vat_status,
+            'invoice_no'       => 'INV-' . mt_rand(100000, 999999),
+            'total'            => $total,
+            'payment_status'   => 'paid',
+            'payment_method'   => $request->payment_method,
+            'pay'              => $pay,
+            'due'              => $due < 0 ? abs($due) : 0,
+            'discount'         => $discount,
+            'change_amount'    => $due > 0 ? $due : 0,
+            'created_by'       => auth()->id(),
+        ]);
 
-            // 1 Create Order
-            $order = Order::create([
-                'order_source'   => 'POS',
-                'customer_id'    => null,
-                'order_date'     => now(),
-                'order_status'   => 'complete',
-                'order_type'     => 'In-Store',
-                'total_products' => $cart->count(),
-                'sub_total'      => $subTotal,
-                'vat'            => $request->vat,
-                'vat_status'     => $request->vat_status,
-                'invoice_no'     => 'INV-' . mt_rand(100000, 999999),
-                'total'          => $total,
-                'payment_status' => 'paid',
-                'payment_method' => $request->payment_method,
-                'pay'            => $pay,
-                'due'            => $due < 0 ? abs($due) : 0,
-                'discount'       => $discount,
-                'change_amount'  => $due > 0 ? $due : 0,
-                'created_by'     => auth()->id(),
-            ]);
+        //  Loop through cart and create OrderDetails
+        foreach (Cart::content() as $item) {
 
-            // 2️ Deduct FIFO stock & create order details
-            foreach ($cart->content() as $item) {
 
-                $quantityToSell = $item->qty;
-                $sellingPrice = $item->price;
+            $quantityToSell = $item->qty;
+            $sellingPrice = $item->price;
 
-                $batches = Inventory::where('product_id', $item->options->product_id)
-                    ->where('quantity', '>', 0)
-                    ->orderBy('received_date', 'asc')
-                    ->lockForUpdate() // prevent oversell -- lock in
-                    ->get();
 
-                foreach ($batches as $batch) {
-                    if ($quantityToSell <= 0) break;
+                    $product = Product::find($item->options->product_id);
 
-                    $deduct = min($batch->quantity, $quantityToSell);
+                    // FIFO (for non-expiring products)
 
-                    $batch->decrement('quantity', $deduct);
 
-                    $unitCost = $batch->cost_price;
-                    $profit = ($sellingPrice - $unitCost) * $deduct;
+                        // FIFO - First In, First Out
+                        $batches = Inventory::where('product_id', $item->options->product_id)
+                            ->where('quantity', '>', 0)
+                            ->orderBy('received_date', 'asc')
+                            ->get();
 
+
+            foreach ($batches as $batch) {
+                if ($quantityToSell <= 0) break;
+
+                
+
+                $deduct = min($batch->quantity, $quantityToSell);
+
+                // Deduct stock
+                $batch->decrement('quantity', $deduct);
+
+
+                // Calculate profit
+                $unitCost = $batch->cost_price;
+                $profit = ($sellingPrice - $unitCost) * $deduct;
+
+
+                // Update order detail for this batch (if multiple batches, you can optionally split into multiple order_details rows)
+
+                    //  Create a new order_detail per batch
                     Orderdetails::create([
-                        'order_id'     => $order->id,
-                        'product_id'   => $item->options['product_id'],
-                        'quantity'     => $deduct,
-                        'unitcost'     => $unitCost,
-                        'total'        => $deduct * $sellingPrice,
-                        'batch_number' => $batch->batch_number,
-                        'profit'       => $profit,
+                        'order_id'      => $order->id,
+                        'product_id'    => $item->options['product_id'],
+                        'quantity'      => $deduct,
+                        'unitcost'      => $unitCost,
+                        'total'         => $deduct * $sellingPrice,
+                        'batch_number'  => $batch->batch_number,
+                        'profit'        => $profit,
                     ]);
 
-                    $quantityToSell -= $deduct;
-                }
-
-                if ($quantityToSell > 0) {
-                    throw new \Exception("Not enough stock for product: {$item->name}");
-                }
+                $quantityToSell -= $deduct;
             }
 
-            $cart->destroy();
+            if ($quantityToSell > 0) {
+                throw new \Exception("Not enough stock for product: {$item->name}");
+            }
+        }
 
-            return $order;
-        });
+        // Clear cart
+        Cart::destroy();
+
+        DB::commit();
 
         return response()->json([
             'success' => true,
@@ -561,9 +431,131 @@ public function PaymentWalkin(Request $request)
         ]);
 
     } catch (\Exception $e) {
-        return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        DB::rollBack();
+        return back()->with('error', 'Something went wrong: '.$e->getMessage());
     }
 }
+
+
+
+// public function PaymentWalkin(Request $request)
+// {
+//     $request->validate([
+//         'pay' => 'required|numeric|min:0',
+//         'total' => 'required|numeric|min:0',
+//         'discount' => 'nullable|numeric',
+//         'vat' => 'required|numeric|min:0',
+//         'vat_status' => 'nullable|string',
+//         'payment_method' => 'required|string',
+//     ]);
+
+//     if ($request->pay < $request->total) {
+//         return back()->with([
+//             'message' => 'The payment must be greater than or equal to total due.',
+//             'alert-type' => 'error'
+//         ]);
+//     }
+
+//     $cart = Cart::instance('ecommerce');
+
+//     if ($cart->count() === 0) {
+//         return back()->with([
+//             'message' => 'Cart is empty.',
+//             'alert-type' => 'error'
+//         ]);
+//     }
+
+//     $pay = $request->pay;
+//     $total = $request->total;
+//     $discount = $request->discount ?? 0;
+//     $due = $pay - $total;
+//     $subTotal = $total - $request->vat;
+
+//     try {
+//         $order = DB::transaction(function () use ($request, $cart, $pay, $total, $subTotal, $discount, $due) {
+
+//             // 1 Create Order
+//             $order = Order::create([
+//                 'order_source'   => 'POS',
+//                 'customer_id'    => null,
+//                 'order_date'     => now(),
+//                 'order_status'   => 'complete',
+//                 'order_type'     => 'In-Store',
+//                 'total_products' => $cart->count(),
+//                 'sub_total'      => $subTotal,
+//                 'vat'            => $request->vat,
+//                 'vat_status'     => $request->vat_status,
+//                 'invoice_no'     => 'INV-' . mt_rand(100000, 999999),
+//                 'total'          => $total,
+//                 'payment_status' => 'paid',
+//                 'payment_method' => $request->payment_method,
+//                 'pay'            => $pay,
+//                 'due'            => $due < 0 ? abs($due) : 0,
+//                 'discount'       => $discount,
+//                 'change_amount'  => $due > 0 ? $due : 0,
+//                 'created_by'     => auth()->id(),
+//             ]);
+
+//             // 2️ Deduct FIFO stock & create order details
+//             foreach ($cart->content() as $item) {
+
+//                 $quantityToSell = $item->qty;
+//                 $sellingPrice = $item->price;
+
+//                 $batches = Inventory::where('product_id', $item->options->product_id)
+//                     ->where('quantity', '>', 0)
+//                     ->orderBy('received_date', 'asc')
+//                     ->lockForUpdate() // prevent oversell -- lock in
+//                     ->get();
+
+//                 foreach ($batches as $batch) {
+//                     if ($quantityToSell <= 0) break;
+
+//                     $deduct = min($batch->quantity, $quantityToSell);
+
+//                     $batch->decrement('quantity', $deduct);
+
+//                     $unitCost = $batch->cost_price;
+//                     $profit = ($sellingPrice - $unitCost) * $deduct;
+
+//                     Orderdetails::create([
+//                         'order_id'     => $order->id,
+//                         'product_id'   => $item->options['product_id'],
+//                         'quantity'     => $deduct,
+//                         'unitcost'     => $unitCost,
+//                         'total'        => $deduct * $sellingPrice,
+//                         'batch_number' => $batch->batch_number,
+//                         'profit'       => $profit,
+//                     ]);
+
+//                     $quantityToSell -= $deduct;
+//                 }
+
+//                 if ($quantityToSell > 0) {
+//                     throw new \Exception("Not enough stock for product: {$item->name}");
+//                 }
+//             }
+
+//             $cart->destroy();
+
+//             return $order;
+//         });
+
+//         return response()->json([
+//             'success' => true,
+//             'order_id' => $order->id
+//         ]);
+
+//     } catch (\Exception $e) {
+//         return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+//     }
+// }
+
+
+
+
+
+
 
 
 

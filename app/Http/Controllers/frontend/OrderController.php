@@ -322,8 +322,12 @@ private function processOrder(Request $request)
     
 
     if ($cart->count() === 0) {
-        return back()->with('error', 'Cart empty');
+        
+        $cart->destroy();
+        return redirect()->route('cart.checkout');
     }
+
+
 
     $inventoryService = app(InventoryDeductionService::class);
 
