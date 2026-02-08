@@ -134,7 +134,6 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
         <!-- Input Quantity -->
 
 
-        
         <input 
           max="{{ $inventory->quantity}}"  
           type="number" 
@@ -143,6 +142,7 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
           min="1" 
           class="input input-bordered join-item w-16 text-center" 
           {{-- onchange="this.form.submit()" --}}
+          style="background-color: rgb(255, 255, 255)"
         />
 
 
@@ -159,8 +159,8 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
         <form action="{{ route('removeProd', $item->rowId) }}" method="POST" style="display:inline;">
           @csrf
           @method('DELETE')
-          <button type="submit" class="btn btn-danger btn-sm">
-            <i class="fa-solid fa-trash text-red"></i>
+          <button type="submit" class="btn btn-danger btn-sm" style="background-color: rgb(255, 255, 255)">
+            <i class="fa fa-trash"></i>
           </button>
         </form>
 
