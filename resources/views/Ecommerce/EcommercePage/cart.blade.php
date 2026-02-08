@@ -34,7 +34,11 @@
 
         @foreach($ProductsCart as $item)
 
+
+
         <!-- Example Product Rows (Repeat for each product) -->
+
+        <a href="{{ route('product.show', $item->options->product_id) }}">
         <div class="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3">
             <div class="flex items-center md:gap-6 gap-3">
                 <div class="cursor-pointer w-24 h-24 flex items-center justify-center border border-gray-300 rounded overflow-hidden">
@@ -66,6 +70,9 @@
             </form>
         </div>
         <!-- Repeat above block for each product -->
+</a>
+
+
 
         @endforeach
 

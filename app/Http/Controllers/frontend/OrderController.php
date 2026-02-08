@@ -324,7 +324,7 @@ private function processOrder(Request $request)
     if ($cart->count() === 0) {
         
         $cart->destroy();
-        return redirect()->route('cart.checkout');
+        return redirect()->route('cart.show');
     }
 
 
@@ -421,7 +421,10 @@ private function processOrder(Request $request)
                 'cart' => $cart->content()->toArray(),
                 'checkout' => session('checkout_data'),
             ]);
-        return back()->with('error', $e->getMessage());
+        // return back()->with('error', $e->getMessage());
+
+                $cart->destroy();
+        return redirect()->route('cart.show')->with('error', $e->getMessage());
     }
 }
 
