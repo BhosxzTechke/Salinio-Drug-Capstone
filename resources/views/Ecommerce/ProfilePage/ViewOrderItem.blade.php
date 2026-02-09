@@ -3,7 +3,7 @@
 @section('content')
 
 
-<div class="min-h-screen bg-base-200 p-6 flex justify-center">
+<div class="min-h-screen bg-base-200 p-6 flex justify-center bg-slate-50">
   <div class="w-full max-w-7xl">
 
     <!-- Header with Go Back and Search -->
@@ -17,45 +17,25 @@
 
       <div class="relative flex items-center">
         <input id="searchInput" type="text" placeholder="Search for users"
-          class="block w-80 ps-10 pr-20 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+          class="block w-80 ps-10 pr-20 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
         <svg class="absolute left-3 w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M9 17a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/>
         </svg>
         <button onclick="clearSearch()" 
           class="absolute right-1 top-1 px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600">Cancel</button>
       </div>
+
+
     </div>
 
 
+
+
+    
     <!-- Action Dropdown -->
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg bg-white dark:bg-gray-900 mb-4">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg bg-white dark:bg-gray-100 mb-4">
      
      
-      {{-- <div class="flex items-center justify-start flex-wrap space-y-4 md:space-y-0 py-4 px-4 border-b border-gray-200 dark:border-gray-700">
-        <div>
-          <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction"
-            class="inline-flex items-center text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
-            Action
-            <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-            </svg>
-          </button>
-
-
-          <!-- Dropdown menu -->
-          <div id="dropdownAction" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-            <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
-              <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reward</a></li>
-              <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Promote</a></li>
-              <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Activate account</a></li>
-            </ul>
-            <div class="py-1">
-              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete User</a>
-            </div>
-          </div>
-        </div>
-      </div> --}}
-
 
 
 
@@ -87,7 +67,7 @@
         @foreach ($order->orderdetails as $item)
                 
           
-          <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
+          <tr class="bg-white dark:bg-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600">
           
 {{--           
             <td class="w-4 p-4">

@@ -13,17 +13,27 @@
 
 <!-- Sticky Responsive Navbar -->
 <nav class="bg-white shadow-md sticky top-0 z-50">
+
+    
     <div class="max-w-7xl ml-8 px-4 py-3 flex items-center justify-between">
         <!-- Logo -->
-        <a href="{{ url('/') }}" 
-           class="flex items-center gap-2 text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 hover:scale-105 transition-transform duration-200">
-            <svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M8 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            @php $BusinessTitle = App\Models\BusinessTitle::find(1); @endphp
-            <span>{{ $BusinessTitle->business_name ?? 'Pharma' }}</span>
-        </a>
+            <a href="{{ url('/') }}" 
+            class="flex items-center gap-2
+                    text-lg sm:text-xl md:text-2xl
+                    font-extrabold bg-clip-text text-transparent
+                    bg-gradient-to-r from-gray-900 to-gray-600
+                    hover:scale-105 transition-transform duration-200">
+
+                <svg class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gray-700"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M8 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+
+                @php $BusinessTitle = App\Models\BusinessTitle::find(1); @endphp
+                <span>{{ $BusinessTitle->business_name ?? 'Pharma' }}</span>
+            </a>
 
 
         <!-- Hamburger Button -->
@@ -161,41 +171,60 @@
 
 
 
+
+
         
         <!-- Category Bar -->
         <div class="bg-white text-gray-900 shadow-lg border-b">
-            <div class="max-w-4xl mx-auto px-1 relative flex items-center">
+
+
+    <div class="max-w-4xl mx-auto px-1 relative flex items-center">
                 <!-- Left Arrow -->
 
 
-     <button id="cat-left" 
-            class="absolute left-0 z-10 bg-white shadow rounded-full p-2 hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-    </button>
+        <button id="cat-left"
+                class="hidden md:flex absolute left-0 z-10 bg-white shadow rounded-full p-2">
 
-    <!-- Category List -->
-    <div id="cat-container" class="overflow-hidden w-full px-8 pt-5">
-        <ul id="cat-list" class="flex space-x-3 transition-transform duration-300 ease-in-out">
-            @foreach($categories as $category)
-                <li class="min-w-[120px] text-center">
-                    <a href="{{ route('category.show', $category->slug) }}" 
-                       class="block px-3 py-2 rounded-lg hover:bg-gradient-to-r from-[#303034] via-[#353a41] to-[#292d31] hover:text-white transition font-semibold text-black-600 text-sm truncate">
-                        {{ $category->category_name ?? $category->name }}
-                    </a>
-                </li>
-            @endforeach
-        </ul>
-    </div>
-
-            <!-- Right Arrow -->
-            <button id="cat-right" 
-                    class="absolute right-0 z-10 bg-white shadow rounded-full p-2 hidden">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
             </button>
+
+
+
+            <!-- Category List -->
+                <div id="cat-container"
+                    class="w-full px-2 pt-5 overflow-x-auto md:overflow-hidden scrollbar-hide">
+
+                    <ul id="cat-list"
+                        class="flex space-x-3 md:space-x-3
+                            md:transition-transform md:duration-300 md:ease-in-out
+                            snap-x snap-mandatory">
+                        @foreach($categories as $category)
+                            <li class="min-w-[120px] text-center snap-start">
+                                <a href="{{ route('category.show', $category->slug) }}"
+                                class="block px-3 py-2 rounded-lg
+                                        hover:bg-gradient-to-r from-[#303034] via-[#353a41] to-[#292d31]
+                                        hover:text-white transition font-semibold text-sm truncate">
+                                    {{ $category->category_name ?? $category->name }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+        </div>
+
+
+        
+
+
+                    <!-- Right Arrow -->
+        <button id="cat-right"
+                class="hidden md:flex absolute right-0 z-10 bg-white shadow rounded-full p-2">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
 
 
 
@@ -267,7 +296,7 @@
 
 
 
-<script>
+ <script>
     document.addEventListener("DOMContentLoaded", () => {
         const container = document.getElementById("cat-container");
         const list = document.getElementById("cat-list");
@@ -275,7 +304,13 @@
         const rightBtn = document.getElementById("cat-right");
         const scrollAmount = 110; // smaller step to fit ~4 items
 
+    function isDesktop() {
+        return window.innerWidth >= 768; // md breakpoint
+    }
+
         function updateButtons() {
+                    if (!isDesktop()) return;
+
             const items = list.querySelectorAll("li").length;
 
             // hide arrows if categories <= 4
@@ -285,8 +320,10 @@
                 return;
             }
 
+
             // toggle arrows on scroll
             leftBtn.classList.toggle("hidden", container.scrollLeft <= 0);
+            
             rightBtn.classList.toggle("hidden",
                 container.scrollLeft + container.clientWidth >= list.scrollWidth
             );
@@ -305,7 +342,9 @@
 
         updateButtons();
     });
-</script>
+
+
+</script> 
 
 
 

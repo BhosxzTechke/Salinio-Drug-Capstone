@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Address;
 use App\Models\Customer;
 use App\Models\Inventory;
+use App\Models\Product;
 use PDO;
 
 class CartController extends Controller
@@ -20,95 +21,92 @@ class CartController extends Controller
 
 
 
-
 public function EcommerceAddCart(Request $request)
 {
-    
-            $inventoryItem = Inventory::where('product_id', $request->id)
-                        ->where('quantity', '>', 0)
-                        ->orderBy('created_at') // FIFO
-                        ->first();
+    // $request->validate([
+    //     'id'  => 'required|integer',
+    //     'qty' => 'required|integer|min:1'
+    // ]);
 
-                    if (!$inventoryItem) {
-                        return redirect()->back()->with([
-                            'message' => 'Product out of stock',
-                            'alert-type' => 'error'
-                        ]);
-                    }
+    $productId = $request->id;
 
-                    Cart::instance('ecommerce')->add([
-                        'id' => $inventoryItem->id,  // Use actual inventory row ID
-                        'name' => $inventoryItem->product->product_name ?? 'Unnamed Product',
-                        'qty' => $request->qty,
-                        'price' => $inventoryItem->product->selling_price ?? 'Price',
-                        'weight' => 20,
-                        'options' => [
-                            'image' => $request->product_image,
-                            'product_id' => $inventoryItem->product_id, // keep original product_id
-                        ]
-                    ]);
+    // Total available stock (FIFO-safe check)
+    $totalAvailable = Inventory::where('product_id', $productId)
+        ->where('quantity', '>', 0)
+        ->sum('quantity');
 
 
-            $notification = array(
-                'message' => 'Product Added Successfully',
-                'alert-type' => 'success'
-            );
 
-    return redirect()->back()->with($notification);
+    if ($totalAvailable < $request->qty) {
+        return back()->with([
+            'message' => 'Product out of stock or insufficient quantity.',
+            'alert-type' => 'error'
+        ]);
+    }
+
+    // Get product once
+    $product = Product::findOrFail($productId);
+
+    Cart::instance('ecommerce')->add([
+        'id'    => $product->id, // PRODUCT ID (important)
+        'name'  => $product->product_name,
+        'qty'   => $request->qty,
+        'price' => $product->selling_price,
+        'weight'=> 0,
+        'options' => [
+            'product_id' => $product->id,
+            'image'      => $product->product_image,
+        ]
+    ]);
+
+    return back()->with([
+        'message' => 'Product added to cart successfully.',
+        'alert-type' => 'success'
+    ]);
 }
 
 
 
 
 
+        public function EcommerceChangeQty(Request $request, $rowId)
+        {
+            $request->validate([
+                'qty' => 'required|integer|min:1'
+            ]);
 
-                    public function EcommerceChangeQty(Request $request, $rowId)
-                    {
-                        $cart = Cart::instance('ecommerce');
+            $cart = Cart::instance('ecommerce');
+            $cartItem = $cart->get($rowId);
 
-                        $cartItem = $cart->get($rowId);
+            if (!$cartItem) {
+                return back()->with([
+                    'message' => 'Cart item not found.',
+                    'alert-type' => 'error'
+                ]);
+            }
 
-                        if (!$cartItem) {
-                            return back()->with([
-                                'message' => 'Cart item not found.',
-                                'alert-type' => 'error'
-                            ]);
-                        }
+            $productId = $cartItem->options->product_id;
 
-                        $productId = $cartItem->options->product_id ?? null;
+            // Total FIFO stock (all valid batches)
+            $totalAvailable = Inventory::where('product_id', $productId)
+                ->where('quantity', '>', 0)
+                ->sum('quantity');
 
-                        $totalAvailable = Inventory::where('product_id', $productId)
-                            ->sum('quantity');
+            if ($request->qty > $totalAvailable) {
+                return back()->with([
+                    'message' => "Only {$totalAvailable} item(s) available in stock.",
+                    'alert-type' => 'error'
+                ]);
+            }
 
-                        if ($request->qty > $totalAvailable) {
-                            return back()->with([
-                                'message' => 'Insufficient stock available across all batches.',
-                                'alert-type' => 'error'
-                            ]);
-                        }
+            // Update quantity
+            $cart->update($rowId, $request->qty);
 
-
-                $qty = $request->qty;
-
-                // if ($request->action === 'increase') {
-                //     $qty++;
-                // } elseif ($request->action === 'decrease' && $qty > 1) {
-                //     $qty--;
-                // } elseif ($request->has('qty')) {
-                //     $qty = max(1, (int) $request->qty); // manual input
-                // }
-
-
-
-                                
-                    // Update cart qty
-                    // Cart::update($rowId, $request->qty);
-
-
-                Cart::instance('ecommerce')->update($rowId, $qty);
-
-                return back()->with('success', 'Cart updated.');
-    }
+            return back()->with([
+                'message' => 'Cart updated successfully.',
+                'alert-type' => 'success'
+            ]);
+        }
 
 
 

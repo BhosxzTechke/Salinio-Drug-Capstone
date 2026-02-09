@@ -17,4 +17,5 @@ class delivery_item extends Model
             {
                 return $this->belongsTo(Delivery::class, 'delivery_id');
             }
+
 }

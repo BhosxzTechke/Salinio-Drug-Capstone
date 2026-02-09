@@ -77,6 +77,13 @@ use HasFactory;
     }
 
 
+
+        public function PurchaseOrderItems()
+    {
+        return $this->hasMany(PurchaseOrderItem::class, 'product_id'); // adjust column names if different
+    }
+
+
     
 
 }

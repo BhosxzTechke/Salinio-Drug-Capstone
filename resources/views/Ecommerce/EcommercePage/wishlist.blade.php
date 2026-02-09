@@ -9,7 +9,7 @@
 
 
 <div class="max-w-7xl mx-auto px-4 py-8">
-  <h2 class="text-2xl font-bold mb-6">My Wishlist</h2>
+  <h2 class="text-2xl font-bold mb-6 text-gray-800">My Wishlist</h2>
 
 
 
@@ -51,7 +51,7 @@
       <span class="badge badge-success ml-auto">In Stock</span>
     </div>
 
-    <!-- Rating (UI only) -->
+    {{-- <!-- Rating (UI only) -->
     <div class="flex items-center space-x-2 mb-3">
       <div class="rating rating-sm">
         <input type="radio" class="mask mask-star-2 bg-yellow-400" checked />
@@ -61,7 +61,9 @@
         <input type="radio" class="mask mask-star-2 bg-yellow-400" />
       </div>
       <span class="text-gray-500 text-sm">(58)</span>
-    </div>
+    </div> --}}
+
+    
 
     <!-- Buttons -->
     <div class="mt-auto flex space-x-2">

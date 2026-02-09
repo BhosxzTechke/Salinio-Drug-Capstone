@@ -5,17 +5,23 @@
 <div class="max-w-7xl mx-auto px-4 py-8">
   <div class="grid md:grid-cols-2 gap-8">
 
-    <!-- Product Images -->
-    <div class="flex flex-col items-center">
-      <div class="w-full max-w-md">
-        <img src="{{ $inventory->product->product_image }}" alt="{{ $inventory->product->product_name }}" class="rounded-lg shadow-lg w-full" />
-      </div>
-      {{-- <div class="flex space-x-3 mt-4">
-        <img src="https://via.placeholder.com/100" class="w-16 h-16 rounded-lg border cursor-pointer hover:border-violet-500" />
-        <img src="https://via.placeholder.com/100" class="w-16 h-16 rounded-lg border cursor-pointer hover:border-violet-500" />
-        <img src="https://via.placeholder.com/100" class="w-16 h-16 rounded-lg border cursor-pointer hover:border-violet-500" />
-      </div> --}}
-    </div>
+
+
+      
+          <!-- Product Images -->
+          <div class="flex flex-col items-center">
+            <div class="w-full max-w-md">
+              <img src="{{ $product->product_image }}" alt="{{ $product->product_name }}" class="rounded-lg shadow-lg w-full" />
+            </div>
+            {{-- <div class="flex space-x-3 mt-4">
+              <img src="https://via.placeholder.com/100" class="w-16 h-16 rounded-lg border cursor-pointer hover:border-violet-500" />
+              <img src="https://via.placeholder.com/100" class="w-16 h-16 rounded-lg border cursor-pointer hover:border-violet-500" />
+              <img src="https://via.placeholder.com/100" class="w-16 h-16 rounded-lg border cursor-pointer hover:border-violet-500" />
+            </div> --}}
+          </div>
+
+
+
 
 
     
@@ -26,46 +32,53 @@
   <form method="POST" action="{{ url('/ecommerce/add') }}">
     @csrf
 
-    <input type="hidden" name="id" value="{{ $inventory->product_id }}">
-    <input type="hidden" name="name" value="{{ $inventory->product->product_name }}">
+
+
+
+    <input type="hidden" name="id" value="{{ $product->id }}">
+    <input type="hidden" name="name" value="{{ $product->product_name }}">
     <input type="hidden" name="qty" value="1">
-    <input type="hidden" name="selling_price" value="{{ $inventory->product->selling_price }}">
-    <input type="hidden" name="product_image" value="{{ $inventory->product->product_image }}">
+    <input type="hidden" name="selling_price" value="{{ $product->selling_price }}">
+    <input type="hidden" name="product_image" value="{{ $product->product_image }}">
 
 
 
     <!-- Name, Brand, Category -->
-    <h1 class="text-2xl font-bold">{{ $inventory->product->product_name }}</h1>
+    <h1 class="text-2xl font-bold text-gray-700">{{ $product->product_name }}</h1>
     <p class="text-sm text-gray-500">
-      Brand: <span class="font-medium">{{ $inventory->product->brand->name ?? 'N/A' }}</span>
+      Brand: <span class="font-medium">{{ $product->brand->name ?? 'N/A' }}</span>
     </p>
 
 
     <p class="text-sm text-gray-500">
-      Category: <span class="font-medium">{{ $inventory->Product->category->category_name ?? 'No Category' }}</span>
+      Category: <span class="font-medium">{{ $product->category->category_name ?? 'No Category' }}</span>
     </p>
     <p class="text-sm text-gray-500">
-      Sub-Category: <span class="font-medium">{{ $inventory->Product->subcategory->name ?? 'No Sub-Category' }}</span>
+      Sub-Category: <span class="font-medium">{{ $product->subcategory->name ?? 'No Sub-Category' }}</span>
     </p>
     <p class="text-sm text-gray-500">
-      Product Code: <span class="font-medium">{{ $inventory->product->product_code ?? 'No Product Code' }}</span>
+      Product Code: <span class="font-medium">{{ $product->product_code ?? 'No Product Code' }}</span>
     </p>
+
+
 
     <!-- Price + Stock -->
     <div class="flex items-center space-x-4">
-      <p class="text-3xl font-bold text-violet-600">₱{{ number_format($inventory->product->selling_price,2) }}</p>
+      <p class="text-3xl font-bold text-violet-600">₱{{ number_format($product->selling_price,2) }}</p>
 
-      @if($inventory->quantity > 0)
-        <span class="badge badge-success ml-2">In Stock</span>
-      @else
-        <span class="badge badge-error ml-2">Out of Stock</span>
-      @endif
+      @if($totalQuantity > 0)
+
+            <span class="badge badge-success ml-2">{{ $totalQuantity }}  In Stock</span>
+
+          @else
+            <span class="badge badge-error ml-2">Out of Stock</span>
+          @endif
         </div>
 
 
 
         <!-- Short Description -->
-        <p class="text-gray-700 leading-relaxed">{{ $inventory->product->description }}</p>
+        <p class="text-gray-700 leading-relaxed">{{ $product->description }}</p>
 
         <!-- Add to Cart Button -->
         <div class="mt-4">
@@ -74,7 +87,7 @@
 
 
 
-      @if($inventory->product->prescription_required)
+      @if($product->prescription_required)
         <div class="text-center space-y-2">
           <p class="text-sm text-red-500 font-semibold">
         This medicine requires a valid prescription and can only be purchased in-store.
@@ -84,7 +97,7 @@
         Visit Our Store
           </a>
         </div>
-      @elseif($inventory->quantity <= 0)
+      @elseif($totalQuantity <= 0)
         <button type="submit" 
             class="btn bg-gray-400 text-white cursor-not-allowed flex-1" disabled>
           Out of Stock
@@ -92,32 +105,42 @@
       @else
 
 
+
+          
+          {{-- IF WALA UNG ID NA NASA CART SA inventories ID THEN LABAS MO UNG BUTTON NA ADD TOCART  --}}
+          {{-- IT MEANS WLA PANG LLAMAN UNG CART --}}
+            @if(!Cart::instance('ecommerce')->content()->where('id', $product->id)->count())
+                <button type="submit"
+                    class="btn bg-violet-600 text-white hover:bg-violet-700 flex-1">
+                    Add to Cart
+                </button>
+
+            @endif
+
+
+          @endif
+
+
       
-      {{-- IF WALA UNG ID NA NASA CART SA INVENTORY ID THEN LABAS MO UNG BUTTON NA ADD TOCART  --}}
-      {{-- IT MEANS WLA PANG LLAMAN UNG CART --}}
-        @if(!Cart::instance('ecommerce')->content()->where('id', $inventory->id)->count())
-            <button type="submit"
-                class="btn bg-violet-600 text-white hover:bg-violet-700 flex-1">
-                Add to Cart
-            </button>
-
-        @endif
 
 
-      @endif
+            </div>
 
 
 
-        </div>
-  </form>
+      </form>
+
+
 
 
   <!--This ensures each item in the loop is the actual product you want  Cart Items (Separate Section, NOT inside Add to Cart Form) -->
 @php
-$ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) use ($inventory) {
-    return $item->options->product_id == $inventory->product_id;
+$ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) use ($product) {
+    return $item->options->product_id == $product->id;
 });
 @endphp
+
+
 
 
   <div class="space-y-4">
@@ -128,14 +151,9 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
         @csrf
         @method('PATCH')
 
-        <!-- Decrease Quantity -->
-        {{-- <button type="submit" name="action" value="decrease" class="btn btn-outline join-item">-</button> --}}
-
-        <!-- Input Quantity -->
-
 
         <input 
-          max="{{ $inventory->quantity}}"  
+          max="{{ $totalQuantity}}"  
           type="number" 
           name="qty" 
           value="{{ $item->qty }}" 
@@ -149,7 +167,8 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
         <!-- Increase Quantity -->
         <button type="submit" onchange="this.form.submit()" name="action" value="increase" class="btn btn-outline join-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-check-fill" viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0m-.646 5.354a.5.5 0 0 0-.708-.708L7.5 10.793 6.354 9.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
-</svg></button>
+</svg>
+</button>
 
         
       </form>
@@ -164,18 +183,21 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
           </button>
         </form>
 
-  </div>
-
-    @endforeach
+    </div>
 
 
 
-  </div>
+
+    </div>
 
 
 
 
 </div>
+
+
+    @endforeach
+
 
       <!-- Tabs for Details / Usage / Safety -->
       <div class="mt-6">
@@ -186,17 +208,17 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
           <a class="tab tab-bordered">Storage</a>
         </div>
         <div class="p-4 border rounded-b-lg text-sm text-gray-600 leading-relaxed">
-          <p><strong>Description:</strong> {{ $inventory->product->description ?? 'N/A' }}</p>
-          <p><strong>Dosage Form:</strong> {{ $inventory->product->dosage_form ?? 'N/A' }}</p>
+          <p><strong>Description:</strong> {{ $product->description ?? 'N/A' }}</p>
+          <p><strong>Dosage Form:</strong> {{ $product->dosage_form ?? 'N/A' }}</p>
 
-          {{-- <p><strong>Dosage Instructions:</strong> {{ $inventory->product->usage_instructions ?? 'Consult your physician.' }}</p> --}}
+          {{-- <p><strong>Dosage Instructions:</strong> {{ $inventories->product->usage_instructions ?? 'Consult your physician.' }}</p> --}}
           {{-- <p><strong>Contraindications:</strong> {{ $Product->contraindications ?? 'Not specified' }}</p> --}}
 
 
-          <p><strong>Target Gender:</strong> {{ $inventory->product->target_gender ?? 'N/A' }}</p>
-          <p><strong>Age Group:</strong> {{ $inventory->product->age_group ?? 'N/A' }}</p>
-          <p><strong>Health Concern:</strong> {{ $inventory->product->health_concern ?? 'N/A' }}</p>
-          <p><strong>Expiry Date:</strong> {{ $inventory->expiry_date ? date('M d, Y', strtotime($inventory->expiry_date)) : 'N/A' }}</p>
+          <p><strong>Target Gender:</strong> {{ $product->target_gender ?? 'N/A' }}</p>
+          <p><strong>Age Group:</strong> {{ $product->age_group ?? 'N/A' }}</p>
+          <p><strong>Health Concern:</strong> {{ $product->health_concern ?? 'N/A' }}</p>
+          <p><strong>Expiry Date:</strong> {{ $product->expiry_date ? date('M d, Y', strtotime($inventories->expiry_date)) : 'N/A' }}</p>
         </div>
       </div>
 
@@ -211,5 +233,8 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
     </div>
   </div>
 </div>
+
+
+
 
 @endsection

@@ -113,13 +113,29 @@ class FrontendController extends Controller
     
 
 
-    public function ProductDetails($product_id)
-    {
-        $inventory = Inventory::with('product')->where('product_id', $product_id)->firstOrFail();
+        public function ProductDetails($product_id)
+        {
+            $today = Carbon::today();
 
-        
-        return view('Ecommerce.product_detail', compact('inventory'));
-    }
+                $inventories = Inventory::with('product')
+                    ->where('product_id', $product_id)
+                    ->where('quantity', '>', 0)
+                    ->orderBy('created_at', 'asc') // FIFO
+                    ->get();
+
+                $product = $inventories->first()->product;
+                $totalQuantity = $inventories->sum('quantity');
+
+                return view('Ecommerce.product_detail', compact(
+                    'product',
+                    'inventories',
+                    'totalQuantity'
+                ));
+
+
+        }
+
+
 
 
 

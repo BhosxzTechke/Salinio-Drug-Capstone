@@ -432,12 +432,7 @@ private function processOrder(Request $request)
 
 
 
-
-
-
-
-
-        public function CancelOrder() {
+        public function PaypalCancel() {
         return view('Ecommerce.payment.cancel');
         }
 
@@ -445,6 +440,12 @@ private function processOrder(Request $request)
 
 
 
+
+
+
+
+
+        
 
 
         //////////// CHANGE ADRESS ///////////////

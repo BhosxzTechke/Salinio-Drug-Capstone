@@ -150,9 +150,6 @@ public function CategoryProduct(Request $request, $slug)
 
 
 
-
-
-
     if ($request->ajax()) {
         return response()->view('Ecommerce.Partials.product_grid', compact('inventory'))->render();
     }

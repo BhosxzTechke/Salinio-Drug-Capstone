@@ -1,9 +1,8 @@
 @extends('Ecommerce.Layout.ecommerce')
 @section('content')
 
-
 <section class="bg-gray-50 pt-6">
-  <div class="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="relative pb-4">
 
       <!-- Carousel -->
@@ -18,7 +17,6 @@
             />
 
             <!-- Overlay -->
-            <!-- Overlay -->
             <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
               <div class="text-white max-w-lg px-4 sm:px-6 lg:px-8">
                 <h2 class="text-2xl md:text-4xl ml-11 font-bold mb-3 ">{{ $item->title ?? 'Big Savings on Your Essentials'}}</h2>
@@ -26,10 +24,11 @@
                 <a href="{{ $item->link ?? '' }}" target="_blank" class="px-4 py-2 bg-green-500 hover:bg-green-900 rounded-lg text-white text-sm md:text-base ml-11">Learn More</a>
               </div>
             </div>
+
+
           </div>
           @endforeach
         </div>
-        
 
         <!-- Arrows -->
         <button id="prev" class="absolute left-4 top-1/2 -translate-y-1/2 btn btn-circle">❮</button>
@@ -42,6 +41,8 @@
           <button class="dot btn btn-xs" data-slide="{{ $index }}">{{ $index + 1 }}</button>
         @endforeach
       </div>
+
+
     </div>
   </div>
 </section>
@@ -51,7 +52,6 @@
 
 
 @if($inventory)
-
 
 <section class="bg-gray-50 pt-10">
   <div class="max-w-6xl mx-auto px-4">
@@ -198,6 +198,10 @@
 
 
 
+
+
+
+
 <section class="bg-gray-50 pt-10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="card bg-base-100 shadow-sm h-[250px] rounded-xl overflow-hidden relative">
@@ -304,6 +308,7 @@ Your trusted online pharmacy for safe, affordable, and quality medicines.
   </div>
 </section>
 
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const track = document.getElementById("track");
@@ -337,7 +342,6 @@ document.addEventListener("DOMContentLoaded", () => {
   startAuto();
 });
 </script>
-
 
 
 @endsection

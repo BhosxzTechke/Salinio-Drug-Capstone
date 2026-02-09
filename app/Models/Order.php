@@ -64,6 +64,16 @@ class Order extends Model
 
 
 
+    /// FOR RETURN
+
+        public function items()
+    {
+        return $this->hasMany(Orderdetails::class, 'order_id'); // adjust class & foreign key if needed
+    }
+
+
+
+
                 //// HAD RELATIONSHIP WITH ADDRESS TABLE
         public function shippingAddress()
         {

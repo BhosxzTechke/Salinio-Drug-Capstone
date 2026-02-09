@@ -84,8 +84,7 @@
                     </td>
 
 
-                    <td class="return-status-cell"
-                        data-return-shipment-id="{{ $data->id }}">
+                    <td class="return-status-cell">
 
                         <!-- Status display -->
                         {{-- <button type="button" class="btn btn-sm btn-secondary return-status-btn">
@@ -97,25 +96,52 @@
                         
                     </td>
 
-
+{{-- 
                 @if($data->returnRequest->status == 'refunded' || $data->returnRequest->status == 'rejected' )
 
                     <td><span class="badge badge-pill bg-danger"> {{ $data->returnRequest->status ?? '' }}</span></td>
 
                 @else
 
-                <td class="confirm-pickup-cell" data-return-shipment-id="{{ $data->id }}">
-                        <a href="{{route('admin.confirmed.return', $data->returnRequest->id )}} " type="button" class="btn btn-sm btn-success confirm-pickup-btn" style="display: none;">
-                            Returned Process
-                        </a>
-                </td>
+                    <td class="confirm-pickup-cell" data-return-shipment-id="{{ $data->id }}">
+                            <a href="{{route('admin.confirmed.return', $data->returnRequest->id )}} " type="button" class="btn btn-sm btn-success confirm-pickup-btn" style="display: none;">
+                                Returned Process
+                            </a>
+                    </td>
 
-                @endif
-
-
-                    
+                @endif --}}
 
 
+
+
+
+        <td class="confirm-pickup-cell" data-return-shipment-id="{{ $data->id }}">
+            
+            @if($data->returnRequest->status == 'refunded' || $data->returnRequest->status == 'rejected')
+                <span class="badge badge-pill bg-danger">{{ $data->returnRequest->status ?? '' }}</span>
+            @elseif($data->returnRequest->status == 'received')
+                <a href="{{ route('admin.confirmed.return', $data->returnRequest->id) }}" 
+                class="btn btn-sm btn-success confirm-pickup-btn">
+                Returned Process
+                </a>
+            @else
+
+            
+    <a href="{{ route('admin.return.mark-received',
+                $data->returnRequest->id)}}"  class="btn btn-sm btn-dark mark-Confirm-received" onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                    Confirm Received</a>
+
+                {{-- <a href="{{ route('admin.confirmed.return', $data->returnRequest->id) }}" 
+                class="btn btn-sm btn-success confirm-pickup-btn" style="display: none;">
+                Returned Process
+                </a> --}}
+            @endif
+        </td>
+
+
+
+
+                
                     </tr>
 
 
@@ -376,49 +402,6 @@ $(document).ready(function() {
 
 
 
-<script>
-
-        $(document).ready(function() {
-            $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-            });
-
-        
-            $('.mark-cancelled-order').click(function() {
-            let id = $(this).data('id');
-
-            Swal.fire({
-                title: 'Cancel this order?',
-                text: 'This action cannot be undone!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Cancel it!',
-                cancelButtonText: 'No, go back'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.post("{{ route('orders.ajax.cancelled') }}", { id: id }, function(data) {
-                        if (data.success) {
-                            $('#order-row-' + id).fadeOut();
-                            Swal.fire('Cancelled', data.message, 'success');
-                        } else {
-                            Swal.fire('Error', data.message, 'error');
-                        }
-
-                    }).fail(function(xhr) {
-                        Swal.fire('Error', 'Unauthorized or session expired', 'error');
-                    });
-                }
-            });
-            });
-
-
-    });
-
-</script>
-
-
 
 
 
@@ -427,7 +410,7 @@ $(document).ready(function() {
 
 
 {{--  AUTO UPDATE FETCHING  --}}
-<script>
+{{-- <script>
 document.addEventListener('DOMContentLoaded', function () {
 
     function refreshStatuses() {
@@ -468,7 +451,130 @@ document.addEventListener('DOMContentLoaded', function () {
     setInterval(refreshStatuses, 3000);
 
 });
+</script> --}}
+
+
+
+
+
+
+
+<script>
+$(document).ready(function() {
+
+    $('.mark-Confirm-received').click(function(e) {
+        e.preventDefault();
+
+        let url = $(this).attr('href');
+
+        Swal.fire({
+            title: 'Mark as Received?',
+            text: 'Are you sure you want to confirm this order?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, confirm it!',
+            cancelButtonText: 'No, cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Processing...",
+                    text: "Please wait",
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+
+                setTimeout(() => {
+                    window.location.href = url; // ✅ FIXED
+                }, 300);
+            }
+
+
+        });
+    });
+
+});
 </script>
+
+
+{{-- <script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // --- MARK AS RECEIVED BUTTON ---
+    document.querySelectorAll('.mark-received-btn').forEach(button => {
+        button.addEventListener('click', function(){
+            let cell = button.closest('.confirm-pickup-cell');
+            let returnShipmentId = cell.dataset.returnShipmentId;
+
+            fetch(`/admin/return/mark-received/${returnShipmentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ status: 'received' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success){
+                    // Hide the "Mark as Received" button
+                    button.style.display = 'none';
+
+                    // Show "Returned Process"
+                    let returnedBtn = cell.querySelector('.confirm-pickup-btn');
+                    if(returnedBtn) returnedBtn.style.display = 'inline-block';
+                } else {
+                    alert('Failed to mark as received');
+                }
+            })
+            .catch(err => console.error('Error:', err));
+        });
+    });
+
+    // --- AUTO REFRESH STATUS ---
+    function refreshStatuses() {
+        document.querySelectorAll('.return-status-cell').forEach(el => {
+            let id = el.dataset.returnShipmentId;
+            let url = `/return-shipment/${id}/status`;
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    let status = (data.shipment_status ?? 'unknown').toLowerCase();
+
+                    // Update status badge or text
+                    let statusBtn = el.querySelector('.return-status-btn');
+                    if(statusBtn) statusBtn.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+
+                    // Update buttons
+                    let cell = document.querySelector(`.confirm-pickup-cell[data-return-shipment-id="${id}"]`);
+                    if(cell){
+                        let markReceivedBtn = cell.querySelector('.mark-received-btn');
+                        let returnedBtn = cell.querySelector('.confirm-pickup-btn');
+
+                        if(status === 'received'){
+                            if(markReceivedBtn) markReceivedBtn.style.display = 'none';
+                            if(returnedBtn) returnedBtn.style.display = 'inline-block';
+                        } else if(status === 'refunded' || status === 'rejected'){
+                            if(markReceivedBtn) markReceivedBtn.style.display = 'none';
+                            if(returnedBtn) returnedBtn.style.display = 'none';
+                        } else {
+                            if(markReceivedBtn) markReceivedBtn.style.display = 'inline-block';
+                            if(returnedBtn) returnedBtn.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(err => console.error('Status fetch error:', err));
+        });
+    }
+
+    refreshStatuses();
+    setInterval(refreshStatuses, 3000);
+
+});
+</script> --}}
+
 
 
 

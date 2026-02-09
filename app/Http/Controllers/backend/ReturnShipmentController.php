@@ -4,6 +4,7 @@ namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ReturnStatusMail;
+use App\Models\Inventory;
 use App\Models\return_requests;
 use App\Models\return_shipments;
 use App\Models\ReturnRequest;
@@ -115,37 +116,75 @@ class ReturnShipmentController extends Controller
 
 
 
+        public function ReturnMarkReceived(Request $request, $id)
+        {
+            $returnRequest = ReturnRequest::findOrFail($id);
+
+            // Only update if current status is not refunded/rejected
+            if(!in_array($returnRequest->status, ['refunded', 'rejected', 'received'])){
+                $returnRequest->status = 'received';
+                $returnRequest->save();
+            }
+
+                $notification = array(
+                'message' => 'Return Order Received',
+                'alert-type' => 'success',
+            );
+
+
+            
+                return redirect()->back()->with($notification);
+
+
+
+        }
+
+
+
+
+
         public function ReturnhandleAction(Request $request, $id)
-    {
+        {
+
+
             $return = ReturnRequest::with('order')->findOrFail($id);
             $order  = $return->order;
+
+
+
+            
+
+
 
             //// Customer
             $customer = $order->customer;
 
         // Prevent double refund
+
+
+
         if ($return->status === 'refunded') {
             return back()->with('error', 'This return has already been refunded.');
         }
 
     /////////////// [ IF ADMIN SELECTED REJECT ] ///////////////////////////
 
-    // Reject flow
-    if ($request->action === 'reject') {
-        $return->update([
-            'status'      => 'rejected',
-            'description' => $request->reject_reason,
-        ]);
+        // Reject flow
+        if ($request->action === 'reject') {
+            $return->update([
+                'status'      => 'rejected',
+                'description' => $request->reject_reason,
+            ]);
 
-            Mail::to($customer->email)->send(new ReturnStatusMail($return, 'rejected'));
+                Mail::to($customer->email)->send(new ReturnStatusMail($return, 'rejected'));
 
-            
-        $notification = [
-            'message' => 'Successfully Rejected',
-            'alert-type' => 'success',
-        ];
+                    
+            $notification = [
+                'message' => 'Successfully Rejected',
+                'alert-type' => 'success',
+            ];
 
-        return redirect()->route('customer.returning.item')->with($notification);
+            return redirect()->route('customer.returning.item')->with($notification);
 
 
 
@@ -155,68 +194,97 @@ class ReturnShipmentController extends Controller
     /////////////// [ IF ADMIN SELECTED REFUND ] ///////////////////////////
 
     // Refund flow
-    if ($request->action === 'refund') {
+if ($request->action === 'refund') {
 
-        $request->validate([
-            'refund_amount' => 'nullable|numeric|min:1',
-        ]);
+    $request->validate([
+        'refund_amount' => 'nullable|numeric|min:1',
+    ]);
 
-        // Safety checks
-        if ($return->status !== 'received') {
-            return back()->with('error', 'Item must be received before refund.');
-        }
+    // Safety checks
+    if ($return->status !== 'received') {
+        return back()->with('error', 'Item must be received before refund.');
+    }
 
-        if ($order->payment_status !== 'paid') {
-            return back()->with('error', 'Order is not paid.');
-        }
+    if ($order->payment_status !== 'paid') {
+        return back()->with('error', 'Order is not paid.');
+    }
 
-        if (!$order->paypal_capture_id) {
-            return back()->with('error', 'Missing PayPal capture ID.');
-        }
+    // Check if it's a COD order
+    $isCOD = !$order->paypal_capture_id; // true if COD
 
-        // Refund amount
+    if (!$isCOD) {
+        // PayPal Refund
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('paypal'));
+        $provider->getAccessToken();
+
+        $invoiceId = $request->invoice_id ?? '';
+        $note      = $request->note ?? 'Refund processed by admin';
         $refundAmount = $request->refund_amount ?? $order->total;
 
+        $response = $provider->refundCapturedPayment(
+            $order->paypal_capture_id,
+            $invoiceId,
+            floatval($refundAmount),
+            $note
+        );
+    } else {
+        // COD: just set refund amount
+        $refundAmount = $request->refund_amount ?? $order->total;
+        $response = ['id' => null]; // no PayPal refund ID
+    }
 
-            $invoiceId = $request->invoice_id ?? '';
-            $note      = $request->note ?? 'Refund processed by admin';
-            $refundAmount = $request->refund_amount ?? $order->total;
+    // Update DB in transaction
+    try {
+        DB::transaction(function () use ($return, $order, $response, $refundAmount) {
+            $return->update([
+                'status'       => 'refunded',
+                'refund_amount'=> $refundAmount,
+                'refund_id'    => $response['id'] ?? null,
+                'refunded_at'  => now(),
+            ]);
+
+            $order->update([
+                'payment_status' => 'refunded',
+            ]);
+
+            // Restock items
+            foreach ($order->items as $item) {
+
+                if ($item->product->prescription_required) continue;
+
+                if ($return->quantity > 0) {
+
+                    $expiryDate = Inventory::where('product_id', $item->product_id)
+                                        ->orderBy('expiry_date', 'asc')
+                                        ->value('expiry_date');
+
+
+                    Inventory::create([
+                        'product_id'    => $item->product_id,
+                        'supplier_id'   => null,
+                        'batch_number'  => null,
+                        'expiry_date'   => $expiryDate,
+                        'received_date' => now(),
+                        'quantity'      => $return->quantity,
+                        'cost_price'    => optional($item->product->PurchaseOrderItems)->cost_price ?? 0,
+                        'selling_price' => $item->product->selling_price ?? 0,
+                        'source'        => 'return',
+                    ]);
+                }
+            }
+        });
+    } catch (\Exception $e) {
+        \Log::error('Return refund transaction failed: '.$e->getMessage());
+        return back()->with('error', 'Something went wrong: '.$e->getMessage());
+    }
 
 
 
-            // PayPal refund
-            $provider = new PayPalClient;
-            $provider->setApiCredentials(config('paypal'));
-            $provider->getAccessToken();
 
-            $response = $provider->refundCapturedPayment(
-                $order->paypal_capture_id, // capture ID
-                $invoiceId,                // must be string
-                floatval($refundAmount),   // refund amount
-                $note                      // refund reason
-            );
+        Mail::to($customer->email)->send(new ReturnStatusMail($return, 'refunded'));
 
-
-                    // Update DB in a transaction
-                    DB::transaction(function () use ($return, $order, $response, $refundAmount) {
-                        $return->update([
-                            'status'      => 'refunded',
-                            'refund_amount' => $refundAmount,
-                            'refund_id'   => $response['id'] ?? null,
-                            'refunded_at' => now(),
-                        ]);
-
-                        $order->update([
-                            'payment_status' => 'refunded',
-                        ]);
-                    });
-
-
-
-
-                Mail::to($customer->email)->send(new ReturnStatusMail($return, 'refunded'));
-
-                
+        
 
                 $notification = [
                     'message' => 'Successfully Refund',
@@ -227,10 +295,9 @@ class ReturnShipmentController extends Controller
 
             }
 
-
-
                 return back()->with('error', 'Invalid action.');
             }
+
 
 
 

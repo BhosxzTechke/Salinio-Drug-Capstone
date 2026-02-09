@@ -923,6 +923,11 @@ Route::middleware(['auth', 'web'])->group(function () {
                 ->name('return.shipment.status');
 
             
+                
+                Route::get('/admin/return/mark-received/{id}', [BackendReturnShipmentController::class, 'ReturnMarkReceived'])
+                    ->name('admin.return.mark-received');
+
+
                 ///////// ITEM RETURN IN SHOP
             Route::controller(BackendReturnShipmentController::class)->group(function () {
 
@@ -931,6 +936,7 @@ Route::middleware(['auth', 'web'])->group(function () {
                 route::post('/admin-confirmed/return/{request_id}', 'ReturnhandleAction')->name('admin.handle.return');
 
 
+                
                 
             });
 
@@ -1366,6 +1372,8 @@ Route::middleware(['auth', 'web'])->group(function () {
                 /// hand to courier item
             Route::post('/customer/pack-item/{return_requestID}', [ReturnShipmentController::class, 'HandToCourier'])
                 ->name('hand.to.courier');
+
+
 
 
 
