@@ -14,11 +14,28 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-
-
-        //// if may mali then this auth will redirect to home page
         if (! $request->expectsJson()) {
-            return route('home');
+
+            // Check which guard is being used
+            if ($request->route()?->middleware()) {
+
+            
+                //// if user is tinatry pumasok sa authentication ng Customer
+               ////  then redirect Customer login
+                if (in_array('auth:customer', $request->route()->middleware())) {
+                    return route('customer.login');
+                }
+
+
+                //// if user is tinatry pumasok sa authentication ng admin
+               ////  then redirect admin login
+                if (in_array('auth:web', $request->route()->middleware())) {
+                    return route('login');
+                }
+            }
+
+            // fallback
+            return route('login');
         }
     }
 }

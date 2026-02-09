@@ -26,8 +26,10 @@ class CustomerMiddleware
 
         if (!$customer) {
             // Not logged in
-            return redirect()->route('login');
+            return redirect()->route('home');
         }
+
+
 
         // Optional: check role if you store roles in the customer table
         if (property_exists($customer, 'role') && $customer->role !== 'customer') {

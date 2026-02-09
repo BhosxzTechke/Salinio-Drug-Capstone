@@ -60,14 +60,12 @@ use Illuminate\Support\Facades\Mail;
 */
 
 
-
 // |--------------------------------------------------------------------------
 // | AI ROUTES
 // |--------------------------------------------------------------------------
 
         Route::get('/admin/show', [AdminAiController::class, 'AiChatShow'])->name('ai.admin.chat');
         Route::post('/admin/ai-chat', [AdminAiController::class, 'ask'])->name('ai.admin.ask');
-
 
 
 
@@ -91,10 +89,8 @@ use Illuminate\Support\Facades\Mail;
     });
 
 
-
     Route::get('/order/{order}/shipment-status', [OrderController::class, 'shipmentStatus']);
 
-    
 
 // ---------------- PUBLIC ROUTES ----------------
 
@@ -103,121 +99,42 @@ use Illuminate\Support\Facades\Mail;
                 return view('Ecommerce.home');
             })->name('home');
 
-            // ---------------- CUSTOMER AUTH ----------------
-
-            // Customer login + register pages
-            Route::controller(AuthCustomerController::class)->group(function () {
-
-                //// Open Login Form
-                Route::get('/customer/login', 'create')
-                    ->middleware('guest:customer')
-                    ->name('customer.login');
-
-                    ///  Login customer 
-                Route::post('/customer/login', 'store')
-                    ->middleware('guest:customer')
-                    ->name('customer.login.store');
 
 
-                    // logout customer
-                Route::post('/customer/logout', 'destroyCustomer')
-                    ->middleware('auth:customer')
-                    ->name('customer.logout');
-            });
+// |--------------------------------------------------------------------------
+// | ADMIN Routes
+// |--------------------------------------------------------------------------
 
 
 
-            // ---------------- CUSTOMER DASHBOARD ----------------
+            Route::controller(AdminController::class)->group(function () {
 
-            Route::middleware(['auth:customer', 'guard.session'])->group(function () {
-                Route::get('/customer/dashboard', [FrontendController::class, 'index'])
-                    ->name('customer.dashboard');
-            });
-
-
-            
-
-            // ---------------- ADMIN AUTH + DASHBOARD ----------------
-
-            // Admin dashboard (default Breeze users table)
-
-
-        // Route::middleware(['auth:web'])->group(function () {
-        //     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
-        //         ->name('admin.dashboard');
-
-
-        //                                         //// if si user is first time login
-        // Route::get('/password/change', [AdminController::class, 'showChangeForm'])->name('password.change');
-
-        // Route::put('/password/update', [AdminController::class, 'updateFirstTimeUser'])->name('password.update');
-
-
-            
-        // });
-
-
-
-
-
-
-
-
-                    ///////////////////////////// REGISTER CUSTOMER /////////////////////////
-        
-                Route::controller(CustomerRegisteredController::class)->group(function () {
-
-
-                    route::get('/customer/register', 'create')->name('customer.register.form');
-
-                        // REGISTER CUSTOMER
-                    Route::post('/customer/Register', 'customerRegister')->name('customer.register');            
-
+                // Only authenticated admins can logout
+                Route::middleware('auth:web')->group(function () {
+                Route::post('/admin/logout', 'destroy')->name('admin.logout');
                 });
 
 
+                // Public logout confirmation page
+                Route::get('/logout', [AdminController::class, 'Logout'])->name('logout.page');
 
-        Route::controller(AdminController::class)->group(function () {
-
-            // Only authenticated admins can logout
-            Route::middleware('auth:web')->group(function () {
-                Route::post('/admin/logout', 'destroy')->name('admin.logout');
             });
 
-            // Public logout confirmation page
-            Route::get('/logout', [AdminController::class, 'Logout'])->name('logout.page');
-
-        });
 
 
-
-
-
-
-
-
-        // Route::middleware('auth')->group(function () {
-        //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-        // });  
-
-
-
-        
 
 
 
 
             // TO PROTECT THE URL BY MANIPULATING IT IN DASHBOARD MAIN
 
-            Route::middleware('auth')->group(function () {
+                Route::middleware(['auth', 'web'])->group(function () {
+
+
                 Route::get('/profile/view', [AdminController::class, 'Viewprofile'])->name('view.profile');
                 Route::post('/profile/view/store', [AdminController::class, 'StoreProfile'])->name('admin.profile.store');
                 Route::get('/profile/changePassword', [AdminController::class, 'ChangePassword'])->name('admin.change.password');
                 Route::post('/profile/changePassword/store', [AdminController::class, 'UpdatePassword'])->name('password.change.store');    
-
 
 
                 //////////// CHAT SYSTEM
@@ -247,36 +164,48 @@ use Illuminate\Support\Facades\Mail;
 
         //////////////////     MANAGE CUSTOMER       ////////////////////
 
-            Route::controller(CustomerController::class)->group(function () {
-            //Showing Data in table
-            Route::get('/customer/all', 'CustomerTable')->name('all.customer')->middleware('permission:view-all-customers');
+        // Route::middleware(['auth', 'web'])->group(function () {
+
+
+        //         Route::controller(CustomerController::class)->group(function () {
+        //         //Showing Data in table
+        //         Route::get('/customer/all', 'CustomerTable')->name('all.customer')->middleware('permission:view-all-customers');
 
 
 
-                // form customer
-            Route::get('/customer/create', 'AddFormCustomer')->name('create.customer')->middleware('permission:add-customer');
+        //             // form customer
+        //         Route::get('/customer/create', 'AddFormCustomer')->name('create.customer')->middleware('permission:add-customer');
 
 
-                // store customer
-            Route::post('/customer/store', 'StoreFormCustomer')->name('store.customer');
+        //             // store customer
+        //         Route::post('/customer/store', 'StoreFormCustomer')->name('store.customer');
 
 
-                // Editing customer
-            Route::get('/customer/edit{id}', 'EditFormCustomer')->name('edit.customer')->middleware('permission:edit-customer');
+        //             // Editing customer
+        //         Route::get('/customer/edit{id}', 'EditFormCustomer')->name('edit.customer')->middleware('permission:edit-customer');
 
 
-              // Editing customer
-            Route::put('/customer/update', 'UpdateFormCustomer')->name('update.customer');
+        //         // Editing customer
+        //         Route::put('/customer/update', 'UpdateFormCustomer')->name('update.customer');
 
 
-            Route::get('/customer/delete/{id}', 'DeleteCustomer')->name('delete.customer')->middleware('permission:delete-customer');
+        //         Route::get('/customer/delete/{id}', 'DeleteCustomer')->name('delete.customer')->middleware('permission:delete-customer');
 
-        });
+        //     });
+
+
+        // });
+
+
+
 
 
             //////////////////     MANAGE SUPPLIER       ////////////////////
 
-        Route::controller(SupplierController::class)->group(function () {
+
+            Route::middleware(['auth', 'web'])->group(function () {
+
+            Route::controller(SupplierController::class)->group(function () {
 
             //Showing Data in table
             Route::get('/supplier', 'SupplierTable')->name('all.supplier');
@@ -310,102 +239,15 @@ use Illuminate\Support\Facades\Mail;
         });
 
 
-
-////////////////////////////////////////       ADVANCED SALARY         /////////////////////////////
-
-
-        //     Route::controller(SalaryController::class)->group(function () {
-
-        //     //Showing Data in table
-        //     Route::get('/salary', 'SalaryTable')->name('all.salary');
-
-        //      //Showing AddSupplier Form 
-        //     Route::get('/salary/create', 'AddFormSalary')->name('salary.create');
-
-
-        //                  //Showing AddSALARY Form 
-        //     Route::post('/salary/store', 'StoreFormSalary')->name('salary.store');
-
-
-        //                  //Showing EDITSALARY Form 
-        //     Route::get('/salary/edit/{id}', 'EditFormSalary')->name('salary.edit');
-
-
-        //                              //Showing EDITSALARY Form 
-        //     Route::put('/salary/update', 'UpdateFormSalary')->name('salary.update');
-
-
-        //     //Showing EDITSALARY Form 
-        //     Route::get('/salary/delete/{id}', 'DeleteSalary')->name('salary.delete');
-
-            
-        // });
-
-
-////////////////////////////////////////       PAY SALARY         /////////////////////////////
-
-
-
-        //    Route::controller(SalaryController::class)->group(function () {
-
-        //     //Showing Data in table
-        //     Route::get('/paysalary', 'PaySalaryTable')->name('pay.salary');
-
-
-        //     //Showing form pay
-        //     Route::get('/paysalary/paynow/{id}', 'ShowPayForm')->name('pay.salary.form');
-
-
-
-        //       //Store form pay
-        //     Route::post('/paysalary/paynow', 'PayNow')->name('store.payform');
-
-            
-        //     Route::get('/paysalary/MonthSalary', 'TableMonthSalary')->name('table.month.salary');
-
-
-        //     Route::get('/paysalary/History/{id}', 'ShowPaidHistory')->name('show.History');
-
-           
-            
-            
-        // });
-
-
-
-
-
-////////////////////////////////////////       ATTENDANCE         /////////////////////////////
-
-
-            Route::controller(AttendanceController::class)->group(function () {
-
-            //Showing Data in table
-            Route::get('/employee/attendance/list', 'AttendanceTable')->name('employee.attendance.list')->middleware('permission:view-all-attendance');
-
-             //Showing Data in table
-            Route::get('/employee/attendance/create', 'AddEmployeeAttendance')->name('employee.add.attendance')->middleware('permission:add-attendance');;
-
-            
-            Route::post('/employee/attendance/store', 'EmployeeAttendanceStore')->name('employee.store.attendance');
-
-
-            // EDIT ATTENDANCE FORM
-            Route::get('/employee/attendance/edit/{date}', 'EmployeeAttendanceEdit')->name('employee.attendance.edit')->middleware('permission:edit-attendance');
-
-
-            // VIEW ATTENDANCE FORM
-            Route::get('/employee/attendance/view/{date}', 'EmployeeAttendanceView')->name('employee.attendance.view')->middleware('permission:view-attendance');
-
-            
     });
 
 
 
 
+        ////////////////////// MANAGE CATEGORY ///////////////////////
 
 
-            ////////////////////// MANAGE CATEGORY ///////////////////////
+        Route::middleware(['auth', 'web'])->group(function () {
         
             Route::controller(CategoryController::class)->group(function () {
 
@@ -432,12 +274,15 @@ use Illuminate\Support\Facades\Mail;
             
         });
 
-
-
-
+        });
 
 
                     ////////////////////// MANAGE SUB CATEGORY ///////////////////////
+
+
+        
+        
+Route::middleware(['auth', 'web'])->group(function () {
 
         Route::controller(SubCategoryController::class)->group(function () {
 
@@ -463,49 +308,55 @@ use Illuminate\Support\Facades\Mail;
 
             //Delete Data in table
             Route::get('/sub-category/delete/{id}', 'DeleteSubCategory')->name('delete.sub-category');
-      });
+        });
 
 
-
+    });
 
 
 
                     ////////////////////// MANAGE BRAND ///////////////////////
-        
-            Route::controller(BrandController::class)->group(function () {
 
-            //Showing Data in table
-            Route::get('/brand/list', 'BrandTable')->name('brand.list');
-
-
-            //Showing form
-            Route::get('/brand/create', 'CreateBrand')->name('brand.create');
-
-            //Store Data in table
-            Route::post('/brand/store', 'StoreBrand')->name('brand.store');
-
-            //Edit Data in table
-            Route::get('/brand/edit/{id}', 'EditBrand')->name('edit.brand');
 
                 
-            //Update Data in table
-            Route::put('/brand/update', 'UpdateBrand')->name('update.brand');
-
-
-            //Delete Data in table
-            Route::get('/brand/delete/{id}', 'DeleteBrand')->name('delete.brand');
-            
-
- });
-
-
-
-            // routes/web.php
-
-            // FOR AJAX IF SINELECT NATIN SI CATEGORIES IS LALABAS UNG MGA SUBCATEGORIES
-           Route::get('/get-subcategories/{category_id}', [ProductController::class, 'getSubcategories']);
+                Route::middleware(['auth', 'web'])->group(function () {
         
-        
+                    Route::controller(BrandController::class)->group(function () {
+
+                    //Showing Data in table
+                    Route::get('/brand/list', 'BrandTable')->name('brand.list');
+
+
+                    //Showing form
+                    Route::get('/brand/create', 'CreateBrand')->name('brand.create');
+
+                    //Store Data in table
+                    Route::post('/brand/store', 'StoreBrand')->name('brand.store');
+
+                    //Edit Data in table
+                    Route::get('/brand/edit/{id}', 'EditBrand')->name('edit.brand');
+
+                        
+                    //Update Data in table
+                    Route::put('/brand/update', 'UpdateBrand')->name('update.brand');
+
+
+                    //Delete Data in table
+                    Route::get('/brand/delete/{id}', 'DeleteBrand')->name('delete.brand');
+                    
+
+                });
+
+
+        });
+
+
+
+
+
+        Route::middleware(['auth', 'web'])->group(function () {
+
+
             Route::controller(ProductController::class)->group(function () {
 
             //Showing Data in table
@@ -531,7 +382,6 @@ use Illuminate\Support\Facades\Mail;
             //Delete Data in table
             Route::get('/product/delete/{id}', 'DeleteProduct')->name('delete.product');
 
-                
 
 
 
@@ -557,6 +407,11 @@ use Illuminate\Support\Facades\Mail;
         });
 
 
+                          // routes/web.php
+
+            // FOR AJAX IF SINELECT NATIN SI CATEGORIES IS LALABAS UNG MGA SUBCATEGORIES
+            Route::get('/get-subcategories/{category_id}', [ProductController::class, 'getSubcategories']);
+        
 
 
             Route::controller(PurchaseOrderController::class)->group(function () {
@@ -582,28 +437,21 @@ use Illuminate\Support\Facades\Mail;
 
 
 
+                ///////// SHOWING FORM DETAILS
+
+                Route::get('Received/Order/{id}', 'ReceivedOrderDetails')->name('Received.Order');
 
 
 
+                    ///// SAVING IN DELIVERIES
+                Route::post('/Save/Order/Deliveries', 'SaveOrderdeliveries')->name('save.deliveries');
 
 
+                Route::get('All/deliveries', 'CompleteDeliveries')->name('deliveries.index');
 
 
+            });
 
-    ///////// SHOWING FORM DETAILS
-
-    Route::get('Received/Order/{id}', 'ReceivedOrderDetails')->name('Received.Order');
-
-
-
-        ///// SAVING IN DELIVERIES
-    Route::post('/Save/Order/Deliveries', 'SaveOrderdeliveries')->name('save.deliveries');
-
-
-    Route::get('All/deliveries', 'CompleteDeliveries')->name('deliveries.index');
-
-
-});
 
 
 
@@ -659,30 +507,31 @@ use Illuminate\Support\Facades\Mail;
         $html .= '</tr>';
     }
 
-    return $html;
-})->name('cart.content');
+            return $html;
+        })->name('cart.content');
 
 
 
-                    ///////// TABLE MAIN
+                        ///////// TABLE MAIN
 
 
 
-    Route::post('/cart/add', function (Illuminate\Http\Request $request) {
-        Cart::instance('purchaseOrder')->add([
-            'id'      => $request->id,
-            'name'    => $request->name,
-            'qty' => $request->qty ?? 1, // fallback to 1 if null
-            'price'   => $request->price,  // selling price
-            'weight'  => 0,  // Add this line
-                'options' => [
-                    'code' => $request->code,
-                    'cost_price' => $request->cost_price ?? 0, // store cost price separately
-                ]
 
-        ]);
-        return response()->json(['success' => true]);
-    })->name('cart.add');
+        Route::post('/cart/add', function (Illuminate\Http\Request $request) {
+            Cart::instance('purchaseOrder')->add([
+                'id'      => $request->id,
+                'name'    => $request->name,
+                'qty' => $request->qty ?? 1, // fallback to 1 if null
+                'price'   => $request->price,  // selling price
+                'weight'  => 0,  // Add this line
+                    'options' => [
+                        'code' => $request->code,
+                        'cost_price' => $request->cost_price ?? 0, // store cost price separately
+                    ]
+
+            ]);
+            return response()->json(['success' => true]);
+        })->name('cart.add');
 
 
 
@@ -714,15 +563,6 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-
-
-
-
-                        
-
-
-        
-
         ///////////////////// DOWNLOAD EXCELLLLL ///////////////////////////////////
             Route::get('/product/template', function () {
             $path = public_path('templates/product_import_template.xlsx');
@@ -738,149 +578,186 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-            /// EXPENSES
-        
-            Route::controller(ExpenseController::class)->group(function () {
-
-            //Showing add expense form
-            Route::get('/add//expense', 'AddExpense')->name('add.expense');
-
-        
-            Route::post('/store//expense', 'StoreExpense')->name('store.expense');
+        }); ///////// MIDDLEWARE END IN PRODUCT
 
 
-            // showing edit expense form
-            route::get('/edit/expense/{id}', 'EditExpense')->name('edit.expense');
+
+
+
+
+
+            // ----------------  SUPPLIER CONFIRMATION PAGE ----------------
+
+
+
+        Route::get('/supplier/confirm/{token}', [SupplierConfirmationController::class, 'show'])
+        ->name('supplier.confirm');
+
+        Route::post('/supplier/confirm/{token}', [SupplierConfirmationController::class, 'store'])
+            ->name('supplier.confirm.store');
+
+
+        // ---------------------------------------------------------------------
+
+
+
+
+
+
+    /////////////////////////////////// MANAGE EXPENSES ///////////////////////////////
+                
+        Route::middleware(['auth', 'web'])->group(function () {
+
+                Route::controller(ExpenseController::class)->group(function () {
+
+                //Showing add expense form
+                Route::get('/add//expense', 'AddExpense')->name('add.expense');
 
             
-            route::put('/update/expense', 'UpdateExpense')->name('update.expense');
-
-            //Delete Expense
-            route::get('/delete/expense/{id}', 'DeleteExpense')->name('delete.expense');
-            
-            //Showing today's expense
+                Route::post('/store//expense', 'StoreExpense')->name('store.expense');
 
 
-            Route::get('/today/expense', 'TodayExpense')->name('todays.expense');
+                // showing edit expense form
+                route::get('/edit/expense/{id}', 'EditExpense')->name('edit.expense');
+
+                
+                route::put('/update/expense', 'UpdateExpense')->name('update.expense');
+
+                //Delete Expense
+                route::get('/delete/expense/{id}', 'DeleteExpense')->name('delete.expense');
+                
+                //Showing today's expense
 
 
-            Route::get('/month/expense', 'MonthExpense')->name('month.expense');
+                Route::get('/today/expense', 'TodayExpense')->name('todays.expense');
 
 
-            Route::get('/year/expense', 'YearExpense' )->name('year.expense');
-            
-        });
+                Route::get('/month/expense', 'MonthExpense')->name('month.expense');
 
-        
+
+                Route::get('/year/expense', 'YearExpense' )->name('year.expense');
+                
+            });
+
+
+    });
+
+
 
 
         //////////////////////////////// vat discount SYSTEM ///////////////////////
-        Route::controller(CommerceController::class)->group(function () {
-
-        //Showing vat discount settings
-        Route::get('/Commerce/Settings', 'VatDiscountPage')->name('commerce.settings')->middleware('permission:manage-commerce-settings');
-
-        Route::post('/update/vat', 'UpdateVat')->name('update.vat');
-        
-
-        Route::post('/Add/ajax/discount', 'AddAjaxDiscount')->name('add.ajax.discount');
-
-        Route::post('/Update/ajax/discount', [CommerceController::class, 'UpdateAjaxDiscount'])->name('update.ajax.discount');
-
-        
-        Route::delete('/Delete/ajax/discount', [CommerceController::class, 'DeleteAjaxDiscount'])->name('delete.ajax.discount');
 
 
+    Route::middleware(['auth', 'web'])->group(function () {
 
-        });
+            Route::controller(CommerceController::class)->group(function () {
 
-        
+            //Showing vat discount settings
+            Route::get('/Commerce/Settings', 'VatDiscountPage')->name('commerce.settings')->middleware('permission:manage-commerce-settings');
+
+            Route::post('/update/vat', 'UpdateVat')->name('update.vat');
+            
+
+            Route::post('/Add/ajax/discount', 'AddAjaxDiscount')->name('add.ajax.discount');
+
+            Route::post('/Update/ajax/discount', [CommerceController::class, 'UpdateAjaxDiscount'])->name('update.ajax.discount');
+
+            
+            Route::delete('/Delete/ajax/discount', [CommerceController::class, 'DeleteAjaxDiscount'])->name('delete.ajax.discount');
+
+            });
+
+    });
 
 
 
         //////////////////////////////// POS SYSTEM ///////////////////////
-            Route::controller(PosController::class)->group(function () {
-
-            //Showing Data in TABLE
-            Route::get('/pos', 'ViewPos')->name('pos');
-
-            
-            //Add Data in CART Content
-            Route::post('/pos/add', 'AddPos');
-            
-           //Get Data in CART Content
-            Route::get('/pos/cart', 'CartContent');
-
-           //ChangeQty in CART Content
-            Route::post('/pos/ChangeQty/{rowId}', 'ChangeQty');
-
-            
-            //Remove Product in CART Content
-            Route::delete('/pos-RemovePrd/{rowId}', 'RemoveProduct');
 
 
-            //ADD Invoice Customer Opening other page
-            Route::post('/create-invoice', 'CreateInvoiceCustomer');
-            
+        Route::middleware(['auth', 'web'])->group(function () {
 
-
-
-        });
-
-
-
-        Route::get('/invoice/print/{order_id}', [OrderController::class, 'ShowPickupInvoice'])->name('invoice.print');
-
-
-
-                        //////////////////////////////// POS CASHIER SYSTEM ///////////////////////
                     Route::controller(PosController::class)->group(function () {
 
-                    // Submit Walkin Payment
-                    Route::post('/pos/Payment', 'PaymentWalkin')->name('payment.walkin');
+                    //Showing Data in TABLE
+                    Route::get('/pos', 'ViewPos')->name('pos');
+
+                    
+                    //Add Data in CART Content
+                    Route::post('/pos/add', 'AddPos');
+                    
+                //Get Data in CART Content
+                    Route::get('/pos/cart', 'CartContent');
+
+                //ChangeQty in CART Content
+                    Route::post('/pos/ChangeQty/{rowId}', 'ChangeQty');
+
+                    
+                    //Remove Product in CART Content
+                    Route::delete('/pos-RemovePrd/{rowId}', 'RemoveProduct');
+
+
+                    //ADD Invoice Customer Opening other page
+                    Route::post('/create-invoice', 'CreateInvoiceCustomer');
+                    
 
 
                 });
 
 
-                
 
-                Route::get('/pos/confirm/{id}', [PosController::class, 'confirm'])->name('pos.confirm');
-
-
-                Route::get('/pos/receipt/{id}', [PosController::class, 'Receipt'])->name('POS.receipt');
+                Route::get('/invoice/print/{order_id}', [OrderController::class, 'ShowPickupInvoice'])->name('invoice.print');
 
 
 
-            ///////////////////// ONLINE PAYMENT POS /////////////////////////////
+                            //////////////////////////////// POS CASHIER SYSTEM ///////////////////////
+                        Route::controller(PosController::class)->group(function () {
 
-            //  Route::controller(OnlinePaymentController::class)->group(function () {
+                        // Submit Walkin Payment
+                        Route::post('/pos/Payment', 'PaymentWalkin')->name('payment.walkin');
 
-            //     // Submit Walkin Payment
-            //     Route::post('/pos/{id}/Payment', 'PaypalPayment')->name('paypal.submit');
-            //     Route::get('/pos/Payment/success', 'PaypalSucess')->name('paypal.payment.success');
-            //     Route::get('/pos/Payment/cancel', 'PaypalCancel')->name('paypal.payment.cancel');
 
-            // });
+                    });
+
+
+                    
+
+                    Route::get('/pos/confirm/{id}', [PosController::class, 'confirm'])->name('pos.confirm');
+
+
+                    Route::get('/pos/receipt/{id}', [PosController::class, 'Receipt'])->name('POS.receipt');
+
+
+
             
-        
+        });
+
+
+
 
 
 
 
         ////////////////////////////////  INVENTORY /////////////////////
-            Route::controller(InventoryController::class)->group(function () {
-
-            Route::get('/All/Inventory', 'Inventory')->name('show.inventory');
 
 
-            });
+        Route::middleware(['auth', 'web'])->group(function () {
+                Route::controller(InventoryController::class)->group(function () {
 
+                Route::get('/All/Inventory', 'Inventory')->name('show.inventory');
+
+
+                });
+
+        });
 
 
 
 
          //////////////////////////////// ORDER SYSTEM ///////////////////////
+
+
+        Route::middleware(['auth', 'web'])->group(function () {
+
             Route::controller(OrderController::class)->group(function () {
 
             //Insert Data in Order and OrderDetails
@@ -891,6 +768,7 @@ use Illuminate\Support\Facades\Mail;
             Route::get('/pos/receipt/{id}', [OrderController::class, 'Receipt'])->name('POS.receipt');
 
         
+
                 ////////////////////////////// PICK UP ORDER
             // Pending Orders TABLE
             Route::get('/Pending/Pickup', 'PendingPickup')->name('pending.pickup')->middleware('permission:view-pending-pickup-orders');
@@ -918,7 +796,9 @@ use Illuminate\Support\Facades\Mail;
                 Route::get('/orders/riderShow/{rider_Id}', [OrderController::class, 'RiderShow'])
                     ->name('rider.show');
 
-                    
+
+
+
 
             Route::get('/edit/permission/{id}', 'EditPermission')->name('edit.permission');
 
@@ -937,8 +817,6 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-
-
             /////////////////// SAVING TRACKING JNT
 
             Route::post('/orders/save-tracking', [OrderController::class, 'saveTracking'])
@@ -950,9 +828,6 @@ use Illuminate\Support\Facades\Mail;
                 Route::get('/orders/print-label/{order}', [OrderController::class, 'printLabel'])
                     ->name('orders.printLabel');
 
-
-
-
         
             // AJAX for Mark as Shipped and Cancelled
             Route::post('/orders/ajax/mark-shipped', [OrderController::class, 'ajaxMarkAsShipped'])->name('orders.ajax.shipped');
@@ -963,7 +838,12 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-            ///////////////////////////////////////////////
+
+            //////////////////////////////////////////////////////////////////////
+            //////////////////////// CUSTOMER ORDER SYSTEM ///////////////////////
+
+
+
 
 
             // Shipped Orders TABLE
@@ -984,10 +864,6 @@ use Illuminate\Support\Facades\Mail;
             Route::get('/Order/Return', 'ReturnOrders')->name('return.order');
 
 
-
-
-
-
             //Show Order Details Form
             Route::get('/Order/Details/{order_id}', 'Details')->name('details');
 
@@ -1002,8 +878,6 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-            
-
             //Update Order Status
             Route::put('/update/status', 'StatusUpdate')->name('status.update');
 
@@ -1012,15 +886,66 @@ use Illuminate\Support\Facades\Mail;
             Route::get('/product/Stocks', 'ShowStock')->name('show.stock')->middleware('permission:Show Stock');
 
 
-
              //Create Order PDF
             Route::get('/product/pdf/{pdfId}', 'CreatePDF');
 
             
         });
 
-        
+
+
+
+
+});
+
+
+
+
+    Route::middleware(['auth', 'web'])->group(function () {
+
+            ///////////// BACKEND
+            //////////// RETURN SHIPMENT ///////////////////////////
+            Route::controller(BackendReturnShipmentController::class)->group(function () {
+
+                route::get('/Customer/Request/pending', 'CustomerRequestPending')->name('customer.request.pending');
+
+                route::get('/Customer/Returning/item', 'CustomerReturningItem')->name('customer.returning.item');
+
+                Route::post('/request/approve/{orderId}', [BackendReturnShipmentController::class, 'MarkAsReturnApproved']);
+
+        });
+
+
+
+            ///////////// BACKEND
+            //////////// RETURN SHIPMENT STATUS WITHOUT RELOAD PAGE
+            Route::get('/return-shipment/{shipmentId}/status', [BackendReturnShipmentController::class, 'getReturnShipmentStatus'])
+                ->name('return.shipment.status');
+
+            
+                ///////// ITEM RETURN IN SHOP
+            Route::controller(BackendReturnShipmentController::class)->group(function () {
+
+                route::get('/admin-confirmed/return/{request_id}', 'AdminConfirmReturned')->name('admin.confirmed.return');
+
+                route::post('/admin-confirmed/return/{request_id}', 'ReturnhandleAction')->name('admin.handle.return');
+
+
+                
+            });
+
+    });
+
+
+
+
+
         //////////////////////////////// PERMISSIONS ///////////////////////
+
+
+    Route::middleware(['auth', 'web'])->group(function () {
+
+
             Route::controller(RoleController::class)->group(function () {
 
             //Show All Permissions AND SHOW ROLES TABLE
@@ -1036,9 +961,9 @@ use Illuminate\Support\Facades\Mail;
                         // Route::get('/create/permission', 'AddPermission')->name('add.permission')->middleware('permission:view-all-permissions');
 
 
-
             //Store Permissions
             Route::post('/store/permission', 'StorePermission')->name('permission.store');
+
 
 
 
@@ -1112,9 +1037,13 @@ use Illuminate\Support\Facades\Mail;
 
 
 
+    });
 
-            Route::middleware(['auth', 'web'])->group(function () {
 
+
+
+
+        Route::middleware(['auth', 'web'])->group(function () {
 
 
                  //////////////////////////////// Admin User SYSTEM ///////////////////////
@@ -1145,11 +1074,14 @@ use Illuminate\Support\Facades\Mail;
         });
 
 
+    });
 
-        });
+
+        /////////////// Change TITLE  SYSTEM 
 
 
-        /////////////// Change Business Name 
+
+    Route::middleware(['auth', 'web'])->group(function () {
 
         Route::controller(AdminController::class)->group(function () {
 
@@ -1161,20 +1093,28 @@ use Illuminate\Support\Facades\Mail;
         });
 
 
-
-        ////////////////////// BACKUP DATABASE ///////////////////////
-    Route::middleware(['auth', 'web'])->group(function () {
-    Route::get('/admin/backup', [AdminController::class, 'BackupDatabase'])->name('backup.database');
-        // Route::get('/admin/backup', [AdminController::class, 'BackupDatabase'])->name('backup.database')->middleware('permission:view-backup-database');
-
-    Route::post('/backup/now', [AdminController::class, 'BackupNow'])->name('backup.now');
-    Route::get('/backup/{getFilename}', [AdminController::class, 'DownloadDatabase'])->name('backup.download');
-    Route::delete('/backup/{getFilename}', [AdminController::class, 'DeleteDatabase'])->name('backup.delete');
 });
 
 
 
+
+        ////////////////////// BACKUP DATABASE ///////////////////////
+    Route::middleware(['auth', 'web'])->group(function () {
+        Route::get('/admin/backup', [AdminController::class, 'BackupDatabase'])->name('backup.database');
+            // Route::get('/admin/backup', [AdminController::class, 'BackupDatabase'])->name('backup.database')->middleware('permission:view-backup-database');
+
+        Route::post('/backup/now', [AdminController::class, 'BackupNow'])->name('backup.now');
+        Route::get('/backup/{getFilename}', [AdminController::class, 'DownloadDatabase'])->name('backup.download');
+        Route::delete('/backup/{getFilename}', [AdminController::class, 'DeleteDatabase'])->name('backup.delete');
+    });
+
+
+
     
+        ////////////////////// AUDIT TRAIL ///////////////////////
+
+        Route::middleware(['auth', 'web'])->group(function () {
+
         Route::controller(AuditController::class)->group(function () {
             Route::get('/audit-trail', 'AuditTrail')->name('audit.trail');
 
@@ -1184,44 +1124,32 @@ use Illuminate\Support\Facades\Mail;
 
             // Route::get('/audit-log', 'AuditLog')->name('audit.log')->middleware('permission:view-audit-trail-log');
 
-
-            
         });
 
+    });
 
 
             Route::middleware(['auth', 'web'])->group(function () {
 
 
-            Route::controller(ReportController::class)->group(function () {
+                Route::controller(ReportController::class)->group(function () {
 
-            Route::get('/Reports-Daily', 'dailyReport')->name('daily.reports')->middleware('permission:view-daily-sales-report');
-
-
-            Route::get('/Reports-Weekly', 'weeklyReport')->name('weekly.reports')->middleware('permission:view-weekly-sales-report');
-
-            
-            Route::get('/Reports-Monthly', 'monthlyReport')->name('monthly.reports')->middleware('permission:view-monthly-sales-report');;
-
-            Route::get('/Top-Selling-Products', 'TopSelling')->name('top.sellings');
+                Route::get('/Reports-Daily', 'dailyReport')->name('daily.reports');
 
 
-            
+                Route::get('/Reports-Weekly', 'weeklyReport')->name('weekly.reports');
+
+                
+                Route::get('/Reports-Monthly', 'monthlyReport')->name('monthly.reports');
+
+                Route::get('/Top-Selling-Products', 'TopSelling')->name('top.sellings');
+
+
+            });
+
         });
 
-    });
-
-        
-
-
-
-
-
-
-
-
-
-
+            
 
 
 
@@ -1230,247 +1158,44 @@ use Illuminate\Support\Facades\Mail;
     Route::middleware(['auth', 'web'])->group(function () {
 
 
-
-            /////////////////////////// Frontend ////////////////////////////////////////////
-
             ////////////////////// HERO SLIDER ///////////////////////
         Route::controller(HeroSliderController::class)->group(function () {
 
-            Route::get('/HeroSlider', 'HeroSlider')->name('heroslider.show');
+                Route::get('/HeroSlider', 'HeroSlider')->name('heroslider.show');
 
-            Route::get('/HeroSlider/Add', 'AddHeroSlider')->name('add.heroslider');
+                Route::get('/HeroSlider/Add', 'AddHeroSlider')->name('add.heroslider');
 
-            Route::post('/HeroSlider/Store', 'StoreHeroSlider')->name('store.heroslider');
-
-
-            Route::get('/HeroSlider/Edit/{id}', 'EditHeroSlider')->name('edit.heroslider');
-
-            Route::put('/HeroSlider/Update', 'UpdateHeroSlider')->name('update.heroslider');
-
-            Route::get('/HeroSlider/Delete/{id}', 'DeleteHeroSlider')->name('delete.heroslider');
-        });
-
-    });
+                Route::post('/HeroSlider/Store', 'StoreHeroSlider')->name('store.heroslider');
 
 
+                Route::get('/HeroSlider/Edit/{id}', 'EditHeroSlider')->name('edit.heroslider');
 
-        
+                Route::put('/HeroSlider/Update', 'UpdateHeroSlider')->name('update.heroslider');
 
-
-
-
-
-        Route::controller(FrontendController::class)->group(function () {
-
-          Route::get('/', 'index')->name('home');
-
-            
-
-
-        });
-
-
-          //////////////////    CATEGORY WISE PRODUCT SHOW ///////////////////////
-         Route::controller(FrontendCategoryController::class)->group(function () {
-
-            Route::get('/category/{slug}', 'CategoryProduct')->name('category.show');
-
-
-        });
-
-
-
-
-
-
-
-
-                  //////////////////    CHECKOUT PAGE ///////////////////////
-
-
-        Route::controller(FrontendController::class)->group(function () {
-
-        Route::get('/cart', 'CartShow')->name('cart.show');
-
-
-        route::get('/wishlist', 'WishlistShow')->name('wishlist.show');
-
-
-        Route::get('/product/{product_id}', 'ProductDetails')->name('product.show');
-
-
-
-        ////////////////////// CONFIDENTIAL PAGE
-
-        Route::get('/privacy-policy', 'PrivacyPolicy')->name('policy.show');
-
-
-        Route::get('/terms-of-service', 'TermsAndServices')->name('terms.show');
-
-
-
-
-    });
-
-
-            Route::controller(WishlistController::class)->group(function () {
-
-                route::post('/ecommerce/wishlist/add', 'EcommerceAddWishlist')->name('ecommerce.wishlist.add');
-
-                route::get('/ecommerce/wishlist', 'wishlistTest');
-
-            route::DELETE('/ecommerce-RemoveWsh/{rowId}', 'RemoveEcommWish')->name('removeWishlist');
-
-                
-
+                Route::get('/HeroSlider/Delete/{id}', 'DeleteHeroSlider')->name('delete.heroslider');
             });
 
-
-
-
-                Route::post('/test-wishlist', function () {
-                    return dd('WISHLIST CLICK WORKS ✅');
-                })->name('test.wishlist');
-
-
-
-
-
-        
-            Route::controller(ContactController::class)->group(function () {
-
-            Route::get('/Contact/page', 'ContactShow')->name('contact.show');
-
-
-            Route::post('/Contact/message', 'send')->name('contact.send');
-        });
-
-
-            Route::controller(AboutController::class)->group(function () {
-
-            Route::get('/About/page', 'AboutShow')->name('about.show');
-
-
         });
 
 
 
-                Route::controller(FrontendBrandController::class)->group(function () {
 
-                    Route::get('/Brand/page/{id}', 'BrandShow')->name('brand.show');
-
-
-                });
-
-        
-
-
-    // Route::middleware(['auth', 'customer'])->group(function () {
-
-    // ///// PROFILE PAGE /////
-    // Route::get('/customer/profile', [FrontendController::class, 'ProfileShow'])->name('customer.profile');
-
-
-    // Route::get('/customer/profile/edit', [FrontendController::class, 'ProfileEdit'])->name('customer.profile.edit');
-     
-
-    //     });
-
-
-
-
-
-
-
-    /////////////////// PROFILE CUSTOMER ////////////////////////
-Route::middleware(['auth:customer', 'customer'])->group(function () {
-    Route::get('/customer/profile', [FrontendController::class, 'ProfileShow'])->name('customer.profile');
-    Route::get('/customer/profile/edit', [FrontendController::class, 'ProfileEdit'])->name('customer.profile.edit');
-
-    Route::get('/customer/chat/admin', [FrontendController::class, 'ChatAdmin'])->name('chat.admin');
-
-    Route::get('/customer/address', [FrontendController::class, 'CustomerAddress'])->name('customer.adress');
-
-
-    Route::post('/customer/address/store', [FrontendController::class, 'CustomerAddressStore'])->name('store.customer.address');
-
-
-
-
-
-    Route::put('/customer/profile/update', [FrontendController::class, 'ProfileUpdate'])->name('update.customer.profile');
-
-    Route::get('/customer/view/item/{id}', [FrontendController::class, 'ViewItem'])->name('customer.view.item');
-
-    Route::get('/customer/return/item/{id}', [FrontendController::class, 'ReturnItem'])->name('return.order.item');
-
-
-    Route::get('/customer/track/item/{id}', [FrontendController::class, 'TrackItem'])->name('customer.track.item');
-
-
-
-});
-
-
-                ////  OUTBOUND RETURN
-            ///////////// FRONTEND
-            //////////// RETURN SHIPMENT
-            Route::post('/customer/requests', [ReturnShipmentController::class, 'CustomerReturnRequest'])
-                ->name('store.return.requests');
-
-                /// hand to courier item
-            Route::post('/customer/pack-item/{return_requestID}', [ReturnShipmentController::class, 'HandToCourier'])
-                ->name('hand.to.courier');
-
-                
-
-
-
-            ///////////// BACKEND
-            //////////// RETURN SHIPMENT
-            Route::controller(BackendReturnShipmentController::class)->group(function () {
-
-            route::get('/Customer/Request/pending', 'CustomerRequestPending')->name('customer.request.pending');
-
-            route::get('/Customer/Returning/item', 'CustomerReturningItem')->name('customer.returning.item');
-
-            Route::post('/request/approve/{orderId}', [BackendReturnShipmentController::class, 'MarkAsReturnApproved']);
-
-        });
-
-            ///////////// BACKEND
-            //////////// RETURN SHIPMENT STATUS WITHOUT RELOAD PAGE
-            Route::get('/return-shipment/{shipmentId}/status', [BackendReturnShipmentController::class, 'getReturnShipmentStatus'])
-                ->name('return.shipment.status');
-
-            
-                ///////// ITEM RETURN IN SHOP
-            Route::controller(BackendReturnShipmentController::class)->group(function () {
-
-            route::get('/admin-confirmed/return/{request_id}', 'AdminConfirmReturned')->name('admin.confirmed.return');
-
-            route::post('/admin-confirmed/return/{request_id}', 'ReturnhandleAction')->name('admin.handle.return');
-
-
-            
-        });
-                    
-
-
-
-                        
             // Admin route
             Route::post('/admin/chat/send', [ChatController::class, 'sendAdmin'])
                 ->middleware('auth:web'); // web guard
-
-            // Customer route
-            Route::post('/customer/chat/send', [ChatController::class, 'sendCustomer'])
-                ->middleware('auth:customer'); // customer guard
 
 
             // Admin routes
             Route::get('/admin/chat/fetch/{customerId}', [ChatController::class,'fetchAdmin'])
                 ->middleware('auth:web');
+
+
+
+
+            // Customer route
+            Route::post('/customer/chat/send', [ChatController::class, 'sendCustomer'])
+                ->middleware('auth:customer'); // customer guard
+
 
             // Customer routes
             Route::get('/customer/chat/fetch', [ChatController::class,'fetchCustomer'])
@@ -1478,33 +1203,129 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
 
 
 
-                
-
-        Route::controller(CartController::class)->group(function () {
-                    
-            ////// PRODUCT DETAILS CART /////////////////
-
-            route::post('/ecommerce/add', 'EcommerceAddCart');
-
-            Route::patch('/ecommerce/ChangeQty/{rowId}', 'EcommerceChangeQty');
-
-            route::get('/ecommerce/carting', 'CartContent');
 
 
-            route::DELETE('/ecommerce-RemovePrd/{rowId}', 'RemoveEcommProduct')->name('removeProd');
-
-            /////////// CART CHECKOUT //////////////
 
 
+
+
+// |--------------------------------------------------------------------------
+// |--------------------------------------------------------------------------
+
+// |--------------------------------------------------------------------------
+// |--------------------------------------------------------------------------
+
+
+
+// |--------------------------------------------------------------------------
+// |--------------------------------------------------------------------------
+
+
+
+// |--------------------------------------------------------------------------
+// | FRONTEND CUSTOMER Routes
+// |--------------------------------------------------------------------------
+
+
+
+
+            
+            // ---------------- CUSTOMER AUTH ----------------
+
+                    // Customer login + register pages
+                    Route::controller(AuthCustomerController::class)->group(function () {
+
+                        //// Open Login Form
+                        Route::get('/customer/login', 'create')
+                            ->middleware('guest:customer')
+                            ->name('customer.login');
+
+                            ///  Login customer 
+                        Route::post('/customer/login', 'store')
+                            ->middleware('guest:customer')
+                            ->name('customer.login.store');
+
+
+                            // logout customer
+                        Route::post('/customer/logout', 'destroyCustomer')
+                            ->middleware('auth:customer')
+                            ->name('customer.logout');
+                    });
+
+
+
+
+
+
+            // ----------------  OAUTH ----------------
+
+                                
+                    Route::prefix('customer')->group(function () {
+                    Route::get('/auth/google', [CustomersGoogleController::class, 'redirect'])
+                        ->name('customer.google.login');
+
+                    Route::get('/auth/google/callback', [CustomersGoogleController::class, 'callback']);
                 });
 
 
-                
+                    // ---------------- CUSTOMER DASHBOARD ----------------
 
-                
+                    Route::middleware(['auth:customer', 'guard.session'])->group(function () {
+                        Route::get('/customer/dashboard', [FrontendController::class, 'index'])
+                            ->name('customer.dashboard');
+                    });
+
+
+                ///////////////////////////// REGISTER CUSTOMER /////////////////////////
+        
+                Route::controller(CustomerRegisteredController::class)->group(function () {
+
+
+                    route::get('/customer/register', 'create')->name('customer.register.form');
+
+                        // REGISTER CUSTOMER
+                    Route::post('/customer/Register', 'customerRegister')->name('customer.register');            
+
+            });
 
 
 
+
+
+                /////////////////// PROFILE CUSTOMER ////////////////////////
+            Route::middleware(['auth:customer', 'customer'])->group(function () {
+                Route::get('/customer/profile', [FrontendController::class, 'ProfileShow'])->name('customer.profile');
+                Route::get('/customer/profile/edit', [FrontendController::class, 'ProfileEdit'])->name('customer.profile.edit');
+
+                Route::get('/customer/chat/admin', [FrontendController::class, 'ChatAdmin'])->name('chat.admin');
+
+                Route::get('/customer/address', [FrontendController::class, 'CustomerAddress'])->name('customer.adress');
+
+
+                Route::post('/customer/address/store', [FrontendController::class, 'CustomerAddressStore'])->name('store.customer.address');
+
+
+
+
+
+                Route::put('/customer/profile/update', [FrontendController::class, 'ProfileUpdate'])->name('update.customer.profile');
+
+                Route::get('/customer/view/item/{id}', [FrontendController::class, 'ViewItem'])->name('customer.view.item');
+
+                Route::get('/customer/return/item/{id}', [FrontendController::class, 'ReturnItem'])->name('return.order.item');
+
+
+                Route::get('/customer/track/item/{id}', [FrontendController::class, 'TrackItem'])->name('customer.track.item');
+
+
+
+            });
+
+
+
+
+
+            
             Route::middleware('auth:customer')->group(function () {
 
                 Route::get('/checkout', [FrontendOrderController::class, 'EcommercePayment'])
@@ -1525,98 +1346,162 @@ Route::middleware(['auth:customer', 'customer'])->group(function () {
                         /// if cash
                     Route::get('{id}/success', [FrontendOrderController::class, 'SuccesfullyOrder'])
                         ->name('success.order');
-                });
+
 
                 Route::get('/ecommerce/payment/cancel', [FrontendOrderController::class, 'PaypalCancel'])
                     ->name('paypal.cancel');
 
 
 
-
-
-
                 Route::post('/Customer/Order/mark-cancelled', [FrontendOrderController::class, 'ajaxMarkAsCancelled'])
                     ->name('Customer.order.cancelled');
 
+
+
+                ////  OUTBOUND RETURN
+            //////////// RETURN SHIPMENT
+            Route::post('/customer/requests', [ReturnShipmentController::class, 'CustomerReturnRequest'])
+                ->name('store.return.requests');
+
+                /// hand to courier item
+            Route::post('/customer/pack-item/{return_requestID}', [ReturnShipmentController::class, 'HandToCourier'])
+                ->name('hand.to.courier');
+
+
+
+                    
+                });
+
+                
+
+
+
+
+
+
+
+            Route::controller(CartController::class)->group(function () {
+                        
+                ////// PRODUCT DETAILS CART /////////////////
+
+                route::post('/ecommerce/add', 'EcommerceAddCart');
+
+                Route::patch('/ecommerce/ChangeQty/{rowId}', 'EcommerceChangeQty');
+
+                route::get('/ecommerce/carting', 'CartContent');
+
+
+                route::DELETE('/ecommerce-RemovePrd/{rowId}', 'RemoveEcommProduct')->name('removeProd');
+
+                /////////// CART CHECKOUT //////////////
+
+
+                });
+
+
+
+            Route::controller(FrontendController::class)->group(function () {
+
+                Route::get('/', 'index')->name('home');
+
+                    
+                });
+
+
+
+
+            //////////////////    CATEGORY WISE PRODUCT SHOW ///////////////////////
+            Route::controller(FrontendCategoryController::class)->group(function () {
+
+                Route::get('/category/{slug}', 'CategoryProduct')->name('category.show');
+
+
+            });
+
+
+
+                              //////////////////    CHECKOUT PAGE ///////////////////////
+
+                    Route::controller(FrontendController::class)->group(function () {
+
+                    Route::get('/cart', 'CartShow')->name('cart.show');
+
+
+                    route::get('/wishlist', 'WishlistShow')->name('wishlist.show');
+
+
+                    Route::get('/product/{product_id}', 'ProductDetails')->name('product.show');
+
+
+
+                    ////////////////////// CONFIDENTIAL PAGE
+
+                    Route::get('/privacy-policy', 'PrivacyPolicy')->name('policy.show');
+
+
+                    Route::get('/terms-of-service', 'TermsAndServices')->name('terms.show');
+
+
+
+                });
+
+
+
+                
+
+
         
-            ///////////////////// ONLINE PAYMENT POS /////////////////////////////
+            Route::controller(ContactController::class)->group(function () {
 
-            //  Route::controller(OnlinePaymentController::class)->group(function () {
-
-
-
-            // });
+            Route::get('/Contact/page', 'ContactShow')->name('contact.show');
 
 
+                    Route::post('/Contact/message', 'send')->name('contact.send');
+                });
 
 
+                    Route::controller(AboutController::class)->group(function () {
 
-        ////////////////// LAZY LOADING FOR USER TO GO IN CHECKOUT  ////////////////
-
-        // Route::get('/checkout', [OrderController::class, 'payment'])->name('checkout');
+                    Route::get('/About/page', 'AboutShow')->name('about.show');
 
 
+                });
 
 
 
+                Route::controller(FrontendBrandController::class)->group(function () {
 
-        /////////////////////////////
+                    Route::get('/Brand/page/{id}', 'BrandShow')->name('brand.show');
 
 
-        Route::prefix('customer')->group(function () {
-        Route::get('/auth/google', [CustomersGoogleController::class, 'redirect'])
-            ->name('customer.google.login');
-
-        Route::get('/auth/google/callback', [CustomersGoogleController::class, 'callback']);
-    });
+                });
 
 
 
 
-
-        Route::get('/supplier/confirm/{token}', [SupplierConfirmationController::class, 'show'])
-        ->name('supplier.confirm');
-
-        Route::post('/supplier/confirm/{token}', [SupplierConfirmationController::class, 'store'])
-            ->name('supplier.confirm.store');
+                
 
 
 
+            Route::controller(WishlistController::class)->group(function () {
+
+                route::post('/ecommerce/wishlist/add', 'EcommerceAddWishlist')->name('ecommerce.wishlist.add');
+
+                route::get('/ecommerce/wishlist', 'wishlistTest');
+
+            route::DELETE('/ecommerce-RemoveWsh/{rowId}', 'RemoveEcommWish')->name('removeWishlist');
+
+
+            });
 
 
 
-            ////////////////////// RIDER SIDE ////////////////////////////
+                Route::post('/test-wishlist', function () {
+                    return dd('WISHLIST CLICK WORKS ✅');
+                })->name('test.wishlist');
 
 
 
-        ////////////////////////////////  INVENTORY /////////////////////
-            Route::controller(RiderController::class)->group(function () {
-
-            Route::get('/Rider/Orders', 'ForRiderTable')->name('rider.table');
-
-            Route::get('/Pickup/details/{Order_id}', 'PickupItemDetails')->name('Product.details.pickUp');
-
-            //////////////////////////
-
-
-            Route::get('/Rider/Pickup', 'ForPickUpTable')->name('rider.pickup');
-
-            
-            Route::get('/Rider/Delivering', 'ForStartDeliveryTable')->name('rider.delivering');
-
-
-
-
-        });
-
-        
-
-
-        Route::post('/orders/pickUp/Item', [RiderController::class, 'ajaxPickupItem'])->name('orders.pickUp');
-
-        Route::post('/orders/Delivered/Item', [RiderController::class, 'ajaxDeliveredtem'])->name('orders.Delivering');
-
-        Route::post('/orders/Complete/Delivered', [RiderController::class, 'ajaxCompleteDelivered'])->name('orders.complete.delivered');
 
 
 
