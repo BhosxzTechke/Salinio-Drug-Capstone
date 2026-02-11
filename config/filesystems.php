@@ -42,6 +42,12 @@ return [
             'visibility' => 'public',
         ],
 
+        'backups' => [
+            'driver' => 'local',
+            'root' => env('RAILWAY_BACKUP_PATH', storage_path('app/backups')),
+        ],
+
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

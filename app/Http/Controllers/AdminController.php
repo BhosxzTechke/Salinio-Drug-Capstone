@@ -610,25 +610,45 @@ public function UpdateAdmin(Request $request)
 
 
 
+                // public function BackupDatabase()
+                // {
+
+                // $path = storage_path('backups');
+
+                // if (!file_exists($path)) {
+                //     return view('backup.backup_database')->with('files', []);
+                // }
+
+                // $files = Storage::disk('s3')->files();
+
+
+                // return view('backup.backup_database')->with('files', File::files($path));
+
+                //     // $path = storage_path('app/POS-Ecommerce');
+
+                //     // if (!file_exists($path)) {
+                //     //     return view('backup.backup_database')->with('files', []);
+                //     // }
+
+                //     // return view('backup.backup_database')->with('files', File::files($path));
+                // }
+
+
+                
                 public function BackupDatabase()
-                {
+                        {
+                            $files = Storage::disk('backups')->files(); // list all backups
 
-                $path = storage_path('backups');
+                            // Prepare files with download URLs
+                            $files = collect($files)->map(function ($file) {
+                                return [
+                                    'name' => basename($file),
+                                    'url' => Storage::disk('backups')->url($file), // optional if you have public visibility
+                                ];
+                            });
 
-                if (!file_exists($path)) {
-                    return view('backup.backup_database')->with('files', []);
-                }
-
-                return view('backup.backup_database')->with('files', File::files($path));
-
-                    // $path = storage_path('app/POS-Ecommerce');
-
-                    // if (!file_exists($path)) {
-                    //     return view('backup.backup_database')->with('files', []);
-                    // }
-
-                    // return view('backup.backup_database')->with('files', File::files($path));
-                }
+                            return view('backup.backup_database')->with('files', $files);
+                        }
 
 
                 
