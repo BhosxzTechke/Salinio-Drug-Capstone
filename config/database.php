@@ -58,9 +58,17 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                // PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+
+            
+            // THIS IS WHERE Spatie DB Dumper will look
+            'dump' => [
+                'useSingleTransaction' => true,
+                'timeout' => 60 * 5,
+                'add_extra_options' => [
+                    '--ssl-mode=DISABLED', // Railway self-signed SSL
+                ],
+                'dump_binary_path' => '', // leave empty for Linux
+            ],
         ],
 
         'pgsql' => [
