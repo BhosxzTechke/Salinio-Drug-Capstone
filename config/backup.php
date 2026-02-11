@@ -80,7 +80,16 @@ return [
              * For a complete list of available customization options, see https://github.com/spatie/db-dumper
              */
             'databases' => [
-                'mysql',
+                'mysql'=> [
+                                'dump' => [
+                                'useSingleTransaction' => true,
+                                'timeout' => 60 * 5,
+                                'add_extra_options' => [
+                                    '--ssl-mode=DISABLED', // important for Railway self-signed SSL
+                                ],
+                                'dump_binary_path' => '', // leave empty for Linux (Railway)
+                            ],
+                ],
             ],
         ],
 
