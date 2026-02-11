@@ -124,7 +124,11 @@
                             </tr>
                     </thead>
                     
-                    
+                    @if ($errors->has('cost_price.*'))
+                            <div class="text-danger mb-2">
+                                    {{ $errors->first('cost_price.*') }}
+                                </div>
+                            @endif
 
     <tbody id="selected-products">
         {{-- Will be filled dynamically --}}

@@ -20,6 +20,7 @@ use App\Models\Orderdetails;
 use App\Models\Order;   
 use Illuminate\Support\Facades\Log;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -621,24 +622,49 @@ public function UpdateAdmin(Request $request)
                 }
 
 
+                // public function BackupNow()
+                // {
+                //     try {
+                //         Artisan::call('backup:run');
+                //         dd(Artisan::output());
+
+                        
+                //             $notification = array(
+                //                 'message' => 'Backup Successfully',
+                //                 'alert-type' => 'success'
+                //             );  
+
+                //             return redirect()->back()->with($notification);
+
+
+                //     } catch (\Throwable $e) {
+                //         dd($e->getMessage());
+                //     }
+                // }
+
 
                 public function BackupNow()
                     {
-                        $backupPath = storage_path('app/POS-Ecommerce');
+                        $php = '"C:\\xampp\\php\\php.exe"';
+                        $artisan = base_path('artisan');
 
-                        if (!file_exists($backupPath)) {
-                            mkdir($backupPath, 0755, true);
+                        $cmd = $php . ' ' . $artisan . ' backup:run';
+
+                        exec($cmd, $output, $result);
+
+                        if ($result === 0) {
+                            return back()->with([
+                                'message' => 'Backup completed successfully!',
+                                'alert-type' => 'success'
+                            ]);
+                        } else {
+                            return back()->with([
+                                'message' => 'Backup failed — check logs.',
+                                'alert-type' => 'error'
+                            ]);
                         }
-
-                        dispatch(new RunBackup());
-
-                        $notification = [
-                            'message' => 'Backup started in background. Check logs for progress.',
-                            'alert-type' => 'success'
-                        ];
-
-                        return redirect()->back()->with($notification);
                     }
+
 
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -25,7 +26,21 @@ class PurchaseOrderMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Confirm Purchase Order')
-                    ->view('emails.purchase_order');
+
+           // Generate PDF from Blade view
+        $pdf = Pdf::loadView('pdf.purchase_receipt', [
+            'purchase' => $this->purchase
+        ]);
+
+
+        return $this->subject('Confirm Purchase Order'. $this->purchase->po_number)
+                    ->view('emails.purchase_order')
+                    ->attachData(
+                $pdf->output(),
+                'PO-' . $this->purchase->po_number . '.pdf',
+                [
+                    'mime' => 'application/pdf',
+                ]
+            );
     }
 }

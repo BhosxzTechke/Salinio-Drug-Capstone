@@ -14,7 +14,7 @@
         <p>Reason: {{ $returnData->description }}</p>
     @endif
 
-    <p>Thank you for shopping with us.</p>
-    <p><strong>Your Business Name</strong></p>
+    <p>Thank you .</p>
+    <p><strong>Salinio Drug Pharmacy</strong></p>
 </body>
 </html>

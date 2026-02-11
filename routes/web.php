@@ -492,7 +492,7 @@ Route::middleware(['auth', 'web'])->group(function () {
                 class="form-control form-control-sm cart-cost-input validate-cost" 
                 data-rowid="'.$item->rowId.'" 
                 value="'.$costPrice.'" 
-                step="0.01" min="0" style="width: 90px;">
+                min="1" style="width: 90px;">
         </td>';
 
         $html .= '<td class="total-cost">'.number_format($totalCost, 2).'</td>';

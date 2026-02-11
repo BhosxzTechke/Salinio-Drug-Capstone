@@ -247,15 +247,14 @@ public function AddPos(Request $request)
             }
 
 
-        
-
-
 
 
                 // FIFO for 
                 $query = Inventory::where('product_id', $product->id)
                     ->where('quantity', '>', 0)
                     ->orderBy('received_date', 'asc');
+
+
 
                 // if ($product->has_expiration) {
                 //     // FEFO: sort by soonest expiration date
