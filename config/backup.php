@@ -2,156 +2,52 @@
 
 return [
 
-    'backup' => [
+'backup' => [
+    'name' => env('APP_NAME', 'laravel-backup'),
 
-        /*
-         * The name of this application. You can use this name to monitor
-         * the backups.
-         */
-        'name' => env('APP_NAME', 'laravel-backup'),
-
-        'source' => [
-
-            'files' => [
-
-                /*
-                 * The list of directories and files that will be included in the backup.
-                 */
-                'include' => [
-                    // base_path(),
-                ],
-
-                /*
-                 * These directories and files will be excluded from the backup.
-                 *
-                 * Directories used by the backup process will automatically be excluded.
-                 */
-                'exclude' => [
-                    base_path('vendor'),
-                    base_path('node_modules'),
-                ],
-
-                /*
-                 * Determines if symlinks should be followed.
-                 */
-                'follow_links' => false,
-
-                /*
-                 * Determines if it should avoid unreadable folders.
-                 */
-                'ignore_unreadable_directories' => false,
-
-                /*
-                 * This path is used to make directories in resulting zip-file relative
-                 * Set to `null` to include complete absolute path
-                 * Example: base_path()
-                 */
-                'relative_path' => null,
-            ],
-
-            /*
-             * The names of the connections to the databases that should be backed up
-             * MySQL, PostgreSQL, SQLite and Mongo databases are supported.
-             *
-             * The content of the database dump may be customized for each connection
-             * by adding a 'dump' key to the connection settings in config/database.php.
-             * E.g.
-             * 'mysql' => [
-             *       ...
-             *      'dump' => [
-             *           'excludeTables' => [
-             *                'table_to_exclude_from_backup',
-             *                'another_table_to_exclude'
-             *            ]
-             *       ],
-             * ],
-             *
-             * If you are using only InnoDB tables on a MySQL server, you can
-             * also supply the useSingleTransaction option to avoid table locking.
-             *
-             * E.g.
-             * 'mysql' => [
-             *       ...
-             *      'dump' => [
-             *           'useSingleTransaction' => true,
-             *       ],
-             * ],
-             *
-             * For a complete list of available customization options, see https://github.com/spatie/db-dumper
-             */
-                'databases' => ['mysql'],
-                
-            ],
-
-                                'dump' => [
-                                'useSingleTransaction' => true,
-                                'timeout' => 60 * 5,
-                                'add_extra_options' => [
-                                    '--ssl-mode=DISABLED', // important for Railway self-signed SSL
-                                ],
-                                'dump_binary_path' => '', // leave empty for Linux (Railway)
-                            ],
-
-        /*
-         * The database dump can be compressed to decrease disk space usage.
-         *
-         * Out of the box Laravel-backup supplies
-         * Spatie\DbDumper\Compressors\GzipCompressor::class.
-         *
-         * You can also create custom compressor. More info on that here:
-         * https://github.com/spatie/db-dumper#using-compression
-         *
-         * If you do not want any compressor at all, set it to null.
-         */
-        'database_dump_compressor' => null,
-        'database_dump_binary_path' => env('DB_DUMP_BINARY_PATH', ''), // add this
-
-
-        /*
-         * The file extension used for the database dump files.
-         *
-         * If not specified, the file extension will be .archive for MongoDB and .sql for all other databases
-         * The file extension should be specified without a leading .
-         */
-        'database_dump_file_extension' => '',
-
-        'destination' => [
-
-            /*
-             * The filename prefix used for the backup zip file.
-             */
-            'filename_prefix' => '',
-
-            /*
-             * The disk names on which the backups will be stored.
-             */
-            // 'disks' => [
-            //     'local',
-            // ],
-                'disks' => ['backups'],
-
+    'source' => [
+        'files' => [
+            'include' => [],
+            'exclude' => [base_path('vendor'), base_path('node_modules')],
+            'follow_links' => false,
+            'ignore_unreadable_directories' => false,
+            'relative_path' => null,
         ],
-
-        /*
-         * The directory where the temporary files will be stored.
-         */
-        'temporary_directory' => storage_path('app/backup-temp'),
-
-        /*
-         * The password to be used for archive encryption.
-         * Set to `null` to disable encryption.
-         */
-        'password' => env('BACKUP_ARCHIVE_PASSWORD'),
-
-        /*
-         * The encryption algorithm to be used for archive encryption.
-         * You can set it to `null` or `false` to disable encryption.
-         *
-         * When set to 'default', we'll use ZipArchive::EM_AES_256 if it is
-         * available on your system.
-         */
-        'encryption' => 'default',
+        'databases' => ['mysql'], // List of connection names as strings
     ],
+
+    // This is the important part:
+    'dump' => [
+        'use_single_transaction' => true,
+        'timeout' => 60 * 5,
+        'add_extra_options' => [
+            '--ssl-mode=DISABLED', // This disables TLS/SSL verification
+        ],
+        'dump_binary_path' => '', // leave empty on Linux (Railway)
+    ],
+
+    'database_dump_compressor' => null,
+    'database_dump_file_extension' => '',
+    'destination' => [
+        'filename_prefix' => '',
+        'disks' => ['backups'], // Or 'local' if you want storage/app/backups
+    ],
+    'temporary_directory' => storage_path('app/backup-temp'),
+    'password' => env('BACKUP_ARCHIVE_PASSWORD'),
+    'encryption' => 'default',
+],
+
+
+
+
+
+
+
+
+
+
+
+
 
     /*
      * You can get notified when specific events occur. Out of the box you can use 'mail' and 'slack'.
