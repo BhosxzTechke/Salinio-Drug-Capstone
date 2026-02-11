@@ -61,14 +61,13 @@ return [
 
 
             'dump' => [
-                'dump_binary_path' => '',
+                'dump_binary_path' => '', // let it use system path
                 'useSingleTransaction' => true,
                 'timeout' => 60 * 5,
+                'add_extra_options' => [
+                    '--ssl-mode=DISABLED', // <- disables SSL verification for mysqldump
+                ],
             ],
-
-            'options' => [
-                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
-            ], //Backup will run without SSL errors.
 
 
             // 'dump' => [
