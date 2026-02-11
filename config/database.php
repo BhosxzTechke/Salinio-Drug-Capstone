@@ -58,8 +58,9 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-
             
+
+
             // THIS IS WHERE Spatie DB Dumper will look
             'dump' => [
                 'useSingleTransaction' => true,
@@ -69,6 +70,7 @@ return [
                 ],
                 'dump_binary_path' => '', // leave empty for Linux
             ],
+
         ],
 
         'pgsql' => [

@@ -79,10 +79,8 @@ return [
              *
              * For a complete list of available customization options, see https://github.com/spatie/db-dumper
              */
-            
-            'databases' => [
-                'mysql', // just the name of the connection
-            ],
+
+            'databases' => ['mysql'],
     ],
 
 
