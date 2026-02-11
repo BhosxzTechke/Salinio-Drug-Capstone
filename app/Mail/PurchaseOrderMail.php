@@ -28,7 +28,7 @@ class PurchaseOrderMail extends Mailable
     {
 
            // Generate PDF from Blade view
-        $pdf = Pdf::loadView('PDFs.purchase_receipt', [
+        $pdf = Pdf::loadView('pdf.purchaseReceipt', [
             'purchase' => $this->purchase
         ]);
 
