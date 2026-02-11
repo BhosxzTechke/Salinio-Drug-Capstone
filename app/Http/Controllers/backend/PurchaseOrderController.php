@@ -49,7 +49,7 @@ public function SavePurchaseOrder(Request $request)
     
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
-            // 'cost_price' => 'required|numeric|min:1'
+        //   'cost_price' => 'required|numeric|min:1'
         ], [
             'supplier_id.required' => 'Please select a supplier.',
         ]);

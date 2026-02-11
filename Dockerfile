@@ -34,11 +34,11 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && npm install -g npm@latest \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Add CA certificates and ensure the MySQL client is installed:
-RUN apt-get update && apt-get install -y \
-    mariadb-client \
-    ca-certificates \
-    && update-ca-certificates
+# # Add CA certificates and ensure the MySQL client is installed:
+# RUN apt-get update && apt-get install -y \
+#     mariadb-client \
+#     ca-certificates \
+#     && update-ca-certificates
 
     
 
