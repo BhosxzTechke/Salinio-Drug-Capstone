@@ -34,6 +34,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && npm install -g npm@latest \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+#Install mysql manually for Backup database
+RUN apt-get update && apt-get install -y mariadb-client
+
+
 # Set working directory
 WORKDIR /var/www/html
 

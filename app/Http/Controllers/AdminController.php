@@ -658,7 +658,7 @@ public function UpdateAdmin(Request $request)
                 {
                     try {
                         Artisan::call('backup:run');
-                        dd(Artisan::output());
+                        // dd(Artisan::output());
 
                         
                             $notification = array(
@@ -670,7 +670,7 @@ public function UpdateAdmin(Request $request)
 
 
                     } catch (\Throwable $e) {
-                        dd($e->getMessage());
+                        // dd($e->getMessage());
                     }
                 }
 
