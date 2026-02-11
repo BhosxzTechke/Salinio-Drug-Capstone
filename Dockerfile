@@ -37,9 +37,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Add CA certificates and ensure the MySQL client is installed:
 RUN apt-get update && apt-get install -y \
     mariadb-client \
-    default-libmysqlclient-dev \
     ca-certificates \
     && update-ca-certificates
+
+    
 
 # Set working directory
 WORKDIR /var/www/html

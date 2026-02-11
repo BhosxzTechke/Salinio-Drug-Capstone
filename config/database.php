@@ -62,14 +62,15 @@ return [
 
 
             // THIS IS WHERE Spatie DB Dumper will look
-            'dump' => [
-                'useSingleTransaction' => true,
-                'timeout' => 60 * 5,
-                'add_extra_options' => [
-                    '--ssl-mode=DISABLED', // Railway self-signed SSL
+                'dump' => [
+                    'useSingleTransaction' => true,
+                    'timeout' => 300,
+                    'add_extra_options' => [
+                        '--ssl',
+                        '--ssl-verify-server-cert=OFF',
+                    ],
+
                 ],
-                'dump_binary_path' => '', // leave empty for Linux
-            ],
 
         ],
 

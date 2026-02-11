@@ -11,6 +11,7 @@ return [
         'name' => env('APP_NAME', 'laravel-backup'),
 
         'source' => [
+            'databases' => ['mysql'],
 
             'files' => [
 
@@ -80,7 +81,6 @@ return [
              * For a complete list of available customization options, see https://github.com/spatie/db-dumper
              */
 
-            'databases' => ['mysql'],
     ],
 
 
