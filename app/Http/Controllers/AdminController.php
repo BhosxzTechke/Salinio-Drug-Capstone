@@ -622,48 +622,48 @@ public function UpdateAdmin(Request $request)
                 }
 
 
-                // public function BackupNow()
-                // {
-                //     try {
-                //         Artisan::call('backup:run');
-                //         dd(Artisan::output());
+                public function BackupNow()
+                {
+                    try {
+                        Artisan::call('backup:run');
+                        // dd(Artisan::output());
 
                         
-                //             $notification = array(
-                //                 'message' => 'Backup Successfully',
-                //                 'alert-type' => 'success'
-                //             );  
-
-                //             return redirect()->back()->with($notification);
-
-
-                //     } catch (\Throwable $e) {
-                //         dd($e->getMessage());
-                //     }
-                // }
-
-
-                public function BackupNow()
-                    {
-                        $php = '"C:\\xampp\\php\\php.exe"';
-                        $artisan = base_path('artisan');
-
-                        $cmd = $php . ' ' . $artisan . ' backup:run';
-
-                        exec($cmd, $output, $result);
-
-                        if ($result === 0) {
-                            return back()->with([
-                                'message' => 'Backup completed successfully!',
+                            $notification = array(
+                                'message' => 'Backup Successfully',
                                 'alert-type' => 'success'
-                            ]);
-                        } else {
-                            return back()->with([
-                                'message' => 'Backup failed — check logs.',
-                                'alert-type' => 'error'
-                            ]);
-                        }
+                            );  
+
+                            return redirect()->back()->with($notification);
+
+
+                    } catch (\Throwable $e) {
+                        // dd($e->getMessage());
                     }
+                }
+
+
+                // public function BackupNow()
+                //     {
+                //         $php = '"C:\\xampp\\php\\php.exe"';
+                //         $artisan = base_path('artisan');
+
+                //         $cmd = $php . ' ' . $artisan . ' backup:run';
+
+                //         exec($cmd, $output, $result);
+
+                //         if ($result === 0) {
+                //             return back()->with([
+                //                 'message' => 'Backup completed successfully!',
+                //                 'alert-type' => 'success'
+                //             ]);
+                //         } else {
+                //             return back()->with([
+                //                 'message' => 'Backup failed — check logs.',
+                //                 'alert-type' => 'error'
+                //             ]);
+                //         }
+                //     }
 
 
 
