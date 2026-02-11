@@ -589,113 +589,89 @@ public function UpdateAdmin(Request $request)
             // }
 
 
-                //             public function BackupNow()
-                // {
-                //     // Ensure directory exists
-                //     if (!file_exists(storage_path('app\\POS-Ecommerce'))) {
-                //         mkdir(storage_path('app\\POS-Ecommerce'), 0755, true);
-                //     }
-
-
-                //     // Dispatch job instead of running backup inline
-                //     dispatch(new RunBackup());
-
-                //     $notification = [
-                //         'message' => 'Backup started in background. Check logs for progress.',
-                //         'alert-type' => 'success'
-                //     ];
-
-                //     return redirect()->back()->with($notification);
-                // }
-
-
-
-                // public function BackupDatabase()
-                // {
-
-                // $path = storage_path('backups');
-
-                // if (!file_exists($path)) {
-                //     return view('backup.backup_database')->with('files', []);
-                // }
-
-                // $files = Storage::disk('s3')->files();
-
-
-                // return view('backup.backup_database')->with('files', File::files($path));
-
-                //     // $path = storage_path('app/POS-Ecommerce');
-
-                //     // if (!file_exists($path)) {
-                //     //     return view('backup.backup_database')->with('files', []);
-                //     // }
-
-                //     // return view('backup.backup_database')->with('files', File::files($path));
-                // }
 
 
 
                 public function BackupDatabase()
-                        {
-                            $files = Storage::disk('backups')->files(); // list all backups
+                {
 
-                            // Prepare files with download URLs
-                            $files = collect($files)->map(function ($file) {
-                                return [
-                                    'name' => basename($file),
-                                    'url' => Storage::disk('backups')->url($file), // optional if you have public visibility
-                                ];
-                            });
 
-                            return view('backup.backup_database')->with('files', $files);
-                        }
+                    $path = storage_path('app/POS-Ecommerce');
+
+                    if (!file_exists($path)) {
+                        return view('backup.backup_database')->with('files', []);
+                    }
+
+                    return view('backup.backup_database')->with('files', File::files($path));
+                }
+
+
+
+                // public function BackupDatabase()
+                //         {
+                //             $files = Storage::disk('backups')->files(); // list all backups
+
+                //             // Prepare files with download URLs
+                //             $files = collect($files)->map(function ($file) {
+                //                 return [
+                //                     'name' => basename($file),
+                //                     'url' => Storage::disk('backups')->url($file), // optional if you have public visibility
+                //                 ];
+                //             });
+
+                //             return view('backup.backup_database')->with('files', $files);
+                //         }
 
 
                 
 
 
-                public function BackupNow()
-                {
-                    try {
-                        Artisan::call('backup:run');
-                        dd(Artisan::output());
+                // public function BackupNow()
+                // {
+                //     try {
+                //         Artisan::call('backup:run');
+                //         dd(Artisan::output());
 
                         
-                            $notification = array(
-                                'message' => 'Backup Successfully',
-                                'alert-type' => 'success'
-                            );  
-
-                            return redirect()->back()->with($notification);
-
-
-                    } catch (\Throwable $e) {
-                        dd($e->getMessage());
-                    }
-                }
-
-
-                // public function BackupNow()
-                //     {
-                //         $php = '"C:\\xampp\\php\\php.exe"';
-                //         $artisan = base_path('artisan');
-
-                //         $cmd = $php . ' ' . $artisan . ' backup:run';
-
-                //         exec($cmd, $output, $result);
-
-                //         if ($result === 0) {
-                //             return back()->with([
-                //                 'message' => 'Backup completed successfully!',
+                //             $notification = array(
+                //                 'message' => 'Backup Successfully',
                 //                 'alert-type' => 'success'
-                //             ]);
-                //         } else {
-                //             return back()->with([
-                //                 'message' => 'Backup failed — check logs.',
-                //                 'alert-type' => 'error'
-                //             ]);
-                //         }
+                //             );  
+
+                //             return redirect()->back()->with($notification);
+
+
+                //     } catch (\Throwable $e) {
+                //         dd($e->getMessage());
                 //     }
+                // }
+
+
+
+
+
+
+                public function BackupNow()
+                    {
+                        $php = '"C:\\xampp\\php\\php.exe"';
+                        $artisan = base_path('artisan');
+
+                        $cmd = $php . ' ' . $artisan . ' backup:run';
+
+                        exec($cmd, $output, $result);
+
+                        if ($result === 0) {
+                            return back()->with([
+                                'message' => 'Backup completed successfully!',
+                                'alert-type' => 'success'
+                            ]);
+                        } else {
+                            return back()->with([
+                                'message' => 'Backup failed — check logs.',
+                                'alert-type' => 'error'
+                            ]);
+                        }
+                    }
 
 
 

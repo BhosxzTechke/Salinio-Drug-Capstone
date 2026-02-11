@@ -123,12 +123,6 @@
                                 <th>Action</th>
                             </tr>
                     </thead>
-                    
-                    @if ($errors->has('cost_price.*'))
-                            <div class="text-danger mb-2">
-                                    {{ $errors->first('cost_price.*') }}
-                                </div>
-                            @endif
 
     <tbody id="selected-products">
         {{-- Will be filled dynamically --}}
@@ -456,32 +450,8 @@ $(document).ready(function () {
 </script>
 
 
-{{-- <script>
-$(document).ready(function () {
-    $('#Myform').on('submit', function (e) {
-        // Only count rows that contain at least one <td> with content
-        const cartRows = $('#selected-products tr').filter(function () {
-            return $(this).find('td').length > 0 && $.trim($(this).text()) !== '';
-        });
 
-        console.log("Cart row count:", cartRows.length); // Debugging
 
-        if (cartRows.length === 0) {
-            e.preventDefault(); // Block form submit
-
-            Swal.fire({
-                icon: 'warning',
-                title: 'Cart is Empty',
-                text: 'Please add at least one product to the purchase order.',
-                timer: 2500,
-                showConfirmButton: false
-            });
-
-            return false;
-        }
-    });
-});
-</script> --}}
 
 
 

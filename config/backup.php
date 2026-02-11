@@ -11,7 +11,6 @@ return [
         'name' => env('APP_NAME', 'laravel-backup'),
 
         'source' => [
-            'databases' => ['mysql'],
 
             'files' => [
 
@@ -80,9 +79,10 @@ return [
              *
              * For a complete list of available customization options, see https://github.com/spatie/db-dumper
              */
-
-    ],
-
+            'databases' => [
+                'mysql',
+            ],
+        ],
 
         /*
          * The database dump can be compressed to decrease disk space usage.
@@ -117,11 +117,9 @@ return [
             /*
              * The disk names on which the backups will be stored.
              */
-            // 'disks' => [
-            //     'local',
-            // ],
-                'disks' => ['backups'],
-
+            'disks' => [
+                'local',
+            ],
         ],
 
         /*

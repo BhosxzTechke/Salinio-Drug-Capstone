@@ -77,16 +77,18 @@ $validated = $request->validate([
     'brand_id' => 'required|integer|exists:brands,id',
     'dosage_form' => 'nullable|string|max:50',
 
-    // 🔥 Ecommerce-only
+    //  Ecommerce-only
     'is_ecommerce' => 'nullable|boolean',
     'description' => 'required_if:is_ecommerce,1|nullable|string|min:1',
     'target_gender' => 'required_if:is_ecommerce,1|string|max:50',
     'age_group' => 'required_if:is_ecommerce,1|string|max:50',
+    'product_image' => 'required_if:is_ecommerce,1|image|mimes:jpg,jpeg,png,webp|max:20480',
     'health_concern' => 'nullable|string|max:100',
+
+
 
     'selling_price' => 'required|numeric|min:0',
     'prescription_required' => 'nullable|boolean',
-    'product_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:20480',
 ], [
     'product_name.unique' => 'A product with the same name, brand, and dosage form already exists.',
     'target_gender.required_if' => 'Target gender is required for ecommerce products.',
@@ -280,8 +282,8 @@ public function UpdateProduct(Request $request)
             'target_gender' => 'required_if:is_ecommerce,1|string|max:50',
             'age_group' => 'required_if:is_ecommerce,1|string|max:50',
             'description' => 'required_if:is_ecommerce,1|nullable|string|min:10',
+            'product_image' => 'required_if:is_ecommerce,1|image|mimes:jpg,jpeg,png,webp|max:20480',
             'health_concern' => 'nullable|string|max:100',
-
 
 
             'selling_price'         => 'required|numeric|min:0',

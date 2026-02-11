@@ -49,16 +49,13 @@ public function SavePurchaseOrder(Request $request)
     
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
-            'cost_price'  => 'required|numeric|min:1'
+            // 'cost_price' => 'required|numeric|min:1'
         ], [
             'supplier_id.required' => 'Please select a supplier.',
-            'cost_price.required'  => 'Cost price is required.',
-            'cost_price.numeric'   => 'Cost price must be a valid number.',
-            'cost_price.min'       => 'Cost price must be greater than 0.',
         ]);
 
 
-
+        
         $po_number = 'PO-' . strtoupper(uniqid());
 
         $cart = Cart::instance('purchaseOrder')->content();
@@ -141,14 +138,12 @@ public function SavePurchaseOrder(Request $request)
         throw $e;
 
     } catch (\Exception $e) {
-                $notification = [
-                    
-                    'message' => 'Something went wrong: ' . $e->getMessage(),
-                    'alert-type' => 'error',
-                ];
-                return redirect()->back()->withInput()->with($notification);
+        \Log::error('Purchase Order Save Error: ' . $e->getMessage());
 
-
+        return back()->with([
+            'message' => 'Something went wrong while saving the purchase order. Please try again.',
+            'alert-type' => 'error',
+        ]);
     }
 }
 

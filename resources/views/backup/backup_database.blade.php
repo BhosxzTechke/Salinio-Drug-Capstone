@@ -55,28 +55,28 @@
                                             <tbody>
 
                 @php $sl = 1 @endphp
-                    @foreach ($files as $file)
+                    @foreach ($files as $data)
                     <tr>
-                        {{-- <td>{{ $sl++ }}</td>
+                        <td>{{ $sl++ }}</td>
                         <td>{{ $data->getFilename() }}</td>
                         <td>{{ $data->getSize() }}</td>
-                        <td>{{ $data->getPath() }}</td> --}}
-
-                            <td>{{ $sl++ }}</td>
+                        <td>{{ $data->getPath() }}</td>
+<td>
+                            {{-- <td>{{ $sl++ }}</td>
                             <td>{{ basename($file) }}</td>
                             <td>{{ Storage::disk('backups')->size($file) }} bytes</td>
                             <td>{{ $file }}</td>
 
                                 <td>
-                                    <a href="{{ Storage::disk('backups')->url($file) }}" target="_blank">Download</a>
+                                    <a href="{{ Storage::disk('backups')->url($file) }}" target="_blank">Download</a> --}}
 
 
                         {{-- <td> --}}
 
-                            
-                            {{-- @if(Auth::user()->can('download-backup')) 
-                                <a href="{{ url($data->getFilename()) }}" class="btn btn-blue rounded-pill waves-effect waves-light">Download </a> 
-                       @endif --}}
+                                
+                            @if(Auth::user()->can('download-backup')) 
+                                    <a href="{{ url($data->getFilename()) }}" class="btn btn-blue rounded-pill waves-effect waves-light">Download </a> 
+                        @endif 
 
 
                             {{-- <a href="{{ route('backup.download', $data->getFilename()) }}"
@@ -84,12 +84,6 @@
                                                     Download
                                                     </a> --}}
 
-
-
-                            
-                {{-- @if(Auth::user()->can('delete-backup')) --}}
-                    {{-- <a href="{{ url('backup/delete/'. $data->getFilename()) }}" class="btn btn-danger rounded-pill waves-effect waves-light" id="delete"  title="Delete Data"><i class="fa-solid fa-trash"></i> Delete</a> --}}
-                {{-- @endif --}}
 
                 
 

@@ -115,7 +115,7 @@
 
         {{-- Dosage Form --}}
         <div class="col-md-6 mb-3">
-            <label for="dosage_form">Dosage Form <span class="text-danger">*</span></label>
+                <label for="dosage_form">Dosage Form (Optional)</label>
             <select name="dosage_form" class="form-control @error('dosage_form') is-invalid @enderror">
                 @php $dosageOptions = ['Tablet','Capsule','Syrup','Cream','Ointment']; @endphp
                 @foreach($dosageOptions as $option)
@@ -384,6 +384,13 @@ $(document).ready(function () {
                 }
             },
 
+            product_image: {
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
+            },
+
+
 
             prescription_required: { required: true },
             description: {
@@ -395,10 +402,6 @@ $(document).ready(function () {
                 number: true,
                 min: 0
             },
-            product_image: {
-                extension: "jpg|jpeg|png|webp"
-            }
-
 
         },
 

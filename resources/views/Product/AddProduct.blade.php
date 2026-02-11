@@ -151,7 +151,7 @@
         {{-- Dosage Form --}}
         <div class="col-md-6">
             <div class="form-group mb-3">
-                <label for="dosage_form">Dosage Form <span class="text-danger">*</span></label>
+                <label for="dosage_form">Dosage Form (Optional)</label>
                 <select name="dosage_form"
                         class="form-control @error('dosage_form') is-invalid @enderror"
                         id="dosage_form">
@@ -174,19 +174,19 @@
 
 
 
-        {{-- Selling Price --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="selling_price">Selling Price <span class="text-danger">*</span></label>
-                <input type="text" name="selling_price"
-                       value="{{ old('selling_price') }}"
-                       class="form-control @error('selling_price') is-invalid @enderror"
-                       id="selling_price" min="1">
-                @error('selling_price')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
+            {{-- Selling Price --}}
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="selling_price">Selling Price <span class="text-danger">*</span></label>
+                    <input type="text" name="selling_price"
+                        value="{{ old('selling_price') }}"
+                        class="form-control @error('selling_price') is-invalid @enderror"
+                        id="selling_price" min="1">
+                    @error('selling_price')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
-        </div>
 
         {{-- Prescription Required --}}
         <div class="col-md-6">
@@ -312,36 +312,40 @@
                         </div>
 
 
+
+                                        {{-- Product Image --}}
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="image">Product Image <span class="text-danger">*</span></label>
+                                <input type="file" name="product_image"
+                                    id="image" class="form-control @error('product_image') is-invalid @enderror">
+                                @error('product_image')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                                    {{-- Preview --}}
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Preview</label>
+                                <img id="showImage" src="{{ url('uploads/noimage.png') }}"
+                                    class="rounded-circle avatar-lg img-thumbnail"
+                                    alt="profile-image">
+                            </div>
+                        </div>
+
+
+
                 </div>
 
 
 
 
-        {{-- Product Image --}}
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="image">Product Image <span class="text-danger">*</span></label>
-                    <input type="file" name="product_image"
-                        id="image" class="form-control @error('product_image') is-invalid @enderror">
-                    @error('product_image')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
+  
 
 
 
-
-
-            {{-- Preview --}}
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label>Preview</label>
-                    <img id="showImage" src="{{ url('uploads/noimage.png') }}"
-                        class="rounded-circle avatar-lg img-thumbnail"
-                        alt="profile-image">
-                </div>
-            </div>
 
         </div> <!-- end row -->
 
@@ -467,6 +471,13 @@ $(document).ready(function () {
                 }
             },
 
+            
+            product_image: {
+                required: function () {
+                    return $('#is_ecommerce').is(':checked');
+                }
+            },
+
 
 
 
@@ -481,10 +492,7 @@ $(document).ready(function () {
                 number: true,
                 min: 0
             },
-            product_image: {
-                required: true,
-                extension: "jpg|jpeg|png|webp"
-            }
+
         },
 
         messages: {
