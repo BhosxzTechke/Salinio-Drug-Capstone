@@ -58,18 +58,31 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+
+
             'dump' => [
-            'dump_binary_path' => '', // only the path, so without `mysqldump` or `pg_dump`
-            'use_single_transaction',
-            'timeout' => 60 * 5, // 5 minute timeout
-            
-                ],
-                'options' => extension_loaded('pdo_mysql') ? array_filter([
+                'dump_binary_path' => '',
+                'useSingleTransaction' => true,
+                'timeout' => 60 * 5,
+            ],
+
+            'options' => [
                 PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+            ], //Backup will run without SSL errors.
+
+
+            // 'dump' => [
+            // 'dump_binary_path' => '', // only the path, so without `mysqldump` or `pg_dump`
+            // 'use_single_transaction',
+            // 'timeout' => 60 * 5, // 5 minute timeout
+            
+            //     ],
+            //     'options' => extension_loaded('pdo_mysql') ? array_filter([
+            //     PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
                 
-            // 'options' => extension_loaded('pdo_mysql') ? array_filter([
-            //     PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            // // 'options' => extension_loaded('pdo_mysql') ? array_filter([
+            // //     PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            // ]) : [],
         ],
 
         'pgsql' => [
