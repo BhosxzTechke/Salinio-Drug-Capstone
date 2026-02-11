@@ -612,14 +612,26 @@ public function UpdateAdmin(Request $request)
 
                 public function BackupDatabase()
                 {
-                    $path = storage_path('app/POS-Ecommerce');
 
-                    if (!file_exists($path)) {
-                        return view('backup.backup_database')->with('files', []);
-                    }
+                $path = storage_path('backups');
 
-                    return view('backup.backup_database')->with('files', File::files($path));
+                if (!file_exists($path)) {
+                    return view('backup.backup_database')->with('files', []);
                 }
+
+                return view('backup.backup_database')->with('files', File::files($path));
+
+                    // $path = storage_path('app/POS-Ecommerce');
+
+                    // if (!file_exists($path)) {
+                    //     return view('backup.backup_database')->with('files', []);
+                    // }
+
+                    // return view('backup.backup_database')->with('files', File::files($path));
+                }
+
+
+                
 
 
                 public function BackupNow()
