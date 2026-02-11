@@ -12,9 +12,6 @@ return [
 
         'source' => [
 
-            'databases' => ['mysql'],
-
-
             'files' => [
 
                 /*
@@ -82,18 +79,19 @@ return [
              *
              * For a complete list of available customization options, see https://github.com/spatie/db-dumper
              */
-
+            'databases' => [
+                'mysql'=> [
+                                'dump' => [
+                                'useSingleTransaction' => true,
+                                'timeout' => 60 * 5,
+                                'add_extra_options' => [
+                                    '--ssl-mode=DISABLED', // important for Railway self-signed SSL
+                                ],
+                                'dump_binary_path' => '', // leave empty for Linux (Railway)
+                            ],
+                ],
             ],
-
-                    'dump' => [
-                        'use_single_transaction' => true,
-                        'timeout' => 60 * 5,
-                        'add_extra_options' => [
-                            '--ssl-mode=DISABLED', // ignore self-signed SSL
-                        ],
-                        'dump_binary_path' => '', // leave empty on Linux/Railway
-                    ],
-
+        ],
 
         /*
          * The database dump can be compressed to decrease disk space usage.
@@ -155,19 +153,6 @@ return [
          */
         'encryption' => 'default',
     ],
-
-
-
-
-
-
-
-
-
-
-
-
-    
 
     /*
      * You can get notified when specific events occur. Out of the box you can use 'mail' and 'slack'.
