@@ -55,13 +55,23 @@
                                             <tbody>
 
                 @php $sl = 1 @endphp
-                    @foreach ($files as $data)
+                    @foreach ($files as $file)
                     <tr>
-                        <td>{{ $sl++ }}</td>
+                        {{-- <td>{{ $sl++ }}</td>
                         <td>{{ $data->getFilename() }}</td>
                         <td>{{ $data->getSize() }}</td>
-                        <td>{{ $data->getPath() }}</td>
-                        <td>
+                        <td>{{ $data->getPath() }}</td> --}}
+
+                            <td>{{ $sl++ }}</td>
+                            <td>{{ basename($file) }}</td>
+                            <td>{{ Storage::disk('backups')->size($file) }} bytes</td>
+                            <td>{{ $file }}</td>
+
+                                <td>
+                                    <a href="{{ Storage::disk('backups')->url($file) }}" target="_blank">Download</a>
+
+
+                        {{-- <td> --}}
 
                             
                             {{-- @if(Auth::user()->can('download-backup')) 
@@ -69,10 +79,12 @@
                        @endif --}}
 
 
-                            <a href="{{ route('backup.download', $data->getFilename()) }}"
+                            {{-- <a href="{{ route('backup.download', $data->getFilename()) }}"
                                                     class="btn btn-blue rounded-pill waves-effect waves-light">
                                                     Download
-                                                    </a>
+                                                    </a> --}}
+
+
 
                             
                 {{-- @if(Auth::user()->can('delete-backup')) --}}
