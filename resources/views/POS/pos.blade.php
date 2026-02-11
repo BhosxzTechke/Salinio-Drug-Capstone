@@ -125,10 +125,17 @@
 
 
                 <tbody id="cart-body">
+
                     @foreach ($ProductsItem as $item)
 
-                    
-                    @php   $inventory = App\Models\Inventory::find($item->id); @endphp
+                    {{-- @php   $inventory = App\Models\Inventory::find($item->options->product_id); @endphp --}}
+
+                        @php
+                        $productId = $item->options->product_id;
+                        $availableStock = $stockMap[$productId]->total_quantity ?? 1;
+                    @endphp
+
+
 
 
                     <tr>
@@ -137,7 +144,7 @@
                         <td>
                             <form method="POST" action="{{ url('/pos/ChangeQty/' . $item->rowId )}}" class="d-flex gap-1">
                                 @csrf
-                                <input type="number" name="qty" value="{{ $item->qty }}" min="1" max="{{ $inventory->quantity }}" class="form-control form-control-sm qty-input">
+                                <input type="number" name="qty" value="{{ $item->qty }}" min="1" max="{{ $availableStock }}" class="form-control form-control-sm qty-input">
                                 <button class="btn btn-success btn-sm">
                                     <i class="fas fa-check"></i>
                                 </button>
@@ -162,6 +169,8 @@
                         </td>
                     </tr>
                     @endforeach
+
+
                 </tbody>
             </table>
         </div>
@@ -236,15 +245,15 @@ Create Invoice for Customer</button>
 
 
 
-                            <br>                                        
-                                              
-                        </div> <!-- end card -->
-                     </div> <!-- end col-->
+                                <br>                                        
+                                                
+                            </div> <!-- end card -->
+                        </div> <!-- end col-->
 
-                              <div class="col-lg-6 col-xl-6">
-                                <div class="card">
-                                    <div class="card-body"> 
-                                           
+                                <div class="col-lg-6 col-xl-6">
+                                    <div class="card">
+                                        <div class="card-body"> 
+                                            
 
     <!-- end timeline content-->
 
@@ -280,48 +289,48 @@ Create Invoice for Customer</button>
 
 
 
-    <!-- Product Grid -->
-    <div class="row g-2" id="product-card">
-        @foreach($PosData as $key => $item)
-            <div class="col-6 col-sm-4 col-md-3 col-lg-2 product-card" 
-                 data-name="{{ strtolower($item->product->product_name) }}" 
-                 data-category="{{ $item->product->category_id }}"
-                 data-brand="{{ $item->product->brand_id }}">
-                <div class="card shadow-sm h-100 text-center p-2" style="border-radius: 12px;">
-                    <img src="{{ asset($item->product->product_image) }}" 
-                         class="mx-auto d-block" 
-                         style="height: 70px; object-fit: contain;">
+            <!-- Product Grid -->
+            <div class="row g-2" id="product-card">
+                @foreach($PosData as $key => $item)
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 product-card" 
+                        data-name="{{ strtolower($item->product->product_name) }}" 
+                        data-category="{{ $item->product->category_id }}"
+                        data-brand="{{ $item->product->brand_id }}">
+                        <div class="card shadow-sm h-100 text-center p-2" style="border-radius: 12px;">
+                            <img src="{{ asset($item->product->product_image) }}" 
+                                class="mx-auto d-block" 
+                                style="height: 70px; object-fit: contain;">
 
-                    <div class="mt-2">
-                        <strong class="d-block text-truncate" style="font-size: 0.85rem;">
-                            {{ $item->product->product_name }}
-                        </strong>
-                        <small class="text-muted d-block mb-1">
-                            ₱{{ number_format($item->product->selling_price, 2) }}
-                        </small>
-                        <span class="badge bg-warning text-dark mb-1" style="font-size: 0.75rem;">
-                            Stock: {{ $item->total_quantity }}
-                        </span>
+                            <div class="mt-2">
+                                <strong class="d-block text-truncate" style="font-size: 0.85rem;">
+                                    {{ $item->product->product_name }}
+                                </strong>
+                                <small class="text-muted d-block mb-1">
+                                    ₱{{ number_format($item->product->selling_price, 2) }}
+                                </small>
+                                <span class="badge bg-warning text-dark mb-1" style="font-size: 0.75rem;">
+                                    Stock: {{ $item->total_quantity }}
+                                </span>
 
 
-                        <form method="POST" action="{{ url('/pos/add') }}">
-                            @csrf
+                                <form method="POST" action="{{ url('/pos/add') }}">
+                                    @csrf
 
-                            <input type="hidden" name="id" value="{{ $item->product_id }}">
-                            <input type="hidden" name="name" value="{{ $item->product->product_name }}">
-                            <input type="hidden" name="qty" value="1">
-                            <input type="hidden" name="selling_price" value="{{ $item->product->selling_price }}">
+                                    <input type="hidden" name="id" value="{{ $item->product_id }}">
+                                    <input type="hidden" name="name" value="{{ $item->product->product_name }}">
+                                    <input type="hidden" name="qty" value="1">
+                                    <input type="hidden" name="selling_price" value="{{ $item->product->selling_price }}">
 
-                            <button type="submit" class="btn btn-sm btn-primary w-100">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
-                        </form>
+                                    <button type="submit" class="btn btn-sm btn-primary w-100">
+                                        <i class="fas fa-plus"></i> Add
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
-        @endforeach
-    </div>
-</div>
+        </div>
 
 
 

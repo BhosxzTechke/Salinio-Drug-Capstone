@@ -77,10 +77,74 @@
                                 type="button"
                                 class="btn btn-outline-primary"
                                 data-bs-toggle="modal"
-                                data-bs-target="#returnDetailsModal"
-                            >
+                                data-bs-target="#returnDetailsModal{{ $data->id }}">
                                 View Return Details
                             </button>
+
+
+                            <!-- Modal -->
+    <div class="modal fade"
+        id="returnDetailsModal{{ $data->id }}"
+        tabindex="-1"
+        aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Return Request Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <strong>Order ID:</strong>
+                    <div>{{ $data->returnRequest->order_id ?? ''}}</div>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Reason:</strong>
+                    <div>{{ ucfirst(str_replace('_',' ', $data->returnRequest->reason ?? '')) }}</div>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Description:</strong>
+                    <div>{{ $data->returnRequest->description ?? '' }}</div>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Quantity:</strong>
+                    <div>{{ $data->returnRequest->quantity ?? '' }}</div>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Images:</strong>
+                    <div class="d-flex gap-2 flex-wrap">
+                        @if($data->returnRequest->photos)
+                            @foreach($data->returnRequest->photos as $img)
+                                <img src="{{ $img }}" class="img-thumbnail" width="120">
+                            @endforeach
+                        @else
+                            <span class="text-muted">No images uploaded</span>
+                        @endif
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
                     </td>
 
 
@@ -142,68 +206,7 @@
 
 
                 
-                    </tr>
-
-
-
-
-                    {{-- Modal Return Details per  --}}
-
-<div class="modal fade" id="returnDetailsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Return Request Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-
-                <div class="mb-3">
-                    <strong>Order ID:</strong>
-                    <div>{{ $data->returnRequest->order_id ?? ''}}</div>
-                </div>
-
-                <div class="mb-3">
-                        <strong>Reason:</strong>
-                        <div>{{ ucfirst(str_replace('_',' ', $data->returnRequest->reason ?? '')) }}</div>
-                    </div>
-
-                <div class="mb-3">
-                    <strong>Description:</strong>
-                    <div>{{ $data->returnRequest->description ?? '' }}</div>
-                </div>
-
-                <div class="mb-3">
-                    <strong>Quantity:</strong>
-                    <div>{{ $data->returnRequest->quantity ?? '' }}</div>
-                </div>
-
-                <div class="mb-3">
-                    <strong>Images:</strong>
-                    <div class="d-flex gap-2 flex-wrap">
-                        @if($data->returnRequest->photos)
-                            @foreach($data->returnRequest->photos as $img)
-                                <img src="{{ $img }}" class="img-thumbnail" width="120">
-                            @endforeach
-                        @else
-                            <span class="text-muted">No images uploaded</span>
-                        @endif
-                    </div>
-                </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Close
-                    </button>
-                </div>
-
-        </div>
-    </div>
-</div>
+   <tr>
 
 
 
@@ -240,6 +243,11 @@
 
 </div>
 <!-- END wrapper -->
+
+
+
+
+
 
 
 

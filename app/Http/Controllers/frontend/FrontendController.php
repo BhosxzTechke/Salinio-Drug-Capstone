@@ -237,6 +237,8 @@ class FrontendController extends Controller
 
 
 
+        ////////// CRUD CUSTOMER ADDRESS
+
             public function CustomerAddressStore(Request $request)
             {
                 $request->validate([
@@ -271,8 +273,55 @@ class FrontendController extends Controller
 
 
 
+            public function UpdateCustomerAddress(Request $request)
+            {
+                $request->validate([
+                    'address_id' => 'required|exists:addresses,id',
+                    'full_name' => 'required|string',
+                    'phone' => 'required|string',
+                    'street' => 'required|string',
+                    'barangay' => 'required|string',
+                    'city' => 'required|string',
+                    'is_default' => 'nullable|boolean',
+                ]);
 
-        
+                $addressID = $request->address_id;
+                $customerId = auth()->id();
+
+                // If this address is set as default, unset other default addresses for this customer
+                if ($request->is_default) {
+                    Address::where('customer_id', $customerId)->update(['is_default' => false]);
+                }
+
+                // Find the address and update it
+                $address = Address::where('id', $addressID)->where('customer_id', $customerId)->firstOrFail();
+
+                $address->update([
+                    'full_name' => $request->full_name,
+                    'phone' => $request->phone,
+                    'street' => $request->street,
+                    'barangay' => $request->barangay,
+                    'city' => $request->city,
+                    'is_default' => $request->is_default ?? false,
+                ]);
+
+                return back()->with('success', 'Address updated successfully');
+            }
+
+
+            public function deleteCustomerAddress($id)
+            {
+                $customerId = auth()->id();
+                $address = Address::where('id', $id)->where('customer_id', $customerId)->firstOrFail();
+                $address->delete();
+
+                return back()->with('success', 'Address deleted successfully');
+            }
+
+
+
+
+
 
 
         

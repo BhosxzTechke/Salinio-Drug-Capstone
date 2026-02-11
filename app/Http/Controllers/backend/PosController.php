@@ -58,7 +58,8 @@ public function viewPos()
         ->get();
 
 
-        
+    $stockMap = $PosData->keyBy('product_id');
+
 
 
     
@@ -72,6 +73,7 @@ public function viewPos()
 
     // 6. Pass all data to the view
     return view('POS.pos', compact(
+        'stockMap',
         'PosData',
         'Customer',
         'totalInclusive',
@@ -210,6 +212,9 @@ public function ChangeQty(Request $request, $rowId)
         'alert-type' => 'success'
     ]);
 }
+
+
+
 
 
 

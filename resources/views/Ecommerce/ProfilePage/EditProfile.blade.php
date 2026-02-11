@@ -26,10 +26,69 @@
               <input type="email" name="email" value="{{ Auth::guard('customer')->user()->email }}" class="input input-bordered w-full bg-white border-gray-300 text-gray-800" />
             </div>
 
-            <div>
-              <label class="label text-gray-800">Phone</label>
-              <input type="tel" name="tel" value="{{ Auth::guard('customer')->user()->phone }}" class="input input-bordered w-full bg-white border-gray-300 text-gray-800" />
-            </div>
+
+
+                  
+                  <!-- Input field for remaining digits -->
+        <div>
+          <label class="label text-gray-800 font-medium mb-1">Phone</label>
+          <div class="flex items-center">
+            <!-- Locked prefix -->
+            <span class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 border border-r-0 border-gray-300 rounded-l-md select-none">
+              +639
+            </span>
+
+            <!-- Visible input: user types 9 digits -->
+            <input
+              type="tel"
+              id="phone-visible"
+              pattern="\d{9}"
+              maxlength="9"
+              placeholder="XXXXXXXXX"
+              value="{{ Auth::guard('customer')->user()->phone ? substr(Auth::guard('customer')->user()->phone, 4) : '' }}"
+              class="input input-bordered w-full rounded-r-md border-gray-300 text-gray-800 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+              required
+            />
+          </div>
+
+                {{-- // Ensure +639 is always at the start --}}
+{{-- 
+          <script>
+                const phoneInput = document.getElementById('phone');
+
+                // Ensure +639 is always at the start
+                phoneInput.addEventListener('input', function() {
+                  if (!this.value.startsWith('+639')) {
+                    this.value = '+639' + this.value.replace(/^(\+?63)?9?/, '');
+                  }
+                });
+
+                // Optional: remove non-numeric characters after +639
+                phoneInput.addEventListener('keypress', function(e) {
+                  if (!/\d/.test(e.key)) e.preventDefault();
+                });
+          </script> --}}
+
+
+            <!-- Hidden input that will hold full number +639XXXXXXXXX -->
+  <input type="hidden" name="tel" id="phone-full" />
+
+      <script>
+            const visibleInput = document.getElementById('phone-visible');
+            const fullInput = document.getElementById('phone-full');
+
+            function updateFullPhone() {
+              let val = visibleInput.value.replace(/\D/g, '').slice(0, 9); // digits only, max 9 chars
+              fullInput.value = '+639' + val;
+            }
+
+            // Update hidden full input on every change
+            visibleInput.addEventListener('input', updateFullPhone);
+
+            // Initialize on page load
+            updateFullPhone();
+          </script>
+
 
             <!-- DRAG AND DROP FILE IMAGE -->
             <div class="mb-6" x-data="imageUploader()" x-cloak>
@@ -75,7 +134,11 @@
               </div>
             </div>
 
-            <button class="btn btn-primary mt-4 w-full md:w-auto">Update Changes</button>
+
+              <button class="btn btn-primary mt-4 w-full md:w-auto"
+                      onclick="this.disabled=true; this.innerText='Updating.'; this.form.submit();">
+                  Update Changes
+              </button>
           </form>
         </div>
       </div>

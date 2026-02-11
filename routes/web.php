@@ -1305,11 +1305,18 @@ Route::middleware(['auth', 'web'])->group(function () {
 
                 Route::get('/customer/chat/admin', [FrontendController::class, 'ChatAdmin'])->name('chat.admin');
 
+
+
+
+                //////////// ADDRESS CUSTOMER
                 Route::get('/customer/address', [FrontendController::class, 'CustomerAddress'])->name('customer.adress');
 
 
                 Route::post('/customer/address/store', [FrontendController::class, 'CustomerAddressStore'])->name('store.customer.address');
 
+                Route::put('/customer/address/update', [FrontendController::class, 'UpdateCustomerAddress'])->name('update.customer.address');
+
+                Route::get('/customer/address/delete/{id}', [FrontendController::class, 'deleteCustomerAddress'])->name('delete.customer.address');
 
 
 

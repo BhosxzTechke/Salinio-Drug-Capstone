@@ -268,36 +268,29 @@
                     </ul> 
 
 
-                    <!-- LOGO -->
-               <div class="logo-box">
-                        <a href="{{ route('admin.dashboard')}}" class="logo logo-dark text-center">
-                            <span class="logo-sm">
-                                <img src="assets/images/logo-sm.png" alt="" height="22">
-                                <!-- <span class="logo-lg-text-light">UBold</span> -->
-                            </span>
 
-                            <span class="logo-lg">
-                                <img src="assets/images/logo-dark.png" alt="" height="20">
-                                <!-- <span class="logo-lg-text-light">U</span> -->
-                            </span>
-                        </a>
-    
-                        <a href="index.html" class="logo logo-light text-center">
-                            <span class="logo-sm">
-                                <img src="assets/images/logo-sm.png" alt="" height="22">
-                            </span>
-                            <span class="logo-lg">
-                                <img src="assets/images/logo-light.png" alt="" height="20">
-                            </span>
-                        </a>
-                    </div> 
+                {{-- <div class="logo-box h-8 w-8 flex items-center justify-center">
+                    <a href="{{ route('admin.dashboard')}}" class="logo logo-dark">
+                        <svg class="w-4 h-4 text-gray-600"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M8 12l2 2 4-4"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
 
-                    
+
+                     --}}
 
     
                     <ul class="list-unstyled topnav-menu topnav-menu-left m-0" style="margin-left: 20px;">
                         <li>
-                            <button class="button-menu-mobile waves-effect waves-light">
+                            <button class="button-menu-mobile waves-effect waves-light" style="margin-left: 1rem;" >
                                 <i class="fe-menu"></i>
                             </button>
                         </li>
