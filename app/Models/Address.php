@@ -18,6 +18,9 @@ class Address extends Model
         'street',
         'barangay',
         'city',
+        'province_id',   // ✅ must be here
+        'city_id',       // ✅ must be here
+        'barangay_id',   // ✅ must be here
         'is_default',
     ];
 
@@ -36,4 +39,28 @@ class Address extends Model
         {
             return $this->belongsTo(Customer::class, 'customer_id');
         }
+
+
+
+
+
+        ///// for shipping address fee dynamic
+
+        public function province()
+            {
+                    return $this->belongsTo(Province::class);
+            }
+
+                public function city()
+                {
+                    return $this->belongsTo(City::class);
+                }
+
+                public function barangay()
+                {
+                    return $this->belongsTo(Barangay::class);
+                }
+
+
+
 }                                                                                                                                                       

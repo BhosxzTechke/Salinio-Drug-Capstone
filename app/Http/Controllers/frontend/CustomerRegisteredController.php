@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Models\Customer;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CustomerRegisteredController extends Controller
 {
@@ -30,35 +32,54 @@ class CustomerRegisteredController extends Controller
         return view('Ecommerce.auth.CustomerRegister');
     }
                 
-    public function customerRegister(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.Customer::class],
-            'phone' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'password_confirmation' => ['required', 'string'],
-        ], [
-            'password.confirmed' => 'The password confirmation does not match.',
-        ]);
-
-        $Customer = Customer::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-            'added_by_staff' => '0',
-        ]);
-
-        event(new Registered($Customer));
 
 
-        // Use this instead because we have multiple guards
+        public function customerRegister(Request $request): RedirectResponse
+        {
+            try {
 
-       Auth::guard('customer')->login($Customer);
+                $request->validate([
+                    'name' => ['required', 'string', 'max:255'],
+                    'email' => ['required', 'string', 'email', 'max:255', 'unique:customers,email'],
+                    'tel' => ['required', 'regex:/^\+639\d{9}$/'],
+                    'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                ], [
+                    'password.confirmed' => 'The password confirmation does not match.',
+                    'tel.regex' => 'Phone number must be valid (ex: +639123456789).',
+                ]);
 
-        return redirect(RouteServiceProvider::CUSTOMER_HOME);
-    }
+
+
+                DB::beginTransaction();
+
+                $customer = Customer::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->tel,
+                    'password' => Hash::make($request->password),
+                    'added_by_staff' => 0,
+                ]);
+
+                event(new Registered($customer));
+
+                Auth::guard('customer')->login($customer);
+
+                DB::commit();
+
+                return redirect(RouteServiceProvider::CUSTOMER_HOME)
+                    ->with('toast_success', 'Registration successful! Welcome 🎉');
+
+            } catch (\Exception $e) {
+
+                DB::rollBack();
+
+                Log::error('Customer Registration Error: ' . $e->getMessage());
+
+                return back()
+                    ->withInput()
+                    ->with('toast_error', 'Something went wrong. Please try again.');
+            }
+        }
 
     
 

@@ -39,15 +39,34 @@ class OrderController extends Controller
         $totalVat = round($totalInclusive - $totalVatable, 2);
 
 
+
+
+
         // if authenticate 
         $Customer = Auth::guard('customer')->user();
 
         $Shipaddress = Address::where('customer_id', $Customer->id)->where('is_default', 1)->first();
 
-        return view('Ecommerce.payment.checkout', compact('totalInclusive', 'totalVatable', 'totalVat','Shipaddress','Customer'));
+
+               // shipping calculation
+            $cityFee = $Shipaddress->city->shipping_fee ?? 0;
+            $barangayFee = $Shipaddress->barangay->extra_fee ?? 0;
+
+            $shippingFee = $cityFee + $barangayFee;
+
+
+            // ----- ALL TOTAL / SHIPPING + CART TOTAL
+            $grandTotal = $totalInclusive + $shippingFee;
+
+
+
+
+        return view('Ecommerce.payment.checkout', compact('totalInclusive', 'totalVatable', 'totalVat','Shipaddress','Customer','grandTotal','shippingFee'));
 
 
         }
+
+
 
 
 
@@ -250,13 +269,39 @@ public function paypalSuccess(Request $request)
                 ]);
             }
 
+
+
+
+
+// ----------------- CALCULATION OF SHIPPING FEE BASED ON ADDRESS ---------- //
+                                ///// SHIPPING ADDRESS
+            $address = $checkout['shipping_address_id'];
+
+
+        $address = Address::with(['city', 'barangay'])
+        ->findOrFail($checkout['shipping_address_id']);
+
+
+        // shipping calculation
+            $cityFee = $address->city->shipping_fee ?? 0;
+            $barangayFee = $address->barangay->extra_fee ?? 0;
+
+            $shippingFee = $cityFee + $barangayFee;
+
+
+            // ----- ALL TOTAL / SHIPPING + CART TOTAL
+            $grandTotal = $cart->total() + $shippingFee;
+
+
+
+
             // update order after stock secured
             $order->update([
                 'customer_id' => $checkout['customer_id'],
                 'order_source' => 'ECOM',
                 'order_type' => 'Delivery',
                 'order_date' => $checkout['order_date'] ?? now(),
-                'order_status' => 'processing',
+                'order_status' => 'pending',
                 'delivery_status' => 'pending',
                 'courier' => $checkout['shipping_method'],
                 'shipping_address_id' => $checkout['shipping_address_id'],
@@ -264,11 +309,15 @@ public function paypalSuccess(Request $request)
                 'payment_status' => 'paid',
                 'sub_total' => $cart->subtotal(),
                 'vat' => $cart->tax(),
-                'total' => $cart->total(),
-                'pay' => $cart->total(),
+                'total' => $grandTotal,
+                'pay' => $cart->$grandTotal,
                 'due' => 0,
                 'paypal_capture_id' => $captureId,
             ]);
+
+
+
+
 
             $cart->destroy();
             session()->forget('checkout_data');
@@ -276,7 +325,8 @@ public function paypalSuccess(Request $request)
 
     } catch (\Exception $e) {
 
-        // ⚠️ refund paypal here if needed
+
+
         return back()->with('error', $e->getMessage());
 
                 
@@ -315,7 +365,8 @@ public function paypalSuccess(Request $request)
 
 
 
-/// if cash
+//////////////////////// ----------------- IF CASH OR COD --------------
+
 private function processOrder(Request $request)
 {
     $cart = Cart::instance('ecommerce');
@@ -334,11 +385,31 @@ private function processOrder(Request $request)
     try {
 
         $order = DB::transaction(function () use ($request, $cart, $inventoryService) {
+        
 
 
         $cartTotal = (float) str_replace(',', '', $cart->total());
         $subTotal  = (float) str_replace(',', '', $cart->subtotal());
         $vat       = (float) str_replace(',', '', $cart->tax());
+
+
+    
+                    ///// SHIPPING ADDRESS
+        $address = Address::with(['city', 'barangay'])
+            ->findOrFail($request->shipping_address_id);
+
+
+
+        // shipping calculation
+            $cityFee = $address->city->shipping_fee ?? 0;
+            $barangayFee = $address->barangay->extra_fee ?? 0;
+
+            $shippingFee = $cityFee + $barangayFee;
+
+
+            // ----- ALL TOTAL / SHIPPING + CART TOTAL
+            $grandTotal = $cartTotal + $shippingFee;
+
 
 
         //  KEEP REQUEST-BASED DATA (PAYPAL DEPENDS ON THIS)
@@ -367,7 +438,7 @@ private function processOrder(Request $request)
                 'sub_total'       => $subTotal ?? '',
                 'vat'             => $vat ?? '',
                 'invoice_no'      => 'Salinio' . mt_rand(10000000, 99999999),
-                'total'           => $cartTotal ?? '',
+                'total'           => $grandTotal ?? '',
 
                 // KEEP PAYPAL VALUES
                 'payment_method' => 'cod',
@@ -375,7 +446,7 @@ private function processOrder(Request $request)
 
 
 
-                'pay'             => $cartTotal ?? '',
+                'pay'             => $grandTotal ?? '',
                 'due'             => 0,
 
                 'created_at'      => now(),

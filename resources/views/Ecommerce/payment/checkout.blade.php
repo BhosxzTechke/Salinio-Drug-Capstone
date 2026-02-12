@@ -34,9 +34,6 @@
 
 
 
-
-
-
     <div class="max-w-screen-xl flex flex-wrap items-center justify-center mx-auto p-4">
 
                 <h2 class="flex flex-wrap mr-10 text-gray-800 font-medium"> Secure Check</h2>
@@ -155,8 +152,8 @@
 
                 <label class="flex items-center gap-2"> 
                     <input type="radio" name="shipping_method" value="jnt" checked required>
-                    <span>J&T Express (1–3 Days)</span>
-                    <span class="ml-auto text-sm text-gray-600">₱120</span>
+                    <span>J&T Express ({{$Shipaddress->city->delivery_days ?? '' }} Days)</span>
+                    <span class="ml-auto text-sm text-gray-600">₱{{$shippingFee ?? ''}}</span>
                 </label>
             </div>
 
@@ -186,9 +183,9 @@
     </div>
 
     <div class="mt-3 text-sm text-gray-700 leading-relaxed">
-        <p class="font-medium">{{ $Shipaddress->full_name }}</p>
-        <p>{{ $Shipaddress->street }}, {{ $Shipaddress->barangay }}</p>
-        <p>{{ $Shipaddress->city }}</p>
+        <p>{{ $Shipaddress->province->name ?? '' }}</p>
+        <p>{{ $Shipaddress->street }}, {{ $Shipaddress->barangay->name ?? '' }}</p>
+        <p>{{ $Shipaddress->city->name ?? '' }}</p>
         <p class="mt-1 text-gray-600">📞 {{ $Shipaddress->phone }}</p>
     </div>
 
@@ -250,20 +247,20 @@
                 <span>Subtotal</span><span>₱{{ $totalInclusive }}</span>
             </p>
             <p class="flex justify-between">
-                <span>Shipping Fee</span><span class="text-green-600">Free</span>
+                <span>Shipping Fee</span><span class="text-red-500">-₱{{$shippingFee ?? ''}}</span>
             </p>
             <p class="flex justify-between">
                 <span>VAT - Inclusive (12%)</span><span>({{ config('cart.tax') }}%):</strong> ₱{{ number_format($totalVat, 2) }} </span>
             </p>
 
 
-             <p class="flex justify-between">
-                   <span>Vatable Sales:</span> <span> ₱{{ number_format($totalVatable, 2) }}</span>
-                </p>
+                <p class="flex justify-between">
+                    <span>Vatable Sales:</span> <span> ₱{{ number_format($totalVatable, 2) }}</span>
+                    </p>
 
-            <p class="flex justify-between text-lg font-medium mt-3">
-                    <span>Total </span> ₱{{ number_format($totalInclusive, 2) }}
-            </p>
+                <p class="flex justify-between text-lg font-medium mt-3">
+                        <span>Total </span> ₱{{ number_format($grandTotal , 2) }}
+                </p>
 
 
 

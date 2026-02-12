@@ -19,7 +19,7 @@
     <!-- Heading -->
     <h1 class="text-3xl font-bold">Thank You for Your Order!</h1>
     <p class="text-gray-600">
-      Your order has been successfully placed. You will receive a confirmation email shortly.
+      Your order has been successfully placed. You will receive an email if the order was complete.
     </p>
 
 

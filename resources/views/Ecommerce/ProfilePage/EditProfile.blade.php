@@ -32,6 +32,8 @@
                   <!-- Input field for remaining digits -->
         <div>
           <label class="label text-gray-800 font-medium mb-1">Phone</label>
+        
+        
           <div class="flex items-center">
             <!-- Locked prefix -->
             <span class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 border border-r-0 border-gray-300 rounded-l-md select-none">
@@ -46,7 +48,7 @@
               maxlength="9"
               placeholder="XXXXXXXXX"
               value="{{ Auth::guard('customer')->user()->phone ? substr(Auth::guard('customer')->user()->phone, 4) : '' }}"
-              class="input input-bordered w-full rounded-r-md border-gray-300 text-gray-800 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+              class="input input-bordered w-full rounded-r-md border-gray-300 bg-white text-gray-800 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
               required
             />
           </div>
@@ -88,6 +90,12 @@
             // Initialize on page load
             updateFullPhone();
           </script>
+
+
+
+
+
+
 
 
             <!-- DRAG AND DROP FILE IMAGE -->

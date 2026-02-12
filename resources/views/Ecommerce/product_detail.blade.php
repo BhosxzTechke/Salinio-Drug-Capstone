@@ -225,9 +225,9 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
 
       
       <!-- Trust Badges -->
-      <div class="flex space-x-4 mt-4">
-        <span class="badge badge-outline">✔ Genuine Medicine Guarantee</span>
-        <span class="badge badge-outline">🔒 Secure & Confidential</span>
+      <div class="flex space-x-4 mt-4 h-3 mb-5">
+        <span class="badge badge-outline h-12">✔ Genuine Medicine Guarantee</span>
+        <span class="badge badge-outline h-12">🔒 Secure & Confidential</span>
       </div>
 
     </div>

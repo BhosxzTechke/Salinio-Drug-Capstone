@@ -38,44 +38,75 @@
 
 
 
-          <div class="form-group mb-4">
-            <label for="email" class="sr-only">Email</label>
-            <input id="email" name="email" type="email" autocomplete="email" required
-            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-            placeholder="Email Address" value="{{ old('email') }}">
-            <span id="email-error" class="text-red-500 text-xs mt-1 block"></span>
-          </div>
+            <div class="form-group mb-4">
+                <label for="email" class="sr-only">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" required
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                placeholder="Email Address" value="{{ old('email') }}">
+                <span id="email-error" class="text-red-500 text-xs mt-1 block"></span>
+            </div>
 
-          <div class="form-group mb-4">
-            <label for="phone" class="sr-only">Phone</label>
-            <input id="phone" name="phone" type="text" autocomplete="tel" required
-            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-            placeholder="Phone Number" value="{{ old('phone') }}">
-            <span id="phone-error" class="text-red-500 text-xs mt-1 block"></span>
-          </div>
 
-          <div class="form-group mb-4">
-            <label for="password" class="sr-only">Password</label>
-            <input id="password" name="password" type="password" autocomplete="new-password" required
-            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-            placeholder="Password">
-            <span id="password-error" class="text-red-500 text-xs mt-1 block"></span>
-          </div>
+            <div class="form-group mb-4">
 
-          <div class="form-group mb-4">
-            <label for="password_confirmation" class="sr-only">Confirm Password</label>
-            <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required
-            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-            placeholder="Confirm Password">
-            <span id="password_confirmation-error" class="text-red-500 text-xs mt-1 block"></span>
-          </div>
-        </div>
+                <div class="flex">
+                    <!-- Locked prefix -->
+                    <span class="inline-flex items-center px-3 bg-gray-200 text-gray-700 border border-r-0 border-gray-300 rounded-l-md">
+                        +639
+                    </span>
 
-        <div>
-          <button type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-            Register
-          </button>
+                    <!-- User types only 9 digits -->
+                                    <input
+                                        type="tel"
+                                        inputmode="numeric"
+                                        id="phone-visible"
+                                        maxlength="9"
+                                        placeholder="XXXXXXXXX"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-r-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+                                        required
+                                    >
+                </div>
+            </div>
+
+
+            
+
+                        <!-- Hidden input that will hold full number +639XXXXXXXXX -->
+            <input type="hidden" name="tel" id="phone-full" />
+
+                    
+            {{--  MAX LENGTH 9 JS  --}}
+                <script>
+                    document.getElementById("phone-visible").addEventListener("input", function () {
+                        this.value = this.value.replace(/\D/g, '').slice(0, 9);
+                    });
+                </script>
+
+
+
+
+            <div class="form-group mb-4">
+                <label for="password" class="sr-only">Password</label>
+                <input id="password" name="password" type="password" autocomplete="new-password" required
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                placeholder="Password">
+                <span id="password-error" class="text-red-500 text-xs mt-1 block"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="password_confirmation" class="sr-only">Confirm Password</label>
+                <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                placeholder="Confirm Password">
+                <span id="password_confirmation-error" class="text-red-500 text-xs mt-1 block"></span>
+            </div>
+            </div>
+
+            <div>
+            <button type="submit"
+                class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                Register
+            </button>
         </div>
         <p class="text-sm text-gray-600 text-center">
           Already have an account? <a href="{{ route('customer.login') }}" class="font-medium text-green-600 hover:text-green-500">Sign In</a>
@@ -159,5 +190,31 @@
         });
     });
 </script>
+
+
+
+
+
+
+
+
+
+
+        <script>
+                const visibleInput = document.getElementById('phone-visible');
+                const fullInput = document.getElementById('phone-full');
+
+                function updateFullPhone() {
+                let val = visibleInput.value.replace(/\D/g, '').slice(0, 9); // digits only, max 9 chars
+                fullInput.value = '+639' + val;
+                }
+
+                // Update hidden full input on every change
+                visibleInput.addEventListener('input', updateFullPhone);
+
+                // Initialize on page load
+                updateFullPhone();
+            </script>
+
 
 @endsection

@@ -181,9 +181,9 @@
                                                     <div class="mb-3">
                                                         <label for="text" class="">Shipping Address</label>
                                                         <p class="text-danger">
-                                                            {{ $Order->shippingAddress->street }} <br>
-                                                            {{ $Order->shippingAddress->barangay }}
-                                                            {{ $Order->shippingAddress->city }}
+                                                            {{ $Order->shippingAddress->province->name ?? '' }}<br>
+                                                            {{ $Order->shippingAddress->street }}, {{ $Order->shippingAddress->barangay->name ?? '' }}
+                                                            {{ $Order->shippingAddress->city->name ?? '' }}
                                                         </p>
 
                                                     </div>

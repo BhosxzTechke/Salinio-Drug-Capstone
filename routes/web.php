@@ -25,9 +25,13 @@ use App\Http\Controllers\backend\PurchaseOrderController;
 use App\Http\Controllers\backend\RoleController;
 use App\Http\Controllers\backend\SubCategoryController;
 use App\Http\Controllers\backend\AuditController;
+use App\Http\Controllers\backend\BarangayController;
+use App\Http\Controllers\backend\CityController;
+use App\Http\Controllers\backend\ProvinceController;
 use App\Http\Controllers\backend\ReportController;
 use App\Http\Controllers\backend\ReturnShipmentController as BackendReturnShipmentController;
 use App\Http\Controllers\backend\RiderController;
+use App\Http\Controllers\backend\ShippingZoneController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\frontend\AboutController;
 use App\Http\Controllers\frontend\AuthCustomerController;
@@ -901,6 +905,15 @@ Route::middleware(['auth', 'web'])->group(function () {
 
 
 
+
+
+
+
+
+
+
+
+
     Route::middleware(['auth', 'web'])->group(function () {
 
             ///////////// BACKEND
@@ -942,6 +955,41 @@ Route::middleware(['auth', 'web'])->group(function () {
 
     });
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////// Shipping Zone Provinces / City / Barangay ///////////////////////
+
+
+            Route::controller(ShippingZoneController::class)->group(function () {
+
+
+
+
+                route::get('/all/barangay', 'AllBarangay')->name('all.barangay');
+                route::get('/create/barangay', 'CreateBarangay')->name('barangay.create.form');
+
+
+
+             // ---------------   CRUD ----------------
+
+
+                                
+                
+        });
+
+
+                    //  POST     /provinces
+            //  GET      /provinces/{province}/edit
+            //  PUT      /provinces/{province}
+            //  DELETE   /provinces/{province}
+
+                Route::resource('provinces', ProvinceController::class);
+
+
+                Route::resource('cities', CityController::class);
+
+
+                Route::resource('barangays', BarangayController::class);
 
 
 
@@ -1314,9 +1362,33 @@ Route::middleware(['auth', 'web'])->group(function () {
 
                 Route::post('/customer/address/store', [FrontendController::class, 'CustomerAddressStore'])->name('store.customer.address');
 
+
+                Route::get('/api/cities/{province}', function($provinceId) {
+                        return \App\Models\City::where('province_id', $provinceId)->get();
+                    });
+
+                Route::get('/api/barangays/{city}', function($cityId) {
+                        return \App\Models\Barangay::where('city_id', $cityId)->get();
+                    });
+
+
+
+                Route::get('/api/cities', [FrontendController::class, 'getCities']);
+                Route::get('/api/barangays', [FrontendController::class, 'getBarangays']);
+
+
+
+
+
                 Route::put('/customer/address/update', [FrontendController::class, 'UpdateCustomerAddress'])->name('update.customer.address');
 
                 Route::get('/customer/address/delete/{id}', [FrontendController::class, 'deleteCustomerAddress'])->name('delete.customer.address');
+
+
+
+
+
+
 
 
 

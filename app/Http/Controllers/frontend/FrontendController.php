@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\HeroSlider;    
 use App\Models\Order;
 use App\Models\Address;
+use App\Models\Barangay;
 use App\Models\Customer;
 use App\Models\Inventory;
 use App\Models\Orderdetails;
@@ -18,6 +19,8 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Intervention\Image\Facades\Image;
 use Carbon\Carbon;
 use App\Models\Brand;
+use App\Models\City;
+use App\Models\Province;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Support\Facades\Validator;
@@ -178,81 +181,144 @@ class FrontendController extends Controller
     {
 
         
-        $customer = Auth::guard('customer')->user();
+            $customer = Auth::guard('customer')->user();
 
-        $orders = Order::with(['customer','orderDetails'])
-            ->where('customer_id', $customer->id)
-            ->whereIn('order_status', ['pending', 'completed', 'return', 'shipped']) 
-            ->orderBy('created_at', 'desc')
-            ->latest()
-            ->paginate(4);
+            $orders = Order::with(['customer','orderDetails'])
+                ->where('customer_id', $customer->id)
+                ->whereIn('order_status', ['pending', 'completed', 'return', 'shipped']) 
+                ->orderBy('created_at', 'desc')
+                ->latest()
+                ->paginate(4);
 
-        $orderCancel = Order::with(['customer','orderDetails'])
-            ->where('customer_id', $customer->id)
-            ->whereIn('order_status', ['cancelled']) 
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-
-        return view('Ecommerce.ProfilePage.profile', compact('orders','customer','orderCancel'));
-    }
+            $orderCancel = Order::with(['customer','orderDetails'])
+                ->where('customer_id', $customer->id)
+                ->whereIn('order_status', ['cancelled']) 
+                ->orderBy('created_at', 'desc')
+                ->get();
 
 
-
-
-        public function ProfileEdit()
-        {
-
-            return view('Ecommerce.ProfilePage.EditProfile');
+            return view('Ecommerce.ProfilePage.profile', compact('orders','customer','orderCancel'));
         }
 
 
 
-        public function ChatAdmin()
-        {
 
-            $Customer = Auth::guard('customer')->user();
+            public function ProfileEdit()
+            {
 
-            return view('Ecommerce.ProfilePage.ChatAdmin', compact('Customer'));
-        }
+                return view('Ecommerce.ProfilePage.EditProfile');
+            }
 
 
-        
 
-        public function CustomerAddress()
-        {
+            public function ChatAdmin()
+            {
 
-            $customer_id = auth()->id();
+                $Customer = Auth::guard('customer')->user();
 
-            $address = Address::where('customer_id', $customer_id)
-                            ->orderByDesc('is_default') // default address first
-                            ->orderBy('id', 'asc')       // then by id
+                return view('Ecommerce.ProfilePage.ChatAdmin', compact('Customer'));
+            }
+
+
+
+
+
+
+
+
+            // -------------------------- CUSTOMER ADDRESS
+            
+
+                // Show customer addresses
+    public function CustomerAddress()
+    {
+        $customer_id = auth()->id();
+
+        // Get the customer's addresses with their location relationships
+        $addresses = Address::with(['province', 'city', 'barangay'])
+                            ->where('customer_id', $customer_id)
+                            ->orderByDesc('is_default')
+                            ->orderBy('id', 'asc')
                             ->limit(3)
                             ->get();
 
+        // All active provinces (for both add and edit forms)
+        $provinces = Province::where('is_active', 1)->get();
 
-            return view('Ecommerce.ProfilePage.CustomerAddress', compact('address'));
 
+
+        // Initialize empty collections for cities and barangays
+        $cities = collect();
+        $barangays = collect();
+
+        // If editing an address, we want to prefill its cities and barangays
+        // Here we just check the first address as an example
+        if ($addresses->first()) {
+            $firstAddress = $addresses->first();
+
+            if ($firstAddress->province_id) {
+                $cities = City::where('province_id', $firstAddress->province_id)
+                            ->where('is_active', 1)
+                            ->get();
+            }
+
+            if ($firstAddress->city_id) {
+                $barangays = Barangay::where('city_id', $firstAddress->city_id)
+                                    ->where('is_active', 1)
+                                    ->get();
+            }
         }
 
+        return view('Ecommerce.ProfilePage.CustomerAddress', compact(
+            'addresses',
+            'provinces',
+            'cities',
+            'barangays'
+        ));
+    }
 
+
+    
+
+
+
+
+            public function CustomerAddressEdit(Address $addr)
+                {
+                    $provinces = Province::where('is_active', 1)->get();
+
+                    // Get cities of the selected province
+                    $cities = City::where('province_id', $addr->province_id)->where('is_active', 1)->get();
+
+                    // Get barangays of the selected city
+                    $barangays = Barangay::where('city_id', $addr->city_id)->where('is_active', 1)->get();
+
+                    return view('Ecommerce.ProfilePage.CustomerAddress', compact('provinces', 'cities', 'barangays', 'addr'));
+                }
+
+
+
+
+                
 
         ////////// CRUD CUSTOMER ADDRESS
 
+            // Store new address
             public function CustomerAddressStore(Request $request)
             {
                 $request->validate([
-                    'full_name' => 'required|string',
-                    'phone' => 'required|string',
-                    'street' => 'required|string',
-                    'barangay' => 'required|string',
-                    'city' => 'required|string',
-                    'is_default' => 'nullable|boolean',
+                    'full_name'   => 'required|string|max:255',
+                    'phone'       => 'required|string|max:20',
+                    'street'      => 'required|string|max:255',
+                    'province_id' => 'required|exists:provinces,id',
+                    'city_id'     => 'required|exists:cities,id',
+                    'barangay_id' => 'required|exists:barangays,id',
+                    'is_default'  => 'nullable|boolean',
                 ]);
 
-                $customerId = auth()->id(); // or customer_id
+                $customerId = auth()->id();
 
-                // If this address is set as default
+                // Unset previous default if needed
                 if ($request->is_default) {
                     Address::where('customer_id', $customerId)
                         ->update(['is_default' => false]);
@@ -260,12 +326,13 @@ class FrontendController extends Controller
 
                 Address::create([
                     'customer_id' => $customerId,
-                    'full_name' => $request->full_name,
-                    'phone' => $request->phone,
-                    'street' => $request->street,
-                    'barangay' => $request->barangay,
-                    'city' => $request->city,
-                    'is_default' => $request->is_default ?? false,
+                    'full_name'   => $request->full_name,
+                    'phone'       => $request->phone,
+                    'street'      => $request->street,
+                    'province_id' => $request->province_id,
+                    'city_id'     => $request->city_id,
+                    'barangay_id' => $request->barangay_id,
+                    'is_default'  => $request->is_default ?? false,
                 ]);
 
                 return back()->with('success', 'Address saved successfully');
@@ -273,51 +340,100 @@ class FrontendController extends Controller
 
 
 
+
+            
+
+                // Get cities based on selected province
+                public function getCities(Request $request)
+                {
+                    $provinceId = $request->query('province_id');
+
+                    if (!$provinceId) {
+                        return response()->json([]);
+                    }
+
+                    $cities = City::where('province_id', $provinceId)->orderBy('name')->get();
+
+                    return response()->json($cities);
+                }
+
+                // Get barangays based on selected city
+                public function getBarangays(Request $request)
+                {
+                    $cityId = $request->query('city_id');
+
+                    if (!$cityId) {
+                        return response()->json([]);
+                    }
+
+                    $barangays = Barangay::where('city_id', $cityId)->orderBy('name')->get();
+
+                    return response()->json($barangays);
+                }
+    
+
+
+
+
+
+
+
+
+
+            // Update existing address
             public function UpdateCustomerAddress(Request $request)
             {
                 $request->validate([
-                    'address_id' => 'required|exists:addresses,id',
-                    'full_name' => 'required|string',
-                    'phone' => 'required|string',
-                    'street' => 'required|string',
-                    'barangay' => 'required|string',
-                    'city' => 'required|string',
-                    'is_default' => 'nullable|boolean',
+                    'address_id'  => 'required|exists:addresses,id',
+                    'full_name'   => 'required|string|max:255',
+                    'phone'       => 'required|string|max:20',
+                    'street'      => 'required|string|max:255',
+                    'province_id' => 'required|exists:provinces,id',
+                    'city_id'     => 'required|exists:cities,id',
+                    'barangay_id' => 'required|exists:barangays,id',
+                    'is_default'  => 'nullable|boolean',
                 ]);
 
-                $addressID = $request->address_id;
-                $customerId = auth()->id();
+                    $customerId = auth()->id();
+                    $address = Address::where('id', $request->address_id)
+                                    ->where('customer_id', $customerId)
+                                    ->firstOrFail();
 
-                // If this address is set as default, unset other default addresses for this customer
-                if ($request->is_default) {
-                    Address::where('customer_id', $customerId)->update(['is_default' => false]);
+                    if ($request->is_default) {
+                        Address::where('customer_id', $customerId)
+                            ->update(['is_default' => false]);
+                    }
+
+                    $address->update([
+                        'full_name'   => $request->full_name,
+                        'phone'       => $request->phone,
+                        'street'      => $request->street,
+                        'province_id' => $request->province_id,
+                        'city_id'     => $request->city_id,
+                        'barangay_id' => $request->barangay_id,
+                        'is_default'  => $request->is_default ?? false,
+                    ]);
+
+                    return back()->with('success', 'Address updated successfully');
                 }
 
-                // Find the address and update it
-                $address = Address::where('id', $addressID)->where('customer_id', $customerId)->firstOrFail();
-
-                $address->update([
-                    'full_name' => $request->full_name,
-                    'phone' => $request->phone,
-                    'street' => $request->street,
-                    'barangay' => $request->barangay,
-                    'city' => $request->city,
-                    'is_default' => $request->is_default ?? false,
-                ]);
-
-                return back()->with('success', 'Address updated successfully');
-            }
 
 
-            public function deleteCustomerAddress($id)
-            {
-                $customerId = auth()->id();
-                $address = Address::where('id', $id)->where('customer_id', $customerId)->firstOrFail();
-                $address->delete();
 
-                return back()->with('success', 'Address deleted successfully');
-            }
+                
 
+
+                // Delete address
+                public function deleteCustomerAddress($id)
+                {
+                    $customerId = auth()->id();
+                    $address = Address::where('id', $id)
+                                    ->where('customer_id', $customerId)
+                                    ->firstOrFail();
+                    $address->delete();
+
+                    return back()->with('success', 'Address deleted successfully');
+                }
 
 
 

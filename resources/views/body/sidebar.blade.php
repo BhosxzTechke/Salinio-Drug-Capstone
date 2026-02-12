@@ -444,6 +444,49 @@
 
 
 
+
+                        {{-- MANAGE SHIPPING ZONE SYSTEM FROM CUSTOMER --}}
+
+
+                    {{-- @if(Auth::user()->can('can-manage-return-orders'))  --}}
+
+                            <li>
+                                <a href="#ShippingZone" data-bs-toggle="collapse">
+                                    <i class="mdi mdi-package-variant"></i>
+                                    <span> Shipping Zone System </span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+
+
+                                <div class="collapse" id="ShippingZone">
+                                    <ul class="nav-second-level">
+
+                                            <li>
+                                                <a href="{{ route('provinces.index') }}">Provinces</a>
+                                            </li>
+
+
+                                            <li>
+                                                <a href="{{ route('cities.index') }}">City
+                                            </a>
+
+                                            <li>
+                                                <a href="{{ route('barangays.index') }}">Barangay
+                                            </a>
+                                            
+                                        </li>
+
+                                
+                                        </ul>
+                                    </div>
+                            </li>
+
+                        {{-- endif --}}
+
+
+
+
+
                                         {{--MANAGE EXPENSE PART --}}
 
 
