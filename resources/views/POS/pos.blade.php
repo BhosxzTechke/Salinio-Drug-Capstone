@@ -136,8 +136,6 @@
                     @endphp
 
 
-
-
                     <tr>
                         <td class="fw-medium">{{ $item->name }}</td>
 
@@ -220,8 +218,8 @@
 
 
 
-            <form id="MyForm" action="{{ url('/create-invoice') }}" method="POST">
-            @csrf
+            {{-- <form id="MyForm" action="{{ url('/create-invoice') }}" method="POST">
+            @csrf --}}
 
 
                 {{-- <div class="form-group mb-9" style="text-align: left; margin-left: 15px; margin-top: 10px;">
@@ -313,9 +311,10 @@ Create Invoice for Customer</button>
                                 </span>
 
 
+
+
                                 <form method="POST" action="{{ url('/pos/add') }}">
                                     @csrf
-
                                     <input type="hidden" name="id" value="{{ $item->product_id }}">
                                     <input type="hidden" name="name" value="{{ $item->product->product_name }}">
                                     <input type="hidden" name="qty" value="1">
@@ -330,6 +329,11 @@ Create Invoice for Customer</button>
                     </div>
                 @endforeach
             </div>
+
+
+
+
+
         </div>
 
 

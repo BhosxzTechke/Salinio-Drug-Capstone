@@ -14,6 +14,7 @@ use App\Models\Inventory;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PosController extends Controller
 {
@@ -241,75 +242,84 @@ public function ChangeQty(Request $request, $rowId)
 
 public function AddPos(Request $request)
 {
-            // Get product info
-            $product = Product::find($request->id);
-
-            if (!$product) {
-                return redirect()->back()->with([
-                    'message' => 'Product not found',
-                    'alert-type' => 'error'
-                ]);
-            }
+    try {
 
 
+    
+        $request->validate([
+            'id' => 'required|integer|exists:products,id',
+            'qty' => 'required|integer|min:1'
+        ]);
 
+        DB::beginTransaction();
 
-                // FIFO for 
-                $query = Inventory::where('product_id', $product->id)
-                    ->where('quantity', '>', 0)
-                    ->orderBy('received_date', 'asc');
+        // Get product
+        $product = Product::findOrFail($request->id);
 
+        // FIFO inventory
+        $inventoryItem = Inventory::where('product_id', $product->id)
+            ->where('quantity', '>', 0)
+            ->orderBy('received_date', 'asc')
+            ->lockForUpdate() //  Prevent race condition
+            ->first();
 
+        if (!$inventoryItem) {
+            DB::rollBack();
+            return redirect()->back()->with([
+                'message' => 'Product out of stock',
+                'alert-type' => 'error'
+            ]);
+        }
 
-                // if ($product->has_expiration) {
-                //     // FEFO: sort by soonest expiration date
-                //     $query->whereDate('expiry_date', '>', now()) // skip expired batches
-                //         ->orderBy('expiry_date', 'asc');
-                // } 
-                //     else {
-                //     // FIFO: sort by date received or created
-                //     $query->orderBy('created_at', 'asc');
-                // }
+        $qtyRequested = (int) $request->qty;
 
+        if ($qtyRequested > $inventoryItem->quantity) {
+            DB::rollBack();
+            return redirect()->back()->with([
+                'message' => 'Not enough stock available',
+                'alert-type' => 'error'
+            ]);
+        }
 
+        // Add to cart
+        Cart::add([
+            'id' => $inventoryItem->id,
+            'name' => $product->product_name,
+            'qty' => $qtyRequested,
+            'price' => $product->selling_price,
+            'weight' => 20,
+            'options' => [
+                'image' => $product->product_image,
+                'product_id' => $product->id,
+                'expiration_date' => $inventoryItem->expiry_date,
+            ]
+        ]);
 
-            $inventoryItem = $query->first();
+        DB::commit();
 
-            if (!$inventoryItem) {
-                return redirect()->back()->with([
-                    'message' => 'Product out of stock or expired',
-                    'alert-type' => 'error'
-                ]);
-            }
-
-    // Check if requested quantity exceeds available
-    if ($request->qty > $inventoryItem->quantity) {
         return redirect()->back()->with([
-            'message' => 'Not enough stock available',
+            'message' => 'Product added successfully!',
+            'alert-type' => 'success'
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+
+        return redirect()->back()
+            ->withErrors($e->validator)
+            ->withInput();
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        // Log error for debugging
+        Log::error('POS Add Error: '.$e->getMessage());
+
+        return redirect()->back()->with([
+            'message' => 'Something went wrong. Please try again.',
             'alert-type' => 'error'
         ]);
     }
-
-    // Add to cart
-    Cart::add([
-        'id' => $inventoryItem->id, // Inventory batch ID
-        'name' => $inventoryItem->product->product_name ?? 'Unnamed Product',
-        'qty' => $request->qty,
-        'price' => $inventoryItem->product->selling_price ?? 0,
-        'weight' => 20,
-        'options' => [
-            'image' => $inventoryItem->product->image,
-            'product_id' => $inventoryItem->product_id,
-            'expiration_date' => $inventoryItem->expiry_date,
-        ]
-    ]);
-
-    $notification = [
-        'message' => 'Product added successfully!',
-        'alert-type' => 'success'
-    ];
-
-    return redirect()->back()->with($notification);
 }
 
 
