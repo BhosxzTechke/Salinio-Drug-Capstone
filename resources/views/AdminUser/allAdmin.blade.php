@@ -73,9 +73,9 @@
                             </td>
 
                             <td>
-                                {{-- @if($data->roles->contains('name', 'Super Admin'))
+                                @if($data->roles->contains('name', 'Super Admin'))
                                     <span class="text-muted fw-bold">Protected</span>
-                                @else --}}
+                                @else
 
                                 
                                     {{-- @if(Auth::user()->can('edit-admin-account')) --}}
@@ -84,6 +84,8 @@
                                             <i class="fa-solid fa-square-pen"></i> Edit
                                         </a>
                                     {{-- @endif --}}
+
+                                    
 
                                     {{-- @if(Auth::user()->can('delete-admin-account')) --}}
                                         <a href="{{ route('delete.admin', $data->id) }}" 
