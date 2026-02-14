@@ -195,10 +195,13 @@
 
 
 
+
+
+
                                 {{-- EDIT ADDRESS MODAL  --}}
 
     <!-- EDIT ADDRESS MODAL -->
-    <div id="EditAddress{{ $addr->id }}" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+    <div id="EditAddress{{ $addr->id ?? '' }}" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
 
         <div class="bg-white rounded-xl w-full max-w-lg p-6 relative">
 
