@@ -4,8 +4,8 @@
 
 
 
-                      {{-- Search bar --}}
-                     {{-- <li class="d-none d-lg-block">
+                    {{-- Search bar --}}
+                    {{-- <li class="d-none d-lg-block">
                             <form class="app-search">
                                 <div class="app-search-box dropdown">
                                     <div class="input-group">

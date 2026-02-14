@@ -85,23 +85,29 @@
 
                                     <div class="mb-3">
                                         <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="checkbox-signin" checked>
+                                            <input type="checkbox" name="remember" class="form-check-input" id="checkbox-signin" checked>
                                             <label name="remember" class="form-check-label" for="checkbox-signin">Remember me</label>
                                         </div>
                                     </div>
 
-                                    <div class="text-center d-grid">
-                                        <button class="btn btn-primary" type="submit"> Log In </button>
-                                    </div>
 
-                                </form>
 
-                             {{-- <div class="flex items-center justify-end mt-4">
-                            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('register') }}">
-                                {{ __('Sign up') }}
-                            </a>
+                                        <div class="text-center d-grid">
+                                            <button type="submit"
+                                                    class="btn btn-dark"
+                                                    onclick="this.disabled=true; this.innerText='Login...'; this.form.submit();">
+                                                Login
+                                            </button>
+                                        </div>
 
-                          </div> --}}
+                                    </form>
+
+                                {{-- <div class="flex items-center justify-end mt-4">
+                                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('register') }}">
+                                    {{ __('Sign up') }}
+                                </a>
+
+                            </div> --}}
 
             
 

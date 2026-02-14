@@ -109,9 +109,16 @@
         </div>
     </div>
 
-    <div class="text-center d-grid">
-        <button class="btn btn-primary" type="submit">Update Password</button>
-    </div>
+            <div class="text-center d-grid">
+                <button type="submit"
+                        class="btn btn-dark"
+                        onclick="this.disabled=true; this.innerText='Updating...'; this.form.submit();">
+                    Update Password
+                </button>
+            </div>
+
+
+    
 </form>
 
 

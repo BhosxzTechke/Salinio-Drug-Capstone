@@ -664,12 +664,11 @@
 
 
 
+        @if (Auth::guard('web')->user()->roles->contains('name', 'Super Admin', 'Admin'))
 
+                    <li class="menu-title mt-2">GENERAL SETTINGS</li>
 
-                <li class="menu-title mt-2">GENERAL SETTINGS</li>
-
-
-
+            @endif
 
 
 

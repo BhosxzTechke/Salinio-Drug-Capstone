@@ -451,8 +451,6 @@ public function UpdateAdmin(Request $request)
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'required|numeric|unique:users,phone,' . $user->id,
             'role' => 'required|string',
-            'vehicle_type' => $request->role === 'Rider' ? 'required|string|max:255' : 'nullable',
-            'availability' => $request->role === 'Rider' ? 'required|in:available,busy' : 'nullable',
         ]);
 
         // Reset password logic
@@ -464,6 +462,7 @@ public function UpdateAdmin(Request $request)
                     'alert-type' => 'warning',
                 ]);
             }
+
             $tempPassword = Str::random(10);
             $user->password = Hash::make($tempPassword);
             $user->must_change_password = 1;
@@ -479,25 +478,6 @@ public function UpdateAdmin(Request $request)
 
         $user->syncRoles([$request->role]);
 
-        // Update Rider info
-        if ($request->role === 'Rider') {
-            if ($user->rider) {
-                $user->rider->update([
-                    'vehicle_type' => $request->vehicle_type,
-                    'availability' => $request->availability,
-                ]);
-            } else {
-                \App\Models\Rider::create([
-                    'user_id' => $user->id,
-                    'vehicle_type' => $request->vehicle_type,
-                    'availability' => $request->availability,
-                ]);
-            }
-        } else {
-            if ($user->rider) {
-                $user->rider->delete();
-            }
-        }
 
         return redirect()->route('all.admin')->with([
             'message' => 'Profile updated successfully!',
