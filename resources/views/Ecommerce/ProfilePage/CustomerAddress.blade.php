@@ -52,7 +52,7 @@
         <div class="flex flex-col gap-2 text-sm">
 
 
-            <button onclick="EditAddressModal({{ $addr->id }})" class="text-blue-600 hover:underline" data-bs-target="#returnDetailsModal{{ $addr->id }}">
+            <button onclick="EditAddressModal({{ $addr->id ?? '' }})" class="text-blue-600 hover:underline" data-bs-target="#returnDetailsModal{{ $addr->id ?? '' }}">
                 Edit
             </button>
 
@@ -60,7 +60,7 @@
 
 
 
-            <a href="{{ route('delete.customer.address', $addr->id) }}" 
+            <a href="{{ route('delete.customer.address', $addr->id ?? '') }}" 
             class="text-red-500 hover:underline"
             onclick="return confirm('Are you sure you want to delete this address?');">
             Delete
