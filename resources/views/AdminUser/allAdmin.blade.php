@@ -85,13 +85,13 @@
                                         </a>
                                     {{-- @endif --}}
 
-                                    @if(Auth::user()->can('delete-admin-account'))
+                                    {{-- @if(Auth::user()->can('delete-admin-account')) --}}
                                         <a href="{{ route('delete.admin', $data->id) }}" 
                                             class="btn btn-danger rounded-pill waves-effect waves-light"
                                             id="delete" title="Delete Data">
                                             <i class="fa-solid fa-trash"></i> Delete
                                         </a>
-                                    @endif
+                                    {{-- @endif --}}
 
 
                                     {{-- @if(auth::user()->can('view-temporary-password')) --}}
