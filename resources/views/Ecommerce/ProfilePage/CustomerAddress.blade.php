@@ -253,7 +253,7 @@
                             <option value="">Select Province</option>
                             @foreach($provinces as $province)
                                 <option value="{{ $province->id ?? '' }}"
-                                    {{ $addr->province_id == $province->id ? 'selected' : '' }}>
+                                    {{ $addr->province_id ?? '' == $province->id ? 'selected' : '' }}>
                                     {{ $province->name ?? '' }}
                                 </option>
                             @endforeach
@@ -268,9 +268,9 @@
                                 onchange="loadBarangays({{ $addr->id ?? '' }})">
                             <option value="">Select City</option>
                             @foreach($cities as $city)
-                                @if($city->province_id == $addr->province_id)
+                                @if($city->province_id == $addr->province_id ?? '')
                                     <option value="{{ $city->id ?? '' }}"
-                                        {{ $addr->city_id == $city->id ? 'selected' : '' }}>
+                                        {{ $addr->city_id ?? '' == $city->id ? 'selected' : '' }}>
                                         {{ $city->name ?? '' }}
                                     </option>
                                 @endif
@@ -285,9 +285,9 @@
                                 class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
                             <option value="">Select Barangay</option>
                             @foreach($barangays as $barangay)
-                                @if($barangay->city_id == $addr->city_id)
+                                @if($barangay->city_id == $addr->city_id ?? '')
                                     <option value="{{ $barangay->id ?? '' }}"
-                                        {{ $addr->barangay_id == $barangay->id ? 'selected' : '' }}>
+                                        {{ $addr->barangay_id ?? '' == $barangay->id ? 'selected' : '' }}>
                                         {{ $barangay->name ?? '' }}
                                     </option>
                                 @endif
