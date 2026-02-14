@@ -22,7 +22,7 @@ class BarangayController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('ShippingZone.barangay.AllBarangay', compact('barangays'));
+        return view('ShippingZone.Barangay.AllBarangay', compact('barangays'));
     }
 
     /**
