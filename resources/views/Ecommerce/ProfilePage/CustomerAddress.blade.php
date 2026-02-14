@@ -300,7 +300,7 @@
                 <!-- Default Checkbox -->
                 <div class="flex items-center gap-2">
                     <input type="checkbox" name="is_default" value="1"
-                        {{ $addr->is_default ? 'checked' : '' }}>
+                        {{ ($addr->is_default ?? false) ? 'checked' : '' }}>
                     <span class="text-sm">Set as default address</span>
                 </div>
 
