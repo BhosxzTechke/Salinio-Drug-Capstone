@@ -218,7 +218,7 @@
                 @method('PUT')
 
                 <!-- Hidden Address ID -->
-                <input type="hidden" name="address_id" value="{{ $addr->id }}">
+                <input type="hidden" name="address_id" value="{{ $addr->id ?? '' }}">
 
                 <!-- Full Name -->
                 <div>
@@ -247,7 +247,7 @@
                     <!-- Province -->
                     <div>
                         <label class="block text-sm font-medium mb-1">Province</label>
-                        <select name="province_id" id="province_id_{{ $addr->id }}" 
+                        <select name="province_id" id="province_id_{{ $addr->id ?? '' }}" 
                                 class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
                                 onchange="loadCities({{ $addr->id }})">
                             <option value="">Select Province</option>
@@ -265,7 +265,7 @@
                         <label class="block text-sm font-medium mb-1">City</label>
                         <select name="city_id" id="city_id_{{ $addr->id }}" 
                                 class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
-                                onchange="loadBarangays({{ $addr->id }})">
+                                onchange="loadBarangays({{ $addr->id ?? '' }})">
                             <option value="">Select City</option>
                             @foreach($cities as $city)
                                 @if($city->province_id == $addr->province_id)
@@ -281,7 +281,7 @@
                     <!-- Barangay -->
                     <div>
                         <label class="block text-sm font-medium mb-1">Barangay</label>
-                        <select name="barangay_id" id="barangay_id_{{ $addr->id }}"
+                        <select name="barangay_id" id="barangay_id_{{ $addr->id ?? '' }}"
                                 class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
                             <option value="">Select Barangay</option>
                             @foreach($barangays as $barangay)
