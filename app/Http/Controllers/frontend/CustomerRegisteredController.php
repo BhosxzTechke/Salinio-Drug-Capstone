@@ -15,6 +15,7 @@ use Illuminate\View\View;
 use App\Models\Customer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mime\Message;
 
 class CustomerRegisteredController extends Controller
 {
@@ -72,6 +73,8 @@ class CustomerRegisteredController extends Controller
             } catch (\Exception $e) {
 
                 DB::rollBack();
+
+                dd($e);
 
                 Log::error('Customer Registration Error: ' . $e->getMessage());
 
