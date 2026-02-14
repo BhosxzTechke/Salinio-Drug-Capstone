@@ -56,7 +56,7 @@
 
                             {{-- DASHBOARD PART --}}
 
-                            {{-- @if(Auth::user()->can('can-access-dashboard'))  --}}
+                            @if(Auth::user()->can('can-access-dashboard')) 
 
                             <li>
                                 <a href="{{ route('admin.dashboard') }}" >
@@ -66,20 +66,20 @@
                                 </a>
 
                             </li>
-                            {{-- endif --}}
+                            @endif
 
 
 
 
                             
-                            <li>
+                            {{-- <li>
                                 <a href="{{ route('ai.admin.chat') }}" >
-                                    <i class="mdi mdi-view-dashboard-outline"></i>
+                                    <i class="mdi mdi-view-dashboard-outline"></i> --}}
                                     {{-- <span class="badge bg-success rounded-pill float-end"></span> --}}
-                                    <span> Ai Assistant </span>
+                                    {{-- <span> Ai Assistant </span>
                                 </a>
 
-                            </li>
+                            </li> --}}
 
 
 
@@ -87,7 +87,7 @@
 
                                         {{-- MANAGE POS PART --}}
 
-                            {{-- @if(Auth::user()->can('can-access-pos'))  --}}
+                            @if(Auth::user()->can('can-access-pos')) 
                                 <li>
                                     <a href="{{ route('pos') }}" >
                                         <i class="fa-solid fa-cash-register"></i>
@@ -96,14 +96,14 @@
                                     </a>
 
                                 </li>
-                            {{-- @endif --}}
+                            @endif
 
 
 
 
                                         {{-- MANAGE SUPPLIERS PART --}}
 
-                        {{-- @if(Auth::user()->can('can-manage-suppliers'))  --}}
+                        @if(Auth::user()->can('can-manage-suppliers')) 
                             <li>    
                                 <a href="#sidebarEmail" data-bs-toggle="collapse">
                                     <i class="fa-solid fa-truck-field"></i>
@@ -114,25 +114,25 @@
                                     <ul class="nav-second-level">
 
 
-                                    {{-- @if(Auth::user()->can('can-view-all-suppliers'))  --}}
+                                    @if(Auth::user()->can('can-view-all-suppliers')) 
                                         <li>
                                             <a href="{{ route('all.supplier') }}">All Supplier</a>
                                         </li>
-                                        {{-- @endif --}}
+                                        @endif
 
                                         
                                         
-                                        {{-- @if(Auth::user()->can('can-create-suppliers')) --}}
+                                        @if(Auth::user()->can('can-create-suppliers'))
                                         <li>
                                             <a href="{{ route('supplier.create') }}">Add Supplier</a>
                                         </li>
-                                        {{-- @endif --}}
+                                        @endif
 
 
                                     </ul>
                                 </div>
                             </li>
-                            {{-- @endif --}}
+                    @endif
 
 
 
@@ -143,7 +143,7 @@
 
 
 
-                        {{-- @if(Auth::user()->can('can-manage-categories')) --}}
+                        @if(Auth::user()->can('can-manage-categories'))
                             <li>
                                 <a href="#cat" data-bs-toggle="collapse">
                                     <i class="fas fa-store"></i>
@@ -156,7 +156,7 @@
                                     </ul>
                                 </div>  
                             </li>
-                        {{-- @endif --}}
+                        @endif
 
 
 
@@ -164,7 +164,7 @@
                                 {{-- SUB CATEGORIES PART --}}
 
                         
-                    {{-- @if(Auth::user()->can('can-manage-sub-categories')) --}}
+                    @if(Auth::user()->can('can-manage-sub-categories'))
                         <li>
                             <a href="#sub-Category" data-bs-toggle="collapse">
                                 <i class="fas fa-store"></i>
@@ -174,25 +174,25 @@
                             <div class="collapse" id="sub-Category">
                                 <ul class="nav-second-level">
 
-                                    {{-- @if(Auth::user()->can('can-view-sub-categories')) --}}
+                                    @if(Auth::user()->can('can-view-sub-categories'))
                                     <li>
                                         <a href="{{ route('sub-category.list') }}">All Sub-Category
                                         </a>
                                     </li>
-                                    {{-- @endif --}}
+                                    @endif
 
 
-                                    {{-- @if(Auth::user()->can('can-create-category')) --}}
+                                    @if(Auth::user()->can('can-create-category'))
                                     <li>
                                         <a href="{{ route('sub-category.create') }}">Add Sub-Category
                                             </a>
                                     </li>
-                                    {{-- @endif --}}
+                                    @endif
 
                                 </ul>
                             </div>
                         </li>
-                        {{-- @endif --}}
+                        @endif
 
 
 
@@ -202,7 +202,7 @@
                                     {{-- MANAGE BRAND PART --}}
 
 
-                    {{-- @if(Auth::user()->can('can-manage-brand')) --}}
+                    @if(Auth::user()->can('can-manage-brand'))
                         <li>
                             <a href="#brands" data-bs-toggle="collapse">
                                 <i class="fas fa-store"></i>
@@ -212,27 +212,27 @@
                             <div class="collapse" id="brands">
                                 <ul class="nav-second-level">
 
-                                    {{-- @if(Auth::user()->can('can-view-all-brand')) --}}
+                                    @if(Auth::user()->can('can-view-all-brand'))
                                         <li>
                                             <a href="{{ route('brand.list') }}">All Brand</a>
                                         </li>
-                                        {{-- @endif--}}
+                                        @endif
 
 
-                                        {{-- @if(Auth::user()->can('can-create-brand')) --}}
+                                        @if(Auth::user()->can('can-create-brand'))
                                         <li>
                                             <a href="{{ route('brand.create') }}">Add Brand
                                             </a>
                                         </li>
 
-                                    {{-- @endif --}}
+                                    @endif
 
 
                                     
                                 </ul>
                             </div>
                         </li>
-                        {{-- @endif --}}
+                        @endif
 
 
 
@@ -244,7 +244,7 @@
 
 
 
-                    {{-- @if(Auth::user()->can('can-manage-products')) --}}
+                    @if(Auth::user()->can('can-manage-products'))
 
                         <li>
                             <a href="#product" data-bs-toggle="collapse">
@@ -256,19 +256,21 @@
                             <div class="collapse" id="product">
                                 <ul class="nav-second-level">
 
-                                    {{-- @if(Auth::user()->can('can-view-all-products')) --}}
+                                    @if(Auth::user()->can('can-view-all-products'))
                                         <li>
                                             <a href="{{ route('product.list') }}">All Product
                                             </a>
                                         </li>
-                                    {{-- @endif --}}
+                                    @endif
 
-                                    {{-- @if(Auth::user()->can('can-create-products')) --}}
+
+
+                                    @if(Auth::user()->can('can-create-products'))
                                         <li>
                                             <a href="{{ route('add.product') }}">Add Product
                                             </a>
                                         </li>
-                                    {{-- @endif --}}
+                                    @endif
 
 
 
@@ -282,7 +284,7 @@
 
                                         {{-- MANAGE PURCHASE ORDER PART --}}
 
-                        {{-- @if(Auth::user()->can('can-manage-purchase-order')) --}}
+                        @if(Auth::user()->can('can-manage-purchase-order'))
 
                         <li>
                                 <a href="#purchaseOrder" data-bs-toggle="collapse">
@@ -298,19 +300,19 @@
                                             </li>
 
 
-                                        {{-- @if(Auth::user()->can('can-create-pO')) --}}
+                                        @if(Auth::user()->can('can-create-pO'))
                                             <li>
                                                 <a href="{{ route('purchase.order') }}">Create PO</a>
                                             </li>
-                                        {{-- @endif --}}
+                                        @endif
 
 
-                                        {{-- @if(Auth::user()->can('can-received-deliveries')) --}}
+                                        @if(Auth::user()->can('can-received-deliveries'))
                                             <li>
                                                 <a href="{{ route('all.pending.order') }}">Received Deliveries
                                                 </a>
                                             </li>
-                                        {{-- @endif --}}
+                                        @endif
 
 
                                             <li>
@@ -321,7 +323,7 @@
                                     </ul>
                                 </div>
                         </li>
-                    {{-- @endif --}}
+                    @endif
 
 
 
@@ -329,7 +331,7 @@
                 </ul>
             </div>
         </li>
-        {{-- @endif --}}
+        @endif
 
 
 
@@ -339,7 +341,7 @@
 
                             {{--  MANAGE INVENTORY PART --}}
 
-                        {{-- @if(Auth::user()->can('can-view-inventory')) --}}
+                        @if(Auth::user()->can('can-view-inventory'))
                             <li>
                                 <a href="#inventory" data-bs-toggle="collapse">
                                     <i class="mdi mdi-warehouse"></i>
@@ -353,7 +355,7 @@
                                     </ul>
                                 </div>
                             </li>
-                        {{-- @endif --}}
+                        @endif
 
 
 
@@ -361,7 +363,7 @@
 
                                         {{-- CUSTOMER ORDER PART --}}
 
-                    {{-- @if(Auth::user()->can('can-manage-customer-order')) --}}
+                    @if(Auth::user()->can('can-manage-customer-order'))
                             <li>
                             <a href="#orders" data-bs-toggle="collapse">
                                 <i class="mdi mdi-package-variant"></i>
@@ -399,7 +401,7 @@
                                 </ul>
                             </div>
                         </li>
-                    {{-- @endif --}}
+                    @endif
 
 
 
@@ -409,7 +411,7 @@
                                     {{-- MANAGE RETURN ORDERS FROM CUSTOMER --}}
 
 
-                    {{-- @if(Auth::user()->can('can-manage-return-orders'))  --}}
+                    @if(Auth::user()->can('can-manage-return-orders')) 
 
                             <li>
                                 <a href="#Returnorders" data-bs-toggle="collapse">
@@ -438,7 +440,7 @@
                                     </div>
                             </li>
 
-                        {{-- endif --}}
+                        @endif
 
 
 
@@ -448,7 +450,7 @@
                         {{-- MANAGE SHIPPING ZONE SYSTEM FROM CUSTOMER --}}
 
 
-                    {{-- @if(Auth::user()->can('can-manage-shipping-zone'))  --}}
+                    @if(Auth::user()->can('can-manage-shipping-zone')) 
 
                             <li>
                                 <a href="#ShippingZone" data-bs-toggle="collapse">
@@ -462,30 +464,30 @@
                                     <ul class="nav-second-level">
 
 
-                                            {{-- @if(Auth::user()->can('can-access-provinces'))  --}}
+                                            @if(Auth::user()->can('can-access-provinces')) 
                                             
                                             <li>
                                                 <a href="{{ route('provinces.index') }}">Provinces</a>
                                             </li>
 
-                                                {{--  endif--}}
+                                            @endif
 
 
-                                                {{-- @if(Auth::user()->can('can-access-city'))  --}}
+                                                @if(Auth::user()->can('can-access-city')) 
                                             <li>
                                                 <a href="{{ route('cities.index') }}">City
                                             </a>
 
-                                                {{--  endif--}}
+                                                @endif
 
 
-                                                {{-- @if(Auth::user()->can('can-access-barangay'))  --}}
+                                                @if(Auth::user()->can('can-access-barangay')) 
 
                                             <li>
                                                 <a href="{{ route('barangays.index') }}">Barangay
                                             </a>
 
-                                                {{--  endif--}}
+                                                @endif
 
                                             
                                         </li>
@@ -495,7 +497,7 @@
                                     </div>
                             </li>
 
-                        {{-- endif --}}
+                        @endif
 
 
 
@@ -504,7 +506,7 @@
                                         {{--MANAGE EXPENSE PART --}}
 
 
-                        {{-- @if(Auth::user()->can('can-manage-expenses')) --}}
+                    @if(Auth::user()->can('can-manage-expenses'))
                             <li>
                                 <a href="#sidebarAuth" data-bs-toggle="collapse">
                                     <i class="mdi mdi-cash-multiple"></i>
@@ -538,7 +540,7 @@
                                     </div>
                         </li>
 
-                        {{-- @endif --}}
+                        @endif
 
 
 
@@ -546,7 +548,7 @@
                                         {{--MANAGE AUDIT TRAIL PART  --}}
 
 
-                            {{-- @if(Auth::user()->can('can-view-audit-trail')) --}}
+                    @if(Auth::user()->can('can-view-audit-trail'))
                             <li>
                                 <a href="#audit" data-bs-toggle="collapse">
                                     <i class="mdi mdi-file-document-outline"></i>
@@ -558,25 +560,25 @@
                             <div class="collapse" id="audit">
                                 <ul class="nav-second-level">
 
-                                    {{-- @if(Auth::user()->can('can-view-audit-by-action')) --}}
+                                    @if(Auth::user()->can('can-view-audit-by-action'))
                                         <li>
                                             <a href="{{ route('audit.trail')}}">Audit By Action</a>
                                         </li>
-                                    {{-- @endif --}}
+                                    @endif
 
 
-                                    {{-- @if(Auth::user()->can('can-view-audit-by-logs')) --}}
+                                    @if(Auth::user()->can('can-view-audit-by-logs'))
                                     <li>
                                         <a href="{{ route('audit.log') }}">Audit By Log</a>
                                     </li>
-                                    {{-- @endif --}}
+                                    @endif
 
 
                                     </ul>
                                 </div>
                             </li>
 
-                        {{-- @endif --}}
+                        @endif
 
 
 
@@ -587,7 +589,7 @@
 
                                         {{-- MANAGE OR VIEW REPORTS PART --}}
 
-                            {{-- @if(Auth::user()->can('can-view-reports')) --}}
+                            @if(Auth::user()->can('can-view-reports'))
                                 <li>
                                     <a href="#SalesReport" data-bs-toggle="collapse">
                                         <i class="mdi mdi-chart-bar"></i>
@@ -599,23 +601,23 @@
                                 <div class="collapse" id="SalesReport">
                                     <ul class="nav-second-level">
 
-                                        {{-- @if(Auth::user()->can('can-view-daily-sales')) --}}
+                                        @if(Auth::user()->can('can-view-daily-sales'))
                                             <li>
                                                 <a href="{{ route('daily.reports')}}">Daily Sales Report</a>
                                             </li>
-                                        {{-- @endif --}}
+                                        @endif
 
 
-                                        {{-- @if(Auth::user()->can('can-view-top-sellings')) --}}
+                                        @if(Auth::user()->can('can-view-top-sellings'))
                                         <li>
                                             <a href="{{ route('top.sellings') }}">Top Selling Products</a>
                                         </li>
-                                        {{-- @endif --}}
+                                        @endif
 
                                         </ul>
                                     </div>
                                 </li>
-                            {{-- @endif --}}
+                            @endif
 
 
 
@@ -626,7 +628,7 @@
 
                             {{-- VAT DISCOUNT COMMERCE PART --}}
 
-                    {{-- @if(Auth::user()->can('can-manage-commerce-settings')) --}}
+                    @if(Auth::user()->can('can-manage-commerce-settings'))
                         <li>
                             
                             <a href="{{ route('commerce.settings') }}">
@@ -635,7 +637,7 @@
                             </a>
                         
                         </li>
-            {{-- @endif --}}
+            @endif
 
 
 
@@ -646,7 +648,7 @@
                             {{-- CHAT CUSTOMER PART --}}
 
 
-                    {{-- @if(Auth::user()->can('can-view-customer-chat')) --}}
+                    @if(Auth::user()->can('can-view-customer-chat'))
 
                         <li>
                             
@@ -656,6 +658,8 @@
                             </a>
 
                         </li>
+
+                        @endif
 
 
 
@@ -673,7 +677,7 @@
 
 
                 
-                {{-- @if(Auth::user()->can('can-manage-system-settings')) --}} 
+                @if(Auth::user()->can('can-manage-system-settings')) 
 
                 <li>
                         <a href="#HeroSlider" data-bs-toggle="collapse">
@@ -686,14 +690,16 @@
                 <div class="collapse" id="HeroSlider">
                     <ul class="nav-second-level">
 
-                        {{-- @if(Auth::user()->can('can-change-system-titles')) --}}
+                        @if(Auth::user()->can('can-change-system-titles'))
                             <li>
                                 <a href="{{ route('heroslider.show')}}">Change Banner
                                 </a>
                             </li>
 
+                        @endif
 
-                        {{-- @if(Auth::user()->can('can-change-banner/slider')) --}}
+
+                        @if(Auth::user()->can('can-change-banner/slider'))
                             <li>
                                 <a href="{{ route('business.name')}}">
                                     <span> Change Title System</span>
@@ -701,7 +707,7 @@
                     
                             </li>
 
-                        {{-- @endif --}}
+                        @endif
 
 
                     </ul>
@@ -710,13 +716,16 @@
             </li>
 
 
+            @endif
+
+
 
 
 
                                 {{-- MANAGE ROLES PART --}}
 
 
-                    {{-- @if(Auth::user()->can('can-manage-roles')) --}}
+                    @if(Auth::user()->can('can-manage-roles'))
 
                         <li>
                             <a href="#roles" data-bs-toggle="collapse">
@@ -727,24 +736,24 @@
                         <div class="collapse" id="roles">
                             <ul class="nav-second-level">   
 
-                                {{-- @if(Auth::user()->can('can-view-roles')) --}}
+                                @if(Auth::user()->can('can-view-roles'))
                                 <li>
                                     <a href="{{ route('all.roles') }}">All Roles</a>
                                 </li>
-                                {{-- @endif --}}
+                                @endif
 
 
-                                {{-- @if(Auth::user()->can('can-create-roles')) --}}
+                                @if(Auth::user()->can('can-create-roles'))
                                 <li>
                                     <a href="{{ route('add.roles') }}">Add Roles</a>
                                 </li>
-                                {{-- @endif --}}
+                                @endif
                             </ul>
 
                             </div>
                     </li>
 
-                {{-- @endif --}}
+                @endif
 
 
 
@@ -754,7 +763,7 @@
                                 {{--  PERMISSIONS PART --}}
 
                                 
-            {{-- @if(Auth::user()->can('can-manage-permission')) --}}
+            @if(Auth::user()->can('can-manage-permission'))
                 <li>
                     <a href="#sidebarExpages" data-bs-toggle="collapse">
                         <i class="mdi mdi-account-key"></i>
@@ -768,11 +777,11 @@
                             <a href="{{ route('all.permission') }}">All Permission</a>
                         </li>
 
-                        {{-- @if(Auth::user()->can('can-add-roles-in-permissions')) --}}
+                        @if(Auth::user()->can('can-add-roles-in-permissions'))
                         <li>
                             <a href="{{ route('add.roles.permission') }}">Add Roles in Permission</a>
                         </li>
-                        {{-- @endif --}}
+                        @endif
 
 
                         <li>
@@ -783,7 +792,7 @@
 
                     </div>
                 </li>
-            {{-- @endif --}}
+            @endif
 
 
 
@@ -794,7 +803,7 @@
 
                             {{-- MANAGE USER ACCOUNT  PART --}}
 
-                {{-- @if(Auth::user()->can('can-manage-user-accounts')) --}}
+                @if(Auth::user()->can('can-manage-user-accounts'))
                         <li>
                                 <a href="#admin" data-bs-toggle="collapse">
                                     <i class="mdi mdi-account-circle"></i>
@@ -804,23 +813,23 @@
                                 <div class="collapse" id="admin">
                                     <ul class="nav-second-level">
 
-                                        {{-- @if(Auth::user()->can('can-view-all-users')) --}}
+                                        @if(Auth::user()->can('can-view-all-users'))
                                         <li>
                                             <a href="{{ route('all.admin') }}">All Users</a>
                                         </li>
-                                        {{-- @endif --}}
+                                        @endif
 
-                                        {{-- @if(Auth::user()->can('can-create-users')) --}}
+                                        @if(Auth::user()->can('can-create-users'))
                                         <li>
                                             <a href="{{ route('create.admin') }}">Add Users</a>
                                         </li>
-                                        {{-- @endif --}}
+                                        @endif
 
                                     </ul>
 
                             </div>
                         </li>
-                {{-- @endif --}}
+                @endif
 
 
 
@@ -829,7 +838,7 @@
                                     {{-- BACKUP DATABASE PART --}}
 
 
-                        {{-- @if(Auth::user()->can('can-manage-backup-database')) --}}
+                        @if(Auth::user()->can('can-manage-backup-database'))
                                 <li>
                                     <a href="#backup" data-bs-toggle="collapse">
                                         <i class="mdi mdi-backup-restore"></i>
@@ -847,7 +856,7 @@
                                             </ul>
                                     </div>
                                 </li>
-                        {{-- @endif --}}
+                        @endif
 
 
 

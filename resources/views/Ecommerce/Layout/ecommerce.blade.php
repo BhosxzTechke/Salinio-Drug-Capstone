@@ -192,7 +192,7 @@
             $customer = auth()->guard('customer')->user();
         @endphp
 
-        {{-- <script
+        <script
             src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
             data-name="wonderchat-seo"
             data-address="app.wonderchat.io"
@@ -208,7 +208,7 @@
 
             defer
         ></script>
---}}
+
 
 
 </main>
