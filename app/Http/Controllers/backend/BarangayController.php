@@ -34,7 +34,7 @@ class BarangayController extends Controller
     public function create()
     {
         $cities = City::where('is_active', 1)->get();
-        return view('ShippingZone.barangay.CreateBarangay', compact('cities'));
+        return view('ShippingZone.Barangay.CreateBarangay', compact('cities'));
     }
 
     /**
