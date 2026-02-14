@@ -223,21 +223,21 @@
                 <!-- Full Name -->
                 <div>
                     <label class="block text-sm font-medium mb-1">Full Name</label>
-                    <input type="text" name="full_name" value="{{ old('full_name', $addr->full_name) }}"
+                    <input type="text" name="full_name" value="{{ old('full_name', $addr->full_name ?? '') }}"
                         class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
                 </div>
 
                 <!-- Phone -->
                 <div>
                     <label class="block text-sm font-medium mb-1">Phone Number</label>
-                    <input type="text" name="phone" value="{{ old('phone', $addr->phone) }}"
+                    <input type="text" name="phone" value="{{ old('phone', $addr->phone ?? '') }}"
                         class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
                 </div>
 
                 <!-- Street -->
                 <div>
                     <label class="block text-sm font-medium mb-1">Street / House No.</label>
-                    <input type="text" name="street" value="{{ old('street', $addr->street) }}"
+                    <input type="text" name="street" value="{{ old('street', $addr->street ?? '') }}"
                         class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
                 </div>
 
@@ -249,12 +249,12 @@
                         <label class="block text-sm font-medium mb-1">Province</label>
                         <select name="province_id" id="province_id_{{ $addr->id ?? '' }}" 
                                 class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
-                                onchange="loadCities({{ $addr->id }})">
+                                onchange="loadCities({{ $addr->id ?? '' }})">
                             <option value="">Select Province</option>
                             @foreach($provinces as $province)
-                                <option value="{{ $province->id }}"
+                                <option value="{{ $province->id ?? '' }}"
                                     {{ $addr->province_id == $province->id ? 'selected' : '' }}>
-                                    {{ $province->name }}
+                                    {{ $province->name ?? '' }}
                                 </option>
                             @endforeach
                         </select>
@@ -263,15 +263,15 @@
                     <!-- City -->
                     <div>
                         <label class="block text-sm font-medium mb-1">City</label>
-                        <select name="city_id" id="city_id_{{ $addr->id }}" 
+                        <select name="city_id" id="city_id_{{ $addr->id ?? '' }}" 
                                 class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
                                 onchange="loadBarangays({{ $addr->id ?? '' }})">
                             <option value="">Select City</option>
                             @foreach($cities as $city)
                                 @if($city->province_id == $addr->province_id)
-                                    <option value="{{ $city->id }}"
+                                    <option value="{{ $city->id ?? '' }}"
                                         {{ $addr->city_id == $city->id ? 'selected' : '' }}>
-                                        {{ $city->name }}
+                                        {{ $city->name ?? '' }}
                                     </option>
                                 @endif
                             @endforeach
@@ -286,9 +286,9 @@
                             <option value="">Select Barangay</option>
                             @foreach($barangays as $barangay)
                                 @if($barangay->city_id == $addr->city_id)
-                                    <option value="{{ $barangay->id }}"
+                                    <option value="{{ $barangay->id ?? '' }}"
                                         {{ $addr->barangay_id == $barangay->id ? 'selected' : '' }}>
-                                        {{ $barangay->name }}
+                                        {{ $barangay->name ?? '' }}
                                     </option>
                                 @endif
                             @endforeach
