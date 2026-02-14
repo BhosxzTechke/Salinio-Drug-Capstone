@@ -73,9 +73,9 @@
                             </td>
 
                             <td>
-                                @if($data->roles->contains('name', 'Super Admin'))
+                                {{-- @if($data->roles->contains('name', 'Super Admin'))
                                     <span class="text-muted fw-bold">Protected</span>
-                                @else
+                                @else --}}
 
                                 
                                     {{-- @if(Auth::user()->can('edit-admin-account')) --}}
@@ -107,7 +107,7 @@
                                         Show Temp Password
                                     </button>
                                 {{-- @endif --}}
-                            @endif
+                            {{-- @endif --}}
                             </td>
                         </tr>
 
