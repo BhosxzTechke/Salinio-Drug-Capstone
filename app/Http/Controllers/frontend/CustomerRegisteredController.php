@@ -74,7 +74,6 @@ class CustomerRegisteredController extends Controller
 
                 DB::rollBack();
 
-                dd($e);
 
                 Log::error('Customer Registration Error: ' . $e->getMessage());
 
