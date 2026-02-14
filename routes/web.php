@@ -391,7 +391,7 @@ Route::middleware(['auth', 'web'])->group(function () {
 
             ////////////////////////////// IMPORT EXPORT EXCELL ///////////////////////////////////////////
             //BARCODE
-            Route::get('/barcode/product/{id}','BarcodeProduct')->name('barcode.product')->middleware('permission:barcode-products');
+            Route::get('/barcode/product/{id}','BarcodeProduct')->name('barcode.product');
 
 
             //Import product in excel
@@ -399,7 +399,7 @@ Route::middleware(['auth', 'web'])->group(function () {
 
 
            ///// EXPORT
-            Route::get('product/export', [ProductController::class, 'Export'])->name('download.export')->middleware('permission:export-products');
+            Route::get('product/export', [ProductController::class, 'Export'])->name('download.export');
 
 
                       ///// EXPORT
@@ -657,7 +657,7 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::controller(CommerceController::class)->group(function () {
 
             //Showing vat discount settings
-            Route::get('/Commerce/Settings', 'VatDiscountPage')->name('commerce.settings')->middleware('permission:manage-commerce-settings');
+            Route::get('/Commerce/Settings', 'VatDiscountPage')->name('commerce.settings');
 
             Route::post('/update/vat', 'UpdateVat')->name('update.vat');
             

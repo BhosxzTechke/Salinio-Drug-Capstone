@@ -70,21 +70,21 @@
 
 
 
-    <div class="row">
+        <div class="row">
 
-        {{-- Product Name --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="product_name">Product Name <span class="text-danger">*</span></label>
-                <input type="text" name="product_name"
-                       value="{{ old('product_name') }}"
-                       class="form-control @error('product_name') is-invalid @enderror"
-                       id="product_name" placeholder="Enter Product name">
-                @error('product_name')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
+            {{-- Product Name --}}
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="product_name">Product Name <span class="text-danger">*</span></label>
+                    <input type="text" name="product_name"
+                        value="{{ old('product_name') }}"
+                        class="form-control @error('product_name') is-invalid @enderror"
+                        id="product_name" placeholder="Enter Product name">
+                    @error('product_name')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
-        </div>
 
         {{-- Category --}}
         <div class="col-md-6">
