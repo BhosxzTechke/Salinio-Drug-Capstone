@@ -435,6 +435,17 @@ class OrderController extends Controller
             }
 
 
+
+
+
+
+
+
+
+
+
+
+
             public function storeAssign(Request $request, Order $order)
                 {
                     $request->validate([
@@ -560,54 +571,6 @@ public function StatusUpdate(Request $request)
     try {
 
         $order = Order::with('orderDetails')->findOrFail($request->id);
-
-        // foreach ($order->orderDetails as $item) {
-
-        //     $qtyToDeduct  = $item->quantity;
-        //     $sellingPrice = $item->product->selling_price;
-
-        //     $totalProfit = 0;
-        //     $totalCost   = 0;
-
-        //     $batches = Inventory::where('product_id', $item->product_id)
-        //         ->where('quantity', '>', 0)
-        //         ->orderBy('received_date', 'asc') // FIFO
-        //         ->lockForUpdate()
-        //         ->get();
-
-        //     foreach ($batches as $batch) {
-
-        //         if ($qtyToDeduct <= 0) {
-        //             break;
-        //         }
-
-        //         $deduct = min($batch->quantity, $qtyToDeduct);
-
-        //         // Deduct inventory
-        //         $batch->decrement('quantity', $deduct);
-
-        //         // Calculate cost & profit
-        //         $batchCost   = $batch->cost_price * $deduct;
-        //         $batchProfit = ($sellingPrice * $deduct) - $batchCost;
-
-        //         $totalCost   += $batchCost;
-        //         $totalProfit += $batchProfit;
-
-        //         $qtyToDeduct -= $deduct;
-        //     }
-
-        //     // ❗ Safety check (optional)
-        //     if ($qtyToDeduct > 0) {
-        //         throw new \Exception('Insufficient stock for product ID ' . $item->product_id);
-        //     }
-
-        //     //Update order item ONCE
-        //     $item->update([
-        //         'unitcost' => $totalCost / $item->quantity, // average cost
-        //         'profit'   => $totalProfit,
-        //     ]);
-        // }
-
 
 
         // Mark order completed
@@ -786,7 +749,7 @@ public function StatusUpdate(Request $request)
 
 
     public function CompleteOrders() {
-        $Orders = order::where('order_status','complete')->get();
+        $Orders = order::where('order_status','completed')->get();
 
         return view('Order.complete', compact('Orders'));
     }

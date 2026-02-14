@@ -80,12 +80,13 @@
                         <option value="reports" {{ $permission->group_name == 'reports' ? 'selected' : '' }}>Reports</option>
                         <option value="returns" {{ $permission->group_name == 'returns' ? 'selected' : '' }}>Return Orders</option>
                         <option value="roles" {{ $permission->group_name == 'roles' ? 'selected' : '' }}>Roles</option>
+                        <option value="shipping-zone" {{ $permission->group_name == 'shipping-zone' ? 'selected' : '' }}>Shipping Zone</option>
                         <option value="sub-category" {{ $permission->group_name == 'sub-category' ? 'selected' : '' }}>Sub-Category</option>
                         <option value="suppliers" {{ $permission->group_name == 'suppliers' ? 'selected' : '' }}>Suppliers</option>
                         <option value="system-settings" {{ $permission->group_name == 'system-settings' ? 'selected' : '' }}>System Settings</option>
                         <option value="user-accounts" {{ $permission->group_name == 'user-accounts' ? 'selected' : '' }}>User Accounts</option>
                     </select>
-                                    
+
 
 
                             

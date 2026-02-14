@@ -160,22 +160,6 @@
                         
                     </td>
 
-{{-- 
-                @if($data->returnRequest->status == 'refunded' || $data->returnRequest->status == 'rejected' )
-
-                    <td><span class="badge badge-pill bg-danger"> {{ $data->returnRequest->status ?? '' }}</span></td>
-
-                @else
-
-                    <td class="confirm-pickup-cell" data-return-shipment-id="{{ $data->id }}">
-                            <a href="{{route('admin.confirmed.return', $data->returnRequest->id )}} " type="button" class="btn btn-sm btn-success confirm-pickup-btn" style="display: none;">
-                                Returned Process
-                            </a>
-                    </td>
-
-                @endif --}}
-
-
 
 
 
@@ -183,6 +167,7 @@
             
             @if($data->returnRequest->status == 'refunded' || $data->returnRequest->status == 'rejected')
                 <span class="badge badge-pill bg-danger">{{ $data->returnRequest->status ?? '' }}</span>
+
             @elseif($data->returnRequest->status == 'received')
                 <a href="{{ route('admin.confirmed.return', $data->returnRequest->id) }}" 
                 class="btn btn-sm btn-success confirm-pickup-btn">
@@ -190,17 +175,19 @@
                 </a>
             @else
 
-            
-    <a href="{{ route('admin.return.mark-received',
-                $data->returnRequest->id)}}"  class="btn btn-sm btn-dark mark-Confirm-received" onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
-                    Confirm Received</a>
+                        
+                <a href="{{ route('admin.return.mark-received',
+                            $data->returnRequest->id)}}"  class="btn btn-sm btn-dark mark-Confirm-received" onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                                Confirm Received</a>
 
-                {{-- <a href="{{ route('admin.confirmed.return', $data->returnRequest->id) }}" 
-                class="btn btn-sm btn-success confirm-pickup-btn" style="display: none;">
-                Returned Process
-                </a> --}}
-            @endif
-        </td>
+                            {{-- <a href="{{ route('admin.confirmed.return', $data->returnRequest->id) }}" 
+                            class="btn btn-sm btn-success confirm-pickup-btn" style="display: none;">
+                            Returned Process
+                            </a> --}}
+
+                            
+                        @endif
+                    </td>
 
 
 
@@ -412,54 +399,6 @@ $(document).ready(function() {
 
 
 
-
-
-
-
-
-{{--  AUTO UPDATE FETCHING  --}}
-{{-- <script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    function refreshStatuses() {
-        document.querySelectorAll('.return-status-cell').forEach(el => {
-            let id = el.dataset.returnShipmentId;
-            let url = `/return-shipment/${id}/status`;
-
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    let newStatus = data.shipment_status ?? 'unknown';
-
-                    // Update status button text
-                    let statusBtn = el.querySelector('.return-status-btn');
-                    if (statusBtn) {
-                        statusBtn.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
-                    }
-
-                    // Show/hide confirm pickup in its own cell
-                    let confirmCell = document.querySelector(`.confirm-pickup-cell[data-return-shipment-id="${id}"]`);
-                    if (confirmCell) {
-                        let confirmBtn = confirmCell.querySelector('.confirm-pickup-btn');
-                        if (confirmBtn) {
-                            confirmBtn.style.display = (newStatus === 'delivered') ? 'inline-block' : 'none';
-                        }
-
-                        else {
-                            
-                        }
-                    }
-                })
-                .catch(err => console.error("Status fetch error:", err));
-        });
-    }
-
-    // Run first, then every 3 seconds
-    refreshStatuses();
-    setInterval(refreshStatuses, 3000);
-
-});
-</script> --}}
 
 
 

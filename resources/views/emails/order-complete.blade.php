@@ -22,10 +22,18 @@
                         <td style="vertical-align:middle;padding-right:12px;">
                       <div style="width:44px;height:44px;border-radius:22px;background:#eef2ff;display:inline-flex;align-items:center;justify-content:center;">
                             <!-- icon -->
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="color:#4f46e5" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M16 12H8m0 0l4-4m-4 4l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                          <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10" fill="white" stroke="black" stroke-width="2"/>
+                          <path d="M8 12l2 2 4-4" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>'>
+
+
                           </div> 
+
+
+
+                          
                         </td>
                         <td style="vertical-align:middle;">
                           {{-- <div style="font-size:13px;color:#6b7280;margin-bottom:2px;">New message received</div> --}}

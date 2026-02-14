@@ -73,6 +73,7 @@
     <option value="reports">Reports</option>
     <option value="returns">Return Orders</option>
     <option value="roles">Roles</option>
+    <option value="shipping-zone">Shipping Zone</option>
     <option value="sub-category">Sub-Category</option>
     <option value="suppliers">Suppliers</option>
     <option value="system-settings">System Settings</option>
