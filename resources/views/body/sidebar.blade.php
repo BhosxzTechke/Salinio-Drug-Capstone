@@ -448,7 +448,7 @@
                         {{-- MANAGE SHIPPING ZONE SYSTEM FROM CUSTOMER --}}
 
 
-                    {{-- @if(Auth::user()->can('can-manage-return-orders'))  --}}
+                    {{-- @if(Auth::user()->can('can-manage-shipping-zone'))  --}}
 
                             <li>
                                 <a href="#ShippingZone" data-bs-toggle="collapse">
@@ -461,18 +461,32 @@
                                 <div class="collapse" id="ShippingZone">
                                     <ul class="nav-second-level">
 
+
+                                            {{-- @if(Auth::user()->can('can-access-provinces'))  --}}
+                                            
                                             <li>
                                                 <a href="{{ route('provinces.index') }}">Provinces</a>
                                             </li>
 
+                                                {{--  endif--}}
 
+
+                                                {{-- @if(Auth::user()->can('can-access-city'))  --}}
                                             <li>
                                                 <a href="{{ route('cities.index') }}">City
                                             </a>
 
+                                                {{--  endif--}}
+
+
+                                                {{-- @if(Auth::user()->can('can-access-barangay'))  --}}
+
                                             <li>
                                                 <a href="{{ route('barangays.index') }}">Barangay
                                             </a>
+
+                                                {{--  endif--}}
+
                                             
                                         </li>
 
