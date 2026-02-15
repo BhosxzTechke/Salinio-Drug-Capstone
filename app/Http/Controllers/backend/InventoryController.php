@@ -23,7 +23,7 @@ class InventoryController extends Controller
             return [
                 'id' => $item->id,
                 'product_id' => $item->product_id,
-                'product_name' => $item->product ? $item->product->name : null,
+                'product_name' => $item->product ? $item->product->product_name : null,
                 'batch_number' => $item->batch_number,
                 'expiry_date' => $item->expiry_date,
                 'received_date' => $item->received_date,
@@ -35,6 +35,7 @@ class InventoryController extends Controller
                 'updated_at' => $item->updated_at,
             ];
         });
+
 
         return response()->json($data);
     }
