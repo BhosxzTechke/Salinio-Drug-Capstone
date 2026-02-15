@@ -1283,11 +1283,7 @@ Route::middleware(['auth', 'web'])->group(function () {
 
 
 
-        // ---------------------------- FOR AI KNOWDLEGE BASE IN INVENTORY
-
-        Route::get('/inventory', [InventoryController::class, 'index']);
-
-
+ 
 
 
 
