@@ -310,7 +310,7 @@ public function paypalSuccess(Request $request)
                 'sub_total' => $cart->subtotal(),
                 'vat' => $cart->tax(),
                 'total' => $grandTotal,
-                'pay' => $cart->$grandTotal,
+                'pay' => $grandTotal,
                 'due' => 0,
                 'paypal_capture_id' => $captureId,
             ]);

@@ -194,7 +194,7 @@
 
         @endphp
 
-        <script
+        {{-- <script
             src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
             data-name="wonderchat-seo"
             data-address="app.wonderchat.io"
@@ -209,9 +209,9 @@
             @endif
 
             defer
-        ></script>
+        ></script> --}}
 
-            @php
+            {{-- @php
                 $inventory = App\Models\Inventory::all();
             @endphp
 
@@ -223,7 +223,34 @@
                     products: inventoryData
                 });
             </script>
+ --}}
 
+
+            {{-- <script
+                src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
+                data-name="wonderchat-seo"
+                data-address="app.wonderchat.io"
+                data-id="cmlngm5dm15hm146zlwxi1jw4"
+                data-widget-size="small"
+                data-widget-button-size="normal"
+                defer
+            ></script>
+
+ --}}
+
+            
+            {{--  ONLY OPEN AI IF AUTHENTICATED --}}
+            @if(auth()->guard('customer')->check())
+                    <script
+                        src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
+                        data-name="wonderchat-seo"
+                        data-address="app.wonderchat.io"
+                        data-id="cmlngm5dm15hm146zlwxi1jw4"
+                        data-widget-size="small"
+                        data-widget-button-size="normal"
+                        defer
+                    ></script>
+                @endif
 
 </main>
 
