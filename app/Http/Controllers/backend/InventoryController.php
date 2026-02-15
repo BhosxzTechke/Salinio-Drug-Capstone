@@ -8,6 +8,40 @@ use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
+
+
+
+
+    /// FOR AI API DATA KNOWLEDGE ABOUT INVENTORY ITEM
+    public function index()
+    {
+        // Load inventory items with related product info
+        $inventory = Inventory::with('product')->get();
+
+        // Transform or filter data if needed
+        $data = $inventory->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'product_id' => $item->product_id,
+                'product_name' => $item->product ? $item->product->name : null,
+                'batch_number' => $item->batch_number,
+                'expiry_date' => $item->expiry_date,
+                'received_date' => $item->received_date,
+                'quantity' => $item->quantity,
+                'status' => $item->status,
+                'cost_price' => $item->cost_price,
+                'selling_price' => $item->selling_price,
+                'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
+            ];
+        });
+
+        return response()->json($data);
+    }
+
+
+
+
     //
 public function Inventory(Request $request)
 {
@@ -59,5 +93,7 @@ public function Inventory(Request $request)
             // his sends data to your toaster or alert system
             return back()->with('success', "Updated $expiredCount expired and $outOfStockCount out-of-stock batches.");
         }
+
+
 
 }

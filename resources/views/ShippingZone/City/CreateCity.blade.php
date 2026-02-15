@@ -160,7 +160,7 @@
                         <button type="submit"
                                 class="btn btn-dark"
                                 onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
-                            Save Provinces
+                            Save City
                         </button>
                     </div>
                 </form>

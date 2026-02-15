@@ -190,6 +190,8 @@
 
         @php
             $customer = auth()->guard('customer')->user();
+
+
         @endphp
 
         <script
@@ -209,6 +211,18 @@
             defer
         ></script>
 
+            @php
+                $inventory = App\Models\Inventory::all();
+            @endphp
+
+            <script>
+                const inventoryData = @json($inventory);
+
+                // Hypothetical Wonder Chat API call to update bot knowledge
+                window.wonderChat && window.wonderChat.setContext({
+                    products: inventoryData
+                });
+            </script>
 
 
 </main>

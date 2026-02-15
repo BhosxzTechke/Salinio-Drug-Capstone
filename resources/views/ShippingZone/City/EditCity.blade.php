@@ -21,7 +21,7 @@
                                         </ol>
                                     </div>
                                     
-                                    <h4 class="page-title">Add City Form</h4>
+                                    <h4 class="page-title">Edit City Form</h4>
                                 </div>
                             </div>
                         </div>     
@@ -165,7 +165,7 @@
                         <button type="submit"
                                 class="btn btn-dark"
                                 onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
-                            Save Provinces
+                            Update City
                         </button>
                     </div>
                 </form>

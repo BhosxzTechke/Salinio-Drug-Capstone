@@ -42,7 +42,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Province</th>
-                                        <th>Name</th>
+                                        <th>City</th>
                                         <th>Shipping Fee</th>
                                         <th>Delivery Days</th>
                                         <th>Status</th>

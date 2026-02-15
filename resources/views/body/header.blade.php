@@ -88,108 +88,96 @@
              
  --}}
 
-   
 
 
-            
-                        {{-- <li class="dropdown notification-list topbar-dropdown">
-                            <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                                <i class="fe-bell noti-icon"></i>
-                                <span class="badge bg-danger rounded-circle noti-icon-badge">9</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end dropdown-lg">
-    
-                                <!-- item-->
-                                <div class="dropdown-item noti-title">
-                                    <h5 class="m-0">
-                                        <span class="float-end">
-                                            <a href="" class="text-dark">
-                                                <small>Clear All</small>
-                                            </a>
-                                        </span>Notification
-                                    </h5>
-                                </div>
-     --}}
 
-  
-                                  {{-- Notification Content
-                                <div class="noti-scroll" data-simplebar>
-    
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item active">
-                                        <div class="notify-icon">
-                                            <img src="assets/images/users/user-1.jpg" class="img-fluid rounded-circle" alt="" /> </div>
-                                        <p class="notify-details">Cristina Pride</p>
-                                        <p class="text-muted mb-0 user-msg">
-                                            <small>Hi, How are you? What about our next meeting</small>
-                                        </p>
-                                    </a>
-    
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon bg-primary">
-                                            <i class="mdi mdi-comment-account-outline"></i>
-                                        </div>
-                                        <p class="notify-details">Caleb Flakelar commented on Admin
-                                            <small class="text-muted">1 min ago</small>
-                                        </p>
-                                    </a>
-    
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon">
-                                            <img src="assets/images/users/user-4.jpg" class="img-fluid rounded-circle" alt="" /> </div>
-                                        <p class="notify-details">Karen Robinson</p>
-                                        <p class="text-muted mb-0 user-msg">
-                                            <small>Wow ! this admin looks good and awesome design</small>
-                                        </p>
-                                    </a>
-    
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon bg-warning">
-                                            <i class="mdi mdi-account-plus"></i>
-                                        </div>
-                                        <p class="notify-details">New user registered.
-                                            <small class="text-muted">5 hours ago</small>
-                                        </p>
-                                    </a>
-    
+                    {{-- NOTIF FOR LOWEST STOCK / OUT OF STOCK AND EXPIRED PRODUCT  --}}
 
 
-                                    
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon bg-info">
-                                            <i class="mdi mdi-comment-account-outline"></i>
-                                        </div>
-                                        <p class="notify-details">Caleb Flakelar commented on Admin
-                                            <small class="text-muted">4 days ago</small>
-                                        </p>
-                                    </a>
-    
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon bg-secondary">
-                                            <i class="mdi mdi-heart"></i>
-                                        </div>
-                                        <p class="notify-details">Carlos Crouch liked
-                                            <b>Admin</b>
-                                            <small class="text-muted">13 days ago</small>
-                                        </p>
-                                    </a>
-                                </div>
 
-    
-                                <!-- All-->
-                                      <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">
-                                          View all
-                                          <i class="fe-arrow-right"></i>
-                                      </a>
-          
+
+                @php
+                use App\Models\Inventory;
+
+                $today = now();
+
+                // Update expired items
+                Inventory::where('expiry_date', '<', $today)
+                        ->where('status', '!=', 'expired')
+                        ->update(['status' => 'expired']);
+
+                // Update out of stock items
+                Inventory::where('quantity', '<=', 0)
+                        ->where('status', '!=', 'out_of_stock')
+                        ->update(['status' => 'out_of_stock']);
+
+                // Retrieve items for notifications
+                $expiredItems = Inventory::where('status', 'expired')->get();
+                $lowStockItems = Inventory::where('quantity', '<', 5) // threshold for low stock
+                                        ->where('status', '!=', 'out_of_stock')
+                                        ->get();
+                $outOfStockItems = Inventory::where('status', 'out_of_stock')->get();
+
+                // Merge all notifications into a single collection
+                $notifications = $expiredItems->merge($lowStockItems)->merge($outOfStockItems);
+
+
+                @endphp
+
+
+
+        <li class="dropdown notification-list topbar-dropdown">
+            <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button">
+                <i class="fe-bell noti-icon"></i>
+                <span class="badge bg-danger rounded-circle noti-icon-badge">{{ $notifications->count() }}</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end dropdown-lg">
+                <div class="dropdown-item noti-title">
+                    <h5 class="m-0">
+                        <span class="float-end">
+                            {{-- <a href="#" class="text-dark"><small>Clear All</small></a> --}}
+                        </span>
+                        Notification
+                    </h5>
+                </div>
+
+                <div class="noti-scroll" data-simplebar>
+                    @foreach($notifications as $item)
+                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <div class="notify-icon 
+                                @if($item->status == 'expired') bg-warning
+                                @elseif($item->status == 'out_of_stock') bg-danger
+                                @elseif($item->quantity < 5) bg-info
+                                @endif">
+                                <i class="mdi mdi-alert"></i>
                             </div>
+                            <p class="notify-details">
 
-                        </li> --}}
+                                {{ $item->product->product_name ?? '' }} - 
+                                @if($item->status == 'expired')
+                                    Expired
+                                @elseif($item->status == 'out_of_stock')
+                                    Out of Stock
+                                @elseif($item->quantity < 5)
+                                    Low Stock
+                                @endif
+                                <small class="text-muted">{{ $item->updated_at->diffForHumans() }}</small>
+                            </p>
+                        </a>
+                    @endforeach
+                </div>
+
+                {{-- <a href="#" class="dropdown-item text-center text-primary notify-item notify-all">
+                    View all <i class="fe-arrow-right"></i>
+                </a> --}}
+            </div>
+        </li>
+
+
+
+
+
+
 
 
 

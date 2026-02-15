@@ -45,7 +45,8 @@ use App\Http\Controllers\frontend\OrderController as FrontendOrderController;
 use App\Http\Controllers\frontend\ReturnShipmentController;
 use App\Http\Controllers\frontend\WishlistController;
 use App\Http\Controllers\SupplierConfirmationController;
-use App\Models\HeroSlider;  
+use App\Models\HeroSlider;
+use App\Models\Inventory;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -253,30 +254,30 @@ use Illuminate\Support\Facades\Mail;
 
         Route::middleware(['auth', 'web'])->group(function () {
         
-            Route::controller(CategoryController::class)->group(function () {
+                Route::controller(CategoryController::class)->group(function () {
 
-            //Showing Data in table
-            Route::get('/category/list', 'CategoryTable')->name('category.list');
-
-
-             //Showing Data in table
-            Route::post('/category/store', 'CategoryStore')->name('store.category');
-
-            
-            //Edit Data in table
-            Route::get('/category/edit/{id}', 'CategoryEdit')->name('edit.category');
+                //Showing Data in table
+                Route::get('/category/list', 'CategoryTable')->name('category.list');
 
 
-            //Update Data in table
-            Route::put('/category/update', 'CategoryUpdate')->name('update.category');
+                //Showing Data in table
+                Route::post('/category/store', 'CategoryStore')->name('store.category');
 
-            
+                
+                //Edit Data in table
+                Route::get('/category/edit/{id}', 'CategoryEdit')->name('edit.category');
 
-            //Delete Data in table
-            Route::get('/category/delete/{id}', 'CategoryDelete')->name('delete.category')->middleware('permission:delete-category');
 
-            
-        });
+                //Update Data in table
+                Route::put('/category/update', 'CategoryUpdate')->name('update.category');
+
+                
+
+                //Delete Data in table
+                Route::get('/category/delete/{id}', 'CategoryDelete')->name('delete.category');
+
+                
+            });
 
         });
 
@@ -1279,6 +1280,14 @@ Route::middleware(['auth', 'web'])->group(function () {
 // |--------------------------------------------------------------------------
 // | FRONTEND CUSTOMER Routes
 // |--------------------------------------------------------------------------
+
+
+
+        // ---------------------------- FOR AI KNOWDLEGE BASE IN INVENTORY
+
+        Route::get('/inventory', [InventoryController::class, 'index']);
+
+
 
 
 

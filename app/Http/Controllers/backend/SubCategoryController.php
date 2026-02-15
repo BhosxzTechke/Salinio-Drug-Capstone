@@ -80,8 +80,16 @@ public function SubCategoryStore(Request $request)
     public function EditSubCategory($id){
         $subcategory = Subcategory::findOrFail($id);
         $categories = Category::orderBy('category_name','ASC')->get();
+
+
+
         return view('SubCategory.EditSubCategory',compact('subcategory','categories'));
     }
+
+
+
+
+
 
 
 

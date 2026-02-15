@@ -28,6 +28,7 @@
                         <!-- end page title -->
 
 
+
 <div class="row">
 
             <div class="col-lg-8 col-xl-6">
@@ -41,6 +42,9 @@
                 <form method="POST" id="SubCatForm" action="{{ route('update.sub-category')}}" enctype="multipart/form-data" >
                     @csrf
                     @method('PUT')
+
+
+                    
 
 
                     <input type="hidden" name="id" value="{{ $subcategory->id }}">
@@ -68,6 +72,9 @@
                                     <label for="name" class="form-label">Category Name <span class="text-danger">*</span></label>
                                 <select name="category_id" class="form-control @error('sub-category') is-invalid @enderror" id="example-select">
                                             <option selected disabled >Select Category </option>
+
+
+
                                             @foreach ($categories as $data)
 
                                             <option value="{{ $data->id }}" {{ $data->id == $subcategory->category_id ? 'selected' : '' }}>{{ $data->category_name }}</option>

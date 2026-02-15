@@ -5,7 +5,9 @@ namespace App\Http\Controllers\backend;
 use App\Http\Controllers\Controller;
 use App\Models\Barangay;
 use App\Models\City;
+use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class BarangayController extends Controller
 {
@@ -44,21 +46,52 @@ class BarangayController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-    public function store(Request $request)
-    {
+public function store(Request $request)
+{
+    try {
+        // Validation
         $request->validate([
             'city_id' => 'required|exists:cities,id',
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('barangays')->where(fn ($query) => $query->where('city_id', $request->city_id)),
+            ],
             'extra_fee' => 'nullable|numeric',
             'is_active' => 'required|boolean',
+        ], [
+            'name.unique' => 'Barangay name already exists in this city.',
         ]);
 
-        Barangay::create($request->all());
+        // Safe creation
+        Barangay::create([
+            'city_id' => $request->city_id,
+            'name' => $request->name,
+            'extra_fee' => $request->extra_fee,
+            'is_active' => $request->boolean('is_active'),
+        ]);
 
-        return redirect()
-            ->route('barangays.index')
-            ->with('success', 'Barangay created successfully.');
+        // Notification
+        $notification = [
+            'message' => 'Barangay created successfully.',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('barangays.index')->with($notification);
+
+    } catch (QueryException $e) {
+        return redirect()->back()->withInput()->with([
+            'message' => 'Database error occurred.',
+            'alert-type' => 'error',
+        ]);
+    } catch (\Exception $e) {
+        return redirect()->back()->withInput()->with([
+            'message' => 'Unexpected error occurred. Please try again.',
+            'alert-type' => 'error',
+        ]);
     }
+}
 
     /**
      * Display the specified resource.
@@ -96,21 +129,55 @@ class BarangayController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function update(Request $request, Barangay $barangay)
-    {
+public function update(Request $request, Barangay $barangay)
+{
+    try {
+        // Validation
         $request->validate([
             'city_id' => 'required|exists:cities,id',
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('barangays')
+                    ->where(fn ($query) => $query->where('city_id', $request->city_id))
+                    ->ignore($barangay->id),
+            ],
             'extra_fee' => 'nullable|numeric',
             'is_active' => 'required|boolean',
+        ], [
+            'name.unique' => 'Barangay name already exists in this city.',
         ]);
 
-        $barangay->update($request->all());
+        // Safe update
+        $barangay->update([
+            'city_id' => $request->city_id,
+            'name' => $request->name,
+            'extra_fee' => $request->extra_fee,
+            'is_active' => $request->boolean('is_active'),
+        ]);
 
-        return redirect()
-            ->route('barangays.index')
-            ->with('success', 'Barangay updated successfully.');
+        // Notification
+        $notification = [
+            'message' => 'Barangay updated successfully.',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('barangays.index')->with($notification);
+
+    } catch (QueryException $e) {
+        return redirect()->back()->withInput()->with([
+            'message' => 'Database error occurred.',
+            'alert-type' => 'error',
+        ]);
+    } catch (\Exception $e) {
+        return redirect()->back()->withInput()->with([
+            'message' => 'Unexpected error occurred. Please try again.',
+            'alert-type' => 'error',
+        ]);
     }
+}
+
 
 
 

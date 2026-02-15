@@ -16,10 +16,14 @@ class Category extends Model
     protected $guarded = [];
 
 
-    public function children()
-{
-    return $this->hasMany(Category::class, 'id');
-}
+
+    //// DROPDOWN EDIT NOT SHOWING THE NEW
+
+//     public function children()
+// {
+//     return $this->hasMany(Category::class, 'id');
+// }
+
 
     // Automatically generate slug when saving
     protected static function booted()
