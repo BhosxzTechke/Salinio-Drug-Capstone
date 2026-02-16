@@ -3,47 +3,88 @@
 
 <section class="bg-gray-50 pt-6">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="relative pb-4">
 
-      <!-- Carousel -->
-      <div id="carousel" class="relative w-full overflow-hidden rounded-xl shadow-lg">
-        <div id="track" class="flex transition-transform duration-700 ease-in-out">
-          @foreach ($HeroSlider as $index => $item)
-          <div class="w-full flex-shrink-0 relative">
-            <img
-              src="{{ $item->image ?? asset('uploads/noimage.png') }}"
-              class="w-full h-56 sm:h-72 md:h-96 lg:h-[500px] object-cover"
-              alt="slide image"
-            />
+  <div class="relative pb-4">
+  <div id="carousel" class="relative w-full overflow-hidden rounded-xl shadow-lg">
+    <div id="track" class="flex transition-transform duration-700 ease-in-out">
 
-            <!-- Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
-              <div class="text-white max-w-lg px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl md:text-4xl ml-11 font-bold mb-3 ">{{ $item->title ?? 'Big Savings on Your Essentials'}}</h2>
-                <p class="mb-4 text-sm md:text-base ml-11">{{ $item->subtitle ?? 'Get exclusive discounts on top pharmacy and wellness products.' }}</p>
-                <a href="{{ $item->link ?? '' }}" target="_blank" class="px-4 py-2 bg-green-500 hover:bg-green-900 rounded-lg text-white text-sm md:text-base ml-11">Learn More</a>
+            @if($HeroSlider && $HeroSlider->count() > 0)
+
+              @foreach ($HeroSlider as $index => $item)
+                <div class="w-full flex-shrink-0 relative">
+                  <img
+                    src="{{ $item->image ?? 'https://images.unsplash.com/photo-1580281657527-47c47eaf4f6f?q=80&w=1920&auto=format&fit=crop' }}"
+                    class="w-full h-56 sm:h-72 md:h-96 lg:h-[500px] object-cover"
+                    alt="slide image"
+                  />
+
+                  <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
+                    <div class="text-white max-w-lg px-4 sm:px-6 lg:px-8">
+                      <h2 class="text-2xl md:text-4xl ml-11 font-bold mb-3">
+                        {{ $item->title ?? 'Big Savings on Your Essentials' }}
+                      </h2>
+                      <p class="mb-4 text-sm md:text-base ml-11">
+                        {{ $item->subtitle ?? 'Get exclusive discounts on top pharmacy and wellness products.' }}
+                      </p>
+                      <a href="{{ $item->link ?? '#' }}"
+                        class="px-4 py-2 bg-green-500 hover:bg-green-900 rounded-lg text-white text-sm md:text-base ml-11">
+                        Learn More
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              @endforeach
+
+            @else
+
+              <!-- Default Slide -->
+              <div class="w-full flex-shrink-0 relative">
+                <img
+                src="https://placehold.co/1920x600/e5e7eb/6b7280?text=No+Hero+Image+Available"
+
+{{-- src="https://images.pexels.com/photos/3683098/pexels-photo-3683098.jpeg?auto=compress&cs=tinysrgb&w=1920" --}}
+                  class="w-full h-56 sm:h-72 md:h-96 lg:h-[500px] object-cover"
+                  alt="default slide"
+                />
+
+                <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
+                  <div class="text-white max-w-lg px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-2xl md:text-4xl ml-11 font-bold mb-3">
+                      Big Savings on Your Essentials
+                    </h2>
+                    <p class="mb-4 text-sm md:text-base ml-11">
+                      Get exclusive discounts on top pharmacy and wellness products.
+                    </p>
+                    <a href="#"
+                      class="px-4 py-2 bg-green-500 hover:bg-green-900 rounded-lg text-white text-sm md:text-base ml-11">
+                      Learn More
+                    </a>
+                  </div>
+                </div>
               </div>
-            </div>
 
+            @endif
 
           </div>
-          @endforeach
+
+          <button id="prev" class="absolute left-4 top-1/2 -translate-y-1/2 btn btn-circle">❮</button>
+          <button id="next" class="absolute right-4 top-1/2 -translate-y-1/2 btn btn-circle">❯</button>
         </div>
 
-        <!-- Arrows -->
-        <button id="prev" class="absolute left-4 top-1/2 -translate-y-1/2 btn btn-circle">❮</button>
-        <button id="next" class="absolute right-4 top-1/2 -translate-y-1/2 btn btn-circle">❯</button>
+        <!-- Dots -->
+        @if($HeroSlider && $HeroSlider->count() > 0)
+          <div class="flex justify-center py-4 gap-2">
+            @foreach ($HeroSlider as $index => $item)
+              <button class="dot btn btn-xs" data-slide="{{ $index }}">
+                {{ $index + 1 }}
+              </button>
+            @endforeach
+          </div>
+        @endif
       </div>
 
-      <!-- Dots -->
-      <div class="flex justify-center py-4 gap-2">
-        @foreach ($HeroSlider as $index => $item)
-          <button class="dot btn btn-xs" data-slide="{{ $index }}">{{ $index + 1 }}</button>
-        @endforeach
-      </div>
 
 
-    </div>
   </div>
 </section>
 
