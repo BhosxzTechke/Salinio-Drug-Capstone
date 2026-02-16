@@ -70,12 +70,12 @@ public function CustomerReturnRequest(Request $request)
 
         DB::commit();
 
-        return redirect()
-            ->route('customer.profile')
-            ->with([
-                'message' => 'Successfully requested return.',
-                'alert-type' => 'success',
-            ]);
+        return back()->with([
+            'message' => 'Return Request Succesfully.',
+            'alert-type' => 'success',
+        ]);
+
+
 
     } catch (\Exception $e) {
         DB::rollBack();
@@ -111,12 +111,11 @@ public function CustomerReturnRequest(Request $request)
 
 
 
-                        return redirect()
-                                ->route('customer.profile')
-                                ->with([
-                                    'message' => 'Successfully customer return.',
-                                    'alert-type' => 'success',
-                                ]);
+                        return back()->with([
+                        'message' => 'Hand To Couries Successfully.',
+                        'alert-type' => 'success',
+                    ]);
+
                 }
 
 }

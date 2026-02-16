@@ -210,6 +210,19 @@ setInterval(loadShipments, 5000);
 
 
 
+
+
+<script>
+        // Print button
+    if (e.target.classList.contains('print-label-btn')) {
+        const orderId = e.target.dataset.orderId;
+        window.open(`/orders/print-label/${orderId}`, '_blank');
+    }
+
+</script>
+
+
+
 {{-- AJAX script --}}
 <script>
 document.addEventListener('click', function (e) {
@@ -236,10 +249,14 @@ document.addEventListener('click', function (e) {
             })
         })
 
+
+
         .then(res => res.json())
         .then(data => {
             if (data.success) {
                 alert('Tracking saved successfully');
+
+
 
                 // PAG KA SUCCESS DISABLED SI INPUT AND SAVING TRACKING NUMBER
                 input.disabled = true;
@@ -397,46 +414,53 @@ $(document).ready(function() {
 
 
 <script>
+$(document).ready(function() {
 
-        $(document).ready(function() {
-            $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+
+
+    $(document).on('click', '.mark-cancelled-order', function(e) {
+        e.preventDefault();
+
+        let id = $(this).data('id');
+
+        Swal.fire({
+            title: 'Cancel this order?',
+            text: 'This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Cancel it!',
+            cancelButtonText: 'No, go back'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                $.post("{{ route('orders.ajax.cancelled') }}", { id: id }, function(data) {
+
+                    if (data.success) {
+                        $('#order-row-' + id).fadeOut();
+                        Swal.fire('Cancelled', data.message, 'success');
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+
+                }).fail(function() {
+                    Swal.fire('Error', 'Unauthorized or session expired', 'error');
+                });
+
             }
-            });
-
-        
-            $('.mark-cancelled-order').click(function() {
-            let id = $(this).data('id');
-
-            Swal.fire({
-                title: 'Cancel this order?',
-                text: 'This action cannot be undone!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Cancel it!',
-                cancelButtonText: 'No, go back'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.post("{{ route('orders.ajax.cancelled') }}", { id: id }, function(data) {
-                        if (data.success) {
-                            $('#order-row-' + id).fadeOut();
-                            Swal.fire('Cancelled', data.message, 'success');
-                        } else {
-                            Swal.fire('Error', data.message, 'error');
-                        }
-
-                    }).fail(function(xhr) {
-                        Swal.fire('Error', 'Unauthorized or session expired', 'error');
-                    });
-                }
-            });
-            });
-
+        });
 
     });
 
+});
 </script>
+
 
 
 

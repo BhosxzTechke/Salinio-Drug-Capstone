@@ -121,7 +121,6 @@
                 // Merge all notifications into a single collection
                 $notifications = $expiredItems->merge($lowStockItems)->merge($outOfStockItems);
 
-
                 @endphp
 
 

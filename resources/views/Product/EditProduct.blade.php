@@ -176,8 +176,8 @@
 
 
         <div class="form-check form-switch mb-4">
-            <input class="form-check-input" type="checkbox" id="is_ecommerce" name="is_ecommerce" value="1"
-                {{ old('is_ecommerce') ? 'checked' : '' }}>
+            <input class="form-check-input" type="checkbox" id="is_ecommerce" name="is_ecommerce"
+                value="1" {{ old('is_ecommerce', $product->is_ecommerce) == 1 ? 'checked' : '' }}>
             <label class="form-check-label" for="is_ecommerce">
                 Ecommerce Product
             </label>
@@ -246,25 +246,28 @@
             </div>
 
 
+
+                        {{-- Product Image --}}
+                <div class="col-md-6 mb-3">
+                    <label for="product_image">Product Image </label>
+                    <input type="file" name="product_image" class="form-control @error('product_image') is-invalid @enderror">
+                    @error('product_image')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- Current Image --}}
+                <div class="col-md-6 mb-3">
+                    <label>Current Image</label>
+                    <img src="{{ $product->product_image ? asset($product->product_image) : url('uploads/noimage.png') }}"
+                        class="rounded-circle avatar-lg img-thumbnail" alt="product-image">
+                </div>
+
+
+
         </div>
 
 
-
-            {{-- Product Image --}}
-            <div class="col-md-6 mb-3">
-                <label for="product_image">Product Image </label>
-                <input type="file" name="product_image" class="form-control @error('product_image') is-invalid @enderror">
-                @error('product_image')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            {{-- Current Image --}}
-            <div class="col-md-6 mb-3">
-                <label>Current Image</label>
-                <img src="{{ $product->product_image ? asset($product->product_image) : url('uploads/noimage.png') }}"
-                    class="rounded-circle avatar-lg img-thumbnail" alt="product-image">
-            </div>
 
     </div> <!-- end row -->
 

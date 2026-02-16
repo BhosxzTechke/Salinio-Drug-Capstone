@@ -39,30 +39,19 @@ class FrontendController extends Controller
             $brand = Brand::all();
 
 
-
-
-            // //// /FIFO TRACKING
-            // $inventory = Inventory::select(
-            //         'product_id',
-            //         DB::raw('SUM(quantity) as total_quantity'),
-            //         DB::raw('MAX(created_at) as latest_date'),
-            //         'selling_price'
-            //     )
-            //     ->where('quantity', '>', 10)
-            //     ->groupBy('product_id', 'selling_price')
-            //     ->orderByDesc('latest_date')
-            //     ->inRandomOrder()
-            //     ->take(8)
-            //     ->get();
-
-    $today = now()->toDateString();
-
+            $today = now()->toDateString();
 
             $inventory = Inventory::where('quantity', '>', 10)
-                ->where(function ($query) use ($today) {
-                    $query->whereNull('expiry_date') // allow items without expiry
-                        ->orWhere('expiry_date', '>', $today); // only include not-expired
+
+                ->whereHas('product', function ($query) {
+                    $query->where('is_ecommerce', true);
                 })
+
+                    ->where(function ($query) use ($today) {
+                        $query->whereNull('expiry_date')
+                            ->orWhere('expiry_date', '>', $today);
+                    })
+
                 ->select(
                     'product_id',
                     'selling_price',
@@ -72,9 +61,6 @@ class FrontendController extends Controller
                 ->groupBy('product_id', 'selling_price')
                 ->orderByDesc('latest_created')
                 ->get();
-
-
-
 
 
 

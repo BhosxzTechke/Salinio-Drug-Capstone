@@ -152,10 +152,6 @@ class ReturnShipmentController extends Controller
 
 
 
-            
-
-
-
             //// Customer
             $customer = $order->customer;
 
@@ -192,12 +188,12 @@ class ReturnShipmentController extends Controller
 
     /////////////// [ IF ADMIN SELECTED REFUND ] ///////////////////////////
 
-    // Refund flow
-if ($request->action === 'refund') {
+        // Refund flow
+    if ($request->action === 'refund') {
 
-    $request->validate([
-        'refund_amount' => 'nullable|numeric|min:1',
-    ]);
+        $request->validate([
+            'refund_amount' => 'nullable|numeric|min:1',
+        ]);
 
     // Safety checks
     if ($return->status !== 'received') {
@@ -248,6 +244,7 @@ if ($request->action === 'refund') {
             ]);
 
             // Restock items
+            // ORDER DETAILS TABLE
             foreach ($order->items as $item) {
 
                 if ($item->product->prescription_required) continue;
@@ -262,13 +259,13 @@ if ($request->action === 'refund') {
                     Inventory::create([
                         'product_id'    => $item->product_id,
                         'supplier_id'   => null,
-                        'batch_number'  => null,
+                        'batch_number'  => $item->batch_number,
                         'expiry_date'   => $expiryDate,
                         'received_date' => now(),
                         'quantity'      => $return->quantity,
-                        'cost_price'    => optional($item->product->PurchaseOrderItems)->cost_price ?? 0,
+                        'cost_price'    => $item->unitcost ?? 0,
                         'selling_price' => $item->product->selling_price ?? 0,
-                        'source'        => 'return',
+                        'source'        => 'costumer_return',
                     ]);
                 }
             }
@@ -277,8 +274,6 @@ if ($request->action === 'refund') {
         \Log::error('Return refund transaction failed: '.$e->getMessage());
         return back()->with('error', 'Something went wrong: '.$e->getMessage());
     }
-
-
 
 
         Mail::to($customer->email)->send(new ReturnStatusMail($return, 'refunded'));

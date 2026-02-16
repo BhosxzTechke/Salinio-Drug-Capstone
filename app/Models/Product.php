@@ -37,9 +37,14 @@ use HasFactory;
         'is_best_seller',
         'is_new_arrival',
         'is_active',
-        'has_expiration'
+        'has_expiration',
+        'is_ecommerce'
     ];
 
+
+    protected $casts = [
+    'is_ecommerce' => 'boolean',
+];
     
     public function Supplier() {
 

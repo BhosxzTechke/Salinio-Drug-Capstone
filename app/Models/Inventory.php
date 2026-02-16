@@ -15,7 +15,7 @@ class Inventory extends Model
 
 
     protected $fillable = [
-        'product_id', 'batch_number', 'expiry_date', 'quantity', 'cost_price', 'selling_price','supplier_id','received_date'
+        'product_id', 'batch_number', 'expiry_date', 'quantity', 'cost_price', 'selling_price','supplier_id','received_date', 'source'
     ];
 
 

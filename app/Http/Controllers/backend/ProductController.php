@@ -78,7 +78,7 @@ $validated = $request->validate([
     'dosage_form' => 'nullable|string|max:50',
 
     //  Ecommerce-only
-    'is_ecommerce' => 'nullable|boolean',
+    'is_ecommerce' => 'sometimes|boolean',
     'description' => 'required_if:is_ecommerce,1|nullable|string|min:1',
     'target_gender' => 'required_if:is_ecommerce,1|string|max:50',
     'age_group' => 'required_if:is_ecommerce,1|string|max:50',
@@ -134,6 +134,9 @@ $validated = $request->validate([
             'dosage_form' => $validated['dosage_form'],
 
             
+            /// if  toggle is on saka ilalagay for pos and ecommerce product
+            'is_ecommerce' => $request->boolean('is_ecommerce'),
+
         // ECOMMERCE FIELDS PART
             'target_gender' => $validated['target_gender'] ?? null,
             'age_group' => $validated['age_group'] ?? null,

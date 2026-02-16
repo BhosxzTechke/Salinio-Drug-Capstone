@@ -82,66 +82,66 @@
                             </button>
 
 
-                            <!-- Modal -->
-    <div class="modal fade"
-        id="returnDetailsModal{{ $data->id }}"
-        tabindex="-1"
-        aria-hidden="true">
+                                    <!-- Modal -->
+            <div class="modal fade"
+                id="returnDetailsModal{{ $data->id }}"
+                tabindex="-1"
+                aria-hidden="true">
 
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Return Request Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-
-                <div class="mb-3">
-                    <strong>Order ID:</strong>
-                    <div>{{ $data->returnRequest->order_id ?? ''}}</div>
-                </div>
-
-                <div class="mb-3">
-                    <strong>Reason:</strong>
-                    <div>{{ ucfirst(str_replace('_',' ', $data->returnRequest->reason ?? '')) }}</div>
-                </div>
-
-                <div class="mb-3">
-                    <strong>Description:</strong>
-                    <div>{{ $data->returnRequest->description ?? '' }}</div>
-                </div>
-
-                <div class="mb-3">
-                    <strong>Quantity:</strong>
-                    <div>{{ $data->returnRequest->quantity ?? '' }}</div>
-                </div>
-
-                <div class="mb-3">
-                    <strong>Images:</strong>
-                    <div class="d-flex gap-2 flex-wrap">
-                        @if($data->returnRequest->photos)
-                            @foreach($data->returnRequest->photos as $img)
-                                <img src="{{ $img }}" class="img-thumbnail" width="120">
-                            @endforeach
-                        @else
-                            <span class="text-muted">No images uploaded</span>
-                        @endif
+                    <div class="modal-header">
+                        <h5 class="modal-title">Return Request Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
+
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <strong>Order ID:</strong>
+                            <div>{{ $data->returnRequest->order_id ?? ''}}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Reason:</strong>
+                            <div>{{ ucfirst(str_replace('_',' ', $data->returnRequest->reason ?? '')) }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Description:</strong>
+                            <div>{{ $data->returnRequest->description ?? '' }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Quantity:</strong>
+                            <div>{{ $data->returnRequest->quantity ?? '' }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Images:</strong>
+                            <div class="d-flex gap-2 flex-wrap">
+                                @if($data->returnRequest->photos)
+                                    @foreach($data->returnRequest->photos as $img)
+                                        <img src="{{ $img }}" class="img-thumbnail" width="120">
+                                    @endforeach
+                                @else
+                                    <span class="text-muted">No images uploaded</span>
+                                @endif
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+
                 </div>
-
             </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    Close
-                </button>
-            </div>
-
         </div>
-    </div>
-</div>
 
 
 
@@ -149,11 +149,6 @@
 
 
                     <td class="return-status-cell">
-
-                        <!-- Status display -->
-                        {{-- <button type="button" class="btn btn-sm btn-secondary return-status-btn">
-                            {{ ucfirst($data->shipment_status ?? 'In Progress') }}
-                        </button> --}}
 
                         <span class="badge badge-pill bg-warning return-status-btn"> {{ ucfirst($data->shipment_status ?? 'In Progress') }}</span>
 
@@ -168,32 +163,32 @@
             @if($data->returnRequest->status == 'refunded' || $data->returnRequest->status == 'rejected')
                 <span class="badge badge-pill bg-danger">{{ $data->returnRequest->status ?? '' }}</span>
 
+            @elseif($data->returnRequest->status == 'approved')
+
+            <span class="badge badge-pill bg-danger">Ongoing</span>
+
             @elseif($data->returnRequest->status == 'received')
-                <a href="{{ route('admin.confirmed.return', $data->returnRequest->id) }}" 
+
+            <a href="{{ route('admin.confirmed.return', $data->returnRequest->id) }}" 
                 class="btn btn-sm btn-success confirm-pickup-btn">
                 Returned Process
                 </a>
-            @else
 
-                        
-                <a href="{{ route('admin.return.mark-received',
-                            $data->returnRequest->id)}}"  class="btn btn-sm btn-dark mark-Confirm-received" onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
-                                Confirm Received</a>
+            @elseif($data->shipment_status == 'delivered')
 
-                            {{-- <a href="{{ route('admin.confirmed.return', $data->returnRequest->id) }}" 
-                            class="btn btn-sm btn-success confirm-pickup-btn" style="display: none;">
-                            Returned Process
-                            </a> --}}
+                <a href="{{ route('admin.return.mark-received',$data->returnRequest->id)}}" 
+                    class="btn btn-sm btn-dark mark-Confirm-received" onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();">
+                Confirm Received</a>
 
-                            
-                        @endif
-                    </td>
+            @endif
+
+        </td>
 
 
 
 
                 
-   <tr>
+<tr>
 
 
 

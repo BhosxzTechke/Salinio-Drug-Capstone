@@ -564,36 +564,36 @@ class OrderController extends Controller
                             ////////////////
 ///////////////////////     COMPLETE ORDER WHEN RIDER DELIVERED IT
                             ///////////////
-public function StatusUpdate(Request $request)
-{
-    DB::beginTransaction();
+    public function StatusUpdate(Request $request)
+    {
+                DB::beginTransaction();
 
-    try {
+            try {
 
-        $order = Order::with('orderDetails')->findOrFail($request->id);
+            $order = Order::with('orderDetails')->findOrFail($request->id);
 
 
-        // Mark order completed
-        if ($request->order_status === 'shipped' || strtolower($request->delivery_status) === 'delivered') {
+            // Mark order completed
+            if ($request->order_status === 'shipped' || strtolower($request->delivery_status) === 'delivered') {
 
-            $order->completed_at   = now();
-            $order->payment_status = 'paid';
-            $order->order_status   = 'completed';
+                $order->completed_at   = now();
+                $order->payment_status = 'paid';
+                $order->order_status   = 'completed';
 
-            $customer = Customer::find($order->customer_id);
+                $customer = Customer::find($order->customer_id);
 
-            if ($customer && !empty($customer->email)) {
-                try {
-                    Mail::to($customer->email)
-                        ->send(new OrderConfirmationMail($order, $customer));
-                } catch (\Exception $e) {
-                    \Log::warning('Order email failed', [
-                        'order_id' => $order->id,
-                        'error'    => $e->getMessage(),
-                    ]);
-                }
+                if ($customer && !empty($customer->email)) {
+                    try {
+                        Mail::to($customer->email)
+                            ->send(new OrderConfirmationMail($order, $customer));
+                    } catch (\Exception $e) {
+                        \Log::warning('Order email failed', [
+                            'order_id' => $order->id,
+                            'error'    => $e->getMessage(),
+                        ]);
+                    }
+                }   
             }
-        }
 
             $order->delivery_status = strtolower($request->delivery_status);
             $order->save();
@@ -617,6 +617,9 @@ public function StatusUpdate(Request $request)
         ]);
     }
 }
+
+
+
 
 
 

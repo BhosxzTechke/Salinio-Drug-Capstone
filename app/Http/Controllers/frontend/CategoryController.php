@@ -28,8 +28,11 @@ public function CategoryProduct(Request $request, $slug)
 
 
 
-    $productIds = Product::where('category_id', $category->id)
-        ->orWhere('subcategory_id', $category->id)
+    $productIds = Product::where('is_ecommerce', true)
+        ->where(function ($query) use ($category) {
+            $query->where('category_id', $category->id)
+                ->orWhere('subcategory_id', $category->id);
+        })
         ->pluck('id');
 
 

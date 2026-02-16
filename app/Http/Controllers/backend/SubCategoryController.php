@@ -62,19 +62,27 @@ public function SubCategoryStore(Request $request)
         ];
 
         return redirect()->route('sub-category.list')->with($notification);
+
+        
     } catch (\Exception $e) {
         // Log the actual error if needed
         \Log::error('SubCategoryStore Error: '.$e->getMessage());
 
         // Error notification
         $notification = [
-            'message' => 'Something went wrong while inserting the Sub Category.',
+            'message' => 'Sub Category Name already used.',
             'alert-type' => 'error'
         ];
 
         return redirect()->back()->withInput()->with($notification);
     }
 }
+
+
+
+
+
+
 
 
     public function EditSubCategory($id){
@@ -118,6 +126,9 @@ public function SubCategoryUpdate(Request $request)
 
         // Update subcategory
         $subcategory = Subcategory::findOrFail($subcatId);
+
+
+        
 
         $subcategory->update([
             'name' => $request->name,

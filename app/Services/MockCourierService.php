@@ -32,6 +32,16 @@ class MockCourierService
                 'updated_at' => now(),
             ]);
 
+
+            
+            DB::table('orders')
+                ->where('id', $order_id)
+                ->update([
+                    'tracking_number' => $tracking_number
+                ]);
+
+
+                
             return $tracking_number;
         }
 

@@ -165,17 +165,26 @@
 
 
 
-                                                <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="text" class="">Paid Amount</label>
-                                                                <p class="text-danger">{{ $Order->pay }}</p>
+                        <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="text" class="">Paid Amount</label>
+                                        <p class="text-danger">{{ $Order->pay }}</p>
 
-                                                            </div>
-                                                        </div> <!-- end col -->
+                                    </div>
+                                </div> <!-- end col -->
 
 
 
-                                                
+                                
+                        <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="text" class="">Shipping Fee</label>
+                                        <p class="text-danger">{{ $Order->shipping_fee ?? '' }}</p>
+
+                                    </div>
+                                </div> <!-- end col -->
+
+                        
 
                                         <div class="col-md-6">
                                                     <div class="mb-3">

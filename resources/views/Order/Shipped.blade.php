@@ -83,7 +83,7 @@
                 <td class="action-cell" data-order-id="{{ $data->id }}"
                     data-courier="{{ $data->courier }}"
                     data-complete-url="{{ route('complete.order.details', $data->id) }}">
-
+{{-- 
                         @if($delivery_status === 'delivered' && in_array($data->courier, ['jnt']) && $tracking_number)
                             <a href="{{ route('complete.order.details', $data->id) }}"
                             class="btn btn-sm btn-dark">
@@ -96,7 +96,7 @@
                             </a>
                         @else
                             <span class="text-gray-600 italic">In Progress</span>
-                        @endif
+                        @endif --}}
 
                 </td>
 

@@ -19,7 +19,13 @@
                   <td style="padding:20px;border-bottom:1px solid #eef2ff;">
                     <table cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
-                        <td style="vertical-align:middle;padding-right:12px;">
+
+
+
+
+                        {{-- <td style="vertical-align:middle;padding-right:12px;">
+
+
                       <div style="width:44px;height:44px;border-radius:22px;background:#eef2ff;display:inline-flex;align-items:center;justify-content:center;">
                             <!-- icon -->
                           <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,
@@ -30,16 +36,22 @@
 
 
                           </div> 
-
-
-
                           
-                        </td>
+                        </td> --}}
+
+
+
+
+
                         <td style="vertical-align:middle;">
                           {{-- <div style="font-size:13px;color:#6b7280;margin-bottom:2px;">New message received</div> --}}
                           <div style="font-size:17px;font-weight:600;color:#0f172a;">{{ $title }}</div>
                         </td>
+
+
                       </tr>
+
+                      
                     </table>
                   </td>
                 </tr>

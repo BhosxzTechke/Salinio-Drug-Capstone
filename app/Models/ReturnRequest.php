@@ -31,18 +31,19 @@ class ReturnRequest extends Model
 
 
 
-public function shipment()
-{
-    return $this->hasOne(return_shipments::class, 'return_request_id', 'id');
+        public function shipment()
+        {
+            return $this->hasOne(return_shipments::class, 'return_request_id', 'id');
 
 
-    }
+        }
 
 
-    public function order()
-    {
-        return $this->belongsTo(Order::class, 'order_id', 'id');
-        // belongsTo(TargetModel, foreign_key_on_this_table, owner_key_on_other_table)
-    }
+        public function order()
+        {
+            return $this->belongsTo(Order::class, 'order_id', 'id');
+        }
+
+
 
 }

@@ -17,7 +17,9 @@ class Orderdetails extends Model
         'quantity',
         'unitcost',
         'total',
-        'profit'
+        'profit',
+        'inventory_id',
+        'expiry_date'
     ];
 
 

@@ -234,6 +234,10 @@ $ProductsItem = Cart::instance('ecommerce')->content()->filter(function($item) u
   </div>
 </div>
 
+<br>
+
+<br>
+
 
 
 

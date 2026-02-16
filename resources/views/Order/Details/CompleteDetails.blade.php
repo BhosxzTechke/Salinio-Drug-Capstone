@@ -45,13 +45,13 @@
                                                     @method('PUT')
 
 
-                                                        <input name="delivery_status" type="text" value="{{$Order->delivery_status ?? ''}}">
+                                                        <input name="delivery_status" type="hidden" value="{{$Order->delivery_status ?? ''}}">
 
 
                                                         <input type="hidden" name="id" value="{{ $Order->id }}">
 
                                                         
-                                                        <input type="text" name="order_status" value="{{$Order->order_status ?? ''}}">
+                                                        <input type="hidden" name="order_status" value="{{$Order->order_status ?? ''}}">
 
                                                     <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Order Details</h5>
 
@@ -136,10 +136,16 @@
                                                                 <p class="text-danger">{{ $Order->pay }}</p>
 
                                                             </div>
-                                                        </div> <!-- end col -->
+                                                </div> <!-- end col -->
 
 
+                                                <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="text" class="">Shipping Fee</label>
+                                                                <p class="text-danger">{{ $Order->shipping_fee ?? '' }}</p>
 
+                                                            </div>
+                                                </div> <!-- end col -->
 
 
 
@@ -185,12 +191,17 @@
                                         </table>
 
 
-    
 
-                                                    <div class="text-end">
-                                                        <button type="submit" name="submit" class="btn btn-info waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i>Complete Orders </button>
-                                                    </div>
-                                                    
+
+                        <div class="text-end">
+
+                        <button type="submit"
+                                    class="btn btn-dark"
+                                    onclick="this.disabled=true; this.innerText='....'; this.form.submit();">
+                                Complete Orders
+                            </button>
+                    </div>
+
                                                 </form>
                                             </div>
                                             <!-- end settings content-->

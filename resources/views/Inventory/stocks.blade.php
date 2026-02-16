@@ -75,7 +75,7 @@
                                 <th>Stock</th> 
                                 <th>Expiration Date</th> 
                                 <th>Received Date</th> 
-                                {{-- <th>Status</th>  --}}
+                                <th>Source</th> 
                             </tr>
                         </thead>
                     
@@ -87,7 +87,7 @@
                 <td> <img src="{{ asset($item->product->product_image) }}" style="width:50px; height: 40px;"> </td>
                 <td>{{ $item->product->product_name ?? '' }}</td>
                 <td>{{ $item['product']['category']['category_name'] ?? '' }}</td>
-                <td>{{ $item['Supplier']['name'] ?? '' }}</td>
+                <td>{{ $item['Supplier']['name'] ?? 'Customer Return' }}</td>
                 <td>{{ $item->product->product_code ?? '' }}</td>
                 <td>
                     @if($item->quantity == 0)
@@ -103,10 +103,14 @@
                 
                 <td>{{ $item->received_date ?? '' }}</td>
 
+                <td>{{ $item->source ?? 'N/A' }}</td>
 
             </tr>
             @endforeach
         </tbody>
+
+
+
                     </table>
 
                 </div> <!-- end card body-->

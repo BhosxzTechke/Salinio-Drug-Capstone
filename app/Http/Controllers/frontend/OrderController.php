@@ -248,7 +248,7 @@ public function paypalSuccess(Request $request)
 
         DB::transaction(function () use ($order, $checkout, $cart, $captureId, $inventoryService) {
 
-            // 🔒 FIFO STOCK DEDUCT FIRST
+            //  FIFO STOCK DEDUCT FIRST
             foreach ($cart->content() as $item) {
 
                 $deduct = $inventoryService->deductFIFO(
@@ -258,17 +258,25 @@ public function paypalSuccess(Request $request)
                 );
 
             ///////////////// AFTER DEDUCTING SA SERVICES THEN BACK ON     
+            foreach ($deduct['layers'] as $layer) {
 
-                Orderdetails::create([
-                    'order_id'   => $order->id,
-                    'product_id' => $item->options->product_id,
-                    'quantity'   => $item->qty,
-                    'price'      => $item->price,
-                    'unitcost'   => $deduct['unit_cost'] / $item->qty,
-                    'profit'     => $deduct['profit'],
-                ]);
+
+                            Orderdetails::create([
+                                'order_id'     => $order->id,
+                                'product_id'   => $item->options->product_id,
+                                'inventory_id' => $layer['inventory_id'],  // 
+                                'batch_number' => $layer['batch_number'],
+                                'expiry_date'  => $layer['expiry_date'],
+                                'quantity'     => $layer['quantity'],
+                                'price'        => $item->price,
+                                'unitcost'     => $layer['unit_cost'],
+                                'profit'       => ($item->price - $layer['unit_cost']) * $layer['quantity'],
+                            ]);
+
+                        }
+
+                
             }
-
 
 
 
@@ -313,6 +321,8 @@ public function paypalSuccess(Request $request)
                 'pay' => $grandTotal,
                 'due' => 0,
                 'paypal_capture_id' => $captureId,
+                'shipping_fee' => $shippingFee,
+
             ]);
 
 
@@ -443,7 +453,7 @@ private function processOrder(Request $request)
                 // KEEP PAYPAL VALUES
                 'payment_method' => 'cod',
                 'payment_status' => 'unpaid',
-
+                'shipping_fee' => $shippingFee,
 
 
                 'pay'             => $grandTotal ?? '',

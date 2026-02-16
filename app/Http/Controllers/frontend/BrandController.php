@@ -21,15 +21,20 @@ public function BrandShow($id)
     $today = now()->toDateString();
 
 
-    // get product IDs from the brand's products relationship
-    $productIds = $brand->products()->pluck('id');
+    $today = now()->toDateString();
 
-    // fetch inventory for those product IDs
+        // get ecommerce-only product IDs from brand
+        $productIds = $brand->products()
+            ->where('is_ecommerce', 1)
+            ->pluck('id');
+
+
+        // fetch inventory
         $inventory = Inventory::whereIn('product_id', $productIds)
-        ->where('quantity', '>', 0)
+            ->where('quantity', '>', 0)
             ->where(function ($query) use ($today) {
-                $query->whereNull('expiry_date') // allow items without expiry
-                    ->orWhere('expiry_date', '>', $today); // only include not-expired
+                $query->whereNull('expiry_date')
+                    ->orWhere('expiry_date', '>', $today);
             })
             ->select(
                 'product_id',
@@ -38,9 +43,11 @@ public function BrandShow($id)
                 DB::raw('MAX(created_at) as latest_created')
             )
             ->groupBy('product_id', 'selling_price')
-        ->latest()
-        ->paginate(12);
+            ->latest()
+            ->paginate(12);
 
+
+            
 
 
             $inventoryQuery = Inventory::where('quantity', '>', 0);

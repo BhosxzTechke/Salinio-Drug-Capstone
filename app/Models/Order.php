@@ -53,9 +53,9 @@ class Order extends Model
         'courier',
         'tracking_number',
         'paypal_order_id',
-        'paypal_capture_id'
+        'paypal_capture_id',
+        'shipping_fee'
             
-
     ];
 
         protected $casts = [
