@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Subcategory;
 use App\Models\Category;
 use Illuminate\Http\Request;
-
+use Illuminate\Validation\Rule;
 
 class SubCategoryController extends Controller
 {
@@ -37,17 +37,21 @@ public function SubCategoryStore(Request $request)
             $request->validate([
                 'name' => [
                     'required',
-                    'unique:subcategories,name',
-                    'regex:/^[A-Za-z0-9 _-]+$/'
+                    'regex:/^[A-Za-z0-9 _-]+$/',
+                    Rule::unique('subcategories')->where(function ($query) use ($request) {
+                        return $query->where('category_id', $request->category_id);
+                    }),
                 ],
                 'category_id' => 'required|exists:categories,id',
             ], [
                 'name.required' => 'Please input Sub Category Name',
-                'name.unique' => 'Sub Category Name already used',
+                'name.unique' => 'Sub Category Name already exists under this category',
                 'name.regex' => 'SubCategory name can only contain letters, numbers, spaces, hyphens, and underscores',
                 'category_id.required' => 'Please select a Category Name',
                 'category_id.exists' => 'Selected Category does not exist',
             ]);
+
+
 
         // Insert into database
         Subcategory::create([
@@ -91,6 +95,7 @@ public function SubCategoryStore(Request $request)
 
 
 
+
         return view('SubCategory.EditSubCategory',compact('subcategory','categories'));
     }
 
@@ -108,21 +113,24 @@ public function SubCategoryUpdate(Request $request)
     $subcatId = $request->id;
 
     try {
-        // Validate request
-        $request->validate([
-            'name' => [
-                'required',
-                'unique:subcategories,name,' . $subcatId,
-                'regex:/^[A-Za-z0-9 _-]+$/'
-            ],
-            'category_id' => 'required|exists:categories,id',
-        ], [
-            'name.required' => 'Please input Sub Category Name',
-            'name.unique' => 'Sub Category Name already used',
-            'name.regex' => 'SubCategory name can only contain letters, numbers, spaces, hyphens, and underscores',
-            'category_id.required' => 'Please select a Category Name',
-            'category_id.exists' => 'Selected Category does not exist',
-        ]);
+
+
+                $request->validate([
+                    'name' => [
+                        'required',
+                        'regex:/^[A-Za-z0-9 _-]+$/',
+                        Rule::unique('subcategories')->ignore($subcatId)->where(function ($query) use ($request) {
+                            return $query->where('category_id', $request->category_id);
+                        }),
+                    ],
+                    'category_id' => 'required|exists:categories,id',
+                ], [
+                    'name.required' => 'Please input Sub Category Name',
+                    'name.unique' => 'Sub Category Name already exists under this category',
+                    'name.regex' => 'SubCategory name can only contain letters, numbers, spaces, hyphens, and underscores',
+                    'category_id.required' => 'Please select a Category Name',
+                    'category_id.exists' => 'Selected Category does not exist',
+                ]);
 
         // Update subcategory
         $subcategory = Subcategory::findOrFail($subcatId);

@@ -76,7 +76,7 @@
 
             
                         <div class="mb-3">
-                        <label for="example-fileinput" class="form-label">Brand Logo Image <span class="text-danger">*</span></label>
+                        <label for="example-fileinput" class="form-label">Brand Logo Image</label>
                         <input type="file" value="{{ $brand->logo }}" name="image" id="image" class="form-control  @error('image') is-invalid @enderror" >
                                         @error('image')
                                             <span class="text-danger">{{ $message }}</span>

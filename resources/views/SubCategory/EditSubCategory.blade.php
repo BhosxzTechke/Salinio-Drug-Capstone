@@ -77,6 +77,8 @@
 
                                             @foreach ($categories as $data)
 
+                                            
+
                                             <option value="{{ $data->id }}" {{ $data->id == $subcategory->category_id ? 'selected' : '' }}>{{ $data->category_name }}</option>
 
                                     @endforeach

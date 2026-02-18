@@ -171,6 +171,20 @@ public function SavePurchaseOrder(Request $request)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public function ReceivedOrderDetails($id){
 
             $PurchaseOrder = PurchaseOrder::findorfail($id);
@@ -215,6 +229,10 @@ public function SavePurchaseOrder(Request $request)
             
         }
 
+
+
+
+        
 
 public function SaveOrderdeliveries(Request $request)
 {

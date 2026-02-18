@@ -290,10 +290,12 @@ Create Invoice for Customer</button>
             <!-- Product Grid -->
             <div class="row g-2" id="product-card">
                 @foreach($PosData as $key => $item)
+                
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2 product-card" 
                         data-name="{{ strtolower($item->product->product_name) }}" 
                         data-category="{{ $item->product->category_id }}"
                         data-brand="{{ $item->product->brand_id }}">
+
                         <div class="card shadow-sm h-100 text-center p-2" style="border-radius: 12px;">
                             <img src="{{ asset($item->product->product_image) }}" 
                                 class="mx-auto d-block" 
@@ -310,7 +312,9 @@ Create Invoice for Customer</button>
                                     Stock: {{ $item->total_quantity }}
                                 </span>
 
-
+                                <span class="badge bg-danger text-dark mb-1" style="font-size: 0.75rem;">
+                                    {{ $item->prescription_required ? 'Rx' : 'Not Rx' }}
+                                </span>
 
 
                                 <form method="POST" action="{{ url('/pos/add') }}">

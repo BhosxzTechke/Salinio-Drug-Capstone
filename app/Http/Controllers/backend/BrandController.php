@@ -31,7 +31,7 @@ public function StoreBrand(Request $request)
         $request->validate([
             'name' => 'required|string|max:100|unique:brands,name',
             'description' => 'nullable|string|max:500',
-            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10248', // max 10MB
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10248', // max 10MB
         ], [
             'name.required' => 'Please input brand name',
             'name.unique' => 'Brand name already used',
