@@ -707,27 +707,49 @@ class OrderController extends Controller
 
 
 
-
             public function ajaxOrderCancelled(Request $request)
             {
+                DB::transaction(function () use ($request) {
 
-                $order = Order::findOrFail($request->id);
-                $user  = auth('web')->user();
+                    $order = Order::with('orderdetails')->findOrFail($request->id);
+                    $user  = auth('web')->user();
 
-                if (!$user) {
-                    return response()->json(['error' => 'Unauthorized'], 401);
-                }
+                    if (!$user) {
+                        throw new \Exception('Unauthorized');
+                    }
 
-                
-                $order->update([
-                    'order_status'       => 'cancelled',
-                    'cancelled_at'       => now(),
-                    'cancelled_by'       => $user->id,
-                    'cancel_reason' => $request->cancel_reason ?? 'No reason provided',
+                    // Prevent double cancel
+                    if ($order->order_status === 'cancelled') {
+                        throw new \Exception('Order already cancelled');
+                    }
+
+                    // RESTORE INVENTORY (FIFO layer restore)
+                    foreach ($order->orderdetails as $detail) {
+
+                        $inventory = Inventory::find($detail->inventory_id);
+
+                        if ($inventory) {
+                            $inventory->quantity += $detail->quantity;
+                            $inventory->save();
+                        }
+                    }
+
+                    // UPDATE ORDER STATUS
+                    $order->update([
+                        'order_status'  => 'cancelled',
+                        'cancelled_at'  => now(),
+                        'cancelled_by'  => $user->id,
+                        'cancel_reason' => $request->cancel_reason ?? 'No reason provided',
+                    ]);
+
+                });
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Order cancelled and stock restored.'
                 ]);
-
-                return response()->json(['success' => true, 'message' => 'Order cancelled.']);
             }
+
 
 
 

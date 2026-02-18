@@ -29,7 +29,7 @@ class RoleSeede extends Seeder
         // Assign a default role to the first user (optional)
         $user = User::first();
         if ($user) {
-            $user->assignRole('admin');
+            $user->assignRole('Super Admin');
         }
     }
 }

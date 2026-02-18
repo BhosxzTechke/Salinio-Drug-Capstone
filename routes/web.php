@@ -484,13 +484,17 @@ Route::middleware(['auth', 'web'])->group(function () {
         $html .= '<td class="product-code">'.($item->options->code ?? '-').'</td>';
         $html .= '<td class="selling-price">'.$item->price.'</td>';
 
-        $html .= '<td>
-            <input type="number" 
-                class="form-control form-control-sm cart-qty-input validate-qty" 
-                data-rowid="'.$item->rowId.'" 
-                value="'.$item->qty.'" 
-                min="1" style="width: 70px;">
-        </td>';
+            $html .= '<td>
+                <input type="number" 
+                    class="form-control form-control-sm cart-qty-input validate-qty" 
+                    data-rowid="'.$item->rowId.'" 
+                    value="'.$item->qty.'" 
+                    min="1" 
+                    step="5" 
+                    style="width: 70px;">
+            </td>';
+
+
 
         $html .= '<td>
             <input type="number" 
@@ -1336,8 +1340,16 @@ Route::middleware(['auth', 'web'])->group(function () {
 
                     Route::middleware(['auth:customer', 'guard.session'])->group(function () {
                         Route::get('/customer/dashboard', [FrontendController::class, 'index'])
+
                             ->name('customer.dashboard');
                     });
+
+
+
+
+
+
+
 
 
                 ///////////////////////////// REGISTER CUSTOMER /////////////////////////
@@ -1353,19 +1365,14 @@ Route::middleware(['auth', 'web'])->group(function () {
             });
 
 
-
-
-
                 /////////////////// PROFILE CUSTOMER ////////////////////////
             Route::middleware(['auth:customer', 'customer'])->group(function () {
+
+
                 Route::get('/customer/profile', [FrontendController::class, 'ProfileShow'])->name('customer.profile');
                 Route::get('/customer/profile/edit', [FrontendController::class, 'ProfileEdit'])->name('customer.profile.edit');
 
                 Route::get('/customer/chat/admin', [FrontendController::class, 'ChatAdmin'])->name('chat.admin');
-
-
-
-
 
 
 
@@ -1453,6 +1460,11 @@ Route::middleware(['auth', 'web'])->group(function () {
 
                 Route::post('/Customer/Order/mark-cancelled', [FrontendOrderController::class, 'ajaxMarkAsCancelled'])
                     ->name('Customer.order.cancelled');
+
+
+
+
+
 
 
 

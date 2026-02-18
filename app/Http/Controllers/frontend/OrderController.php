@@ -602,35 +602,53 @@ private function processOrder(Request $request)
 
         public function ajaxMarkAsCancelled(Request $request)
         {
-                // if (!$request->ajax()) {
-                //         return response()->json(['error' => 'Invalid request'], 400);
-                // }
+            return DB::transaction(function () use ($request) {
 
-                // $user = auth('customer')->user();
+                $user = auth('customer')->user();
 
-                // if (!$user) {
-                //         return response()->json(['error' => 'Unauthorized'], 401);
-                // }
+                if (!$user) {
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
 
-                $order = Order::findOrFail($request->id);
+                $order = Order::with('orderdetails')
+                    ->where('id', $request->id)
+                    ->where('customer_id', $user->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
-                // Prevent cancelling if already shipped or cancelled
+                    
+                // Prevent invalid cancel
                 if ($order->order_status === 'shipped') {
-                        return response()->json(['error' => 'Order has already been shipped and cannot be cancelled'], 400);
+                    return response()->json(['error' => 'Order already shipped'], 400);
                 }
-                
+
                 if ($order->order_status === 'cancelled') {
-                        return response()->json(['error' => 'Order is already cancelled'], 400);
+                    return response()->json(['error' => 'Order already cancelled'], 400);
                 }
 
-                // Only allow cancelling if status is 'pending' or 'processing'
                 if (!in_array($order->order_status, ['pending', 'processing'])) {
-                        return response()->json(['error' => 'Only pending or processing orders can be cancelled'], 400);
+                    return response()->json(['error' => 'Only pending or processing orders can be cancelled'], 400);
                 }
 
-                $order->order_status = 'cancelled';
-                $order->save();
+                //  RESTORE STOCK (FIFO SAFE)
+                foreach ($order->orderdetails as $detail) {
+                    Inventory::where('id', $detail->inventory_id)
+                        ->increment('quantity', $detail->quantity);
+                }
 
-                return response()->json(['success' => true, 'message' => 'Order cancelled.']);
+                // Update order
+                $order->update([
+                    'order_status' => 'cancelled',
+                    'cancelled_at' => now(),
+                    'cancelled_by' => null, // no admin involved
+
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Order cancelled and stock restored.'
+                ]);
+            });
         }
+
 }

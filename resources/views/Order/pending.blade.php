@@ -109,7 +109,7 @@
                         class="form-control form-control-sm mb-1 tracking-input"
                         data-order-id="{{ $data->id }}"
                         placeholder="Enter J&T Tracking Number"
-                        value="{{ $tracking_number ?? '' }}">
+                        value="{{ $tracking_number ?? '' }}" readonly>
 
                     <button class="btn btn-sm btn-outline-primary print-label-btn {{ $tracking_number ? '' : 'd-none' }}"
                             data-order-id="{{ $data->id }}">

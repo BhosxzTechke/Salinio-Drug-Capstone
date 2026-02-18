@@ -424,30 +424,39 @@ $(document).ready(function () {
         poField.val(randomCode);
     }
 
-        $(document).on('change blur', '.validate-cost, .validate-qty', function () {
-            const $row = $(this).closest('tr');
-            const sellingPrice = parseFloat($row.find('.selling-price').text()) || 0;
-            const costPrice = parseFloat($row.find('.validate-cost').val()) || 0;
-            const qty = parseFloat($row.find('.validate-qty').val()) || 0;
+    $(document).on('change blur', '.validate-cost, .validate-qty', function () {
+        const $row = $(this).closest('tr');
+        const sellingPrice = parseFloat($row.find('.selling-price').text()) || 0;
+        const costPrice = parseFloat($row.find('.validate-cost').val()) || 0;
+        const qty = parseFloat($row.find('.validate-qty').val()) || 0;
 
-            // Basic checks
-            if (qty <= 0) {
-                $(this).addClass('is-invalid');
-                Swal.fire({ icon: 'error', title: 'Quantity must be greater than 0' });
-            } else {
-                $(this).removeClass('is-invalid');
-            }
+        // Quantity validation
+        if (qty <= 0) {
+            $(this).addClass('is-invalid');
+            Swal.fire({ icon: 'error', title: 'Quantity must be greater than 0' });
+        } else {
+            $(this).removeClass('is-invalid');
+        }
 
-            if (sellingPrice <= costPrice) {
-                $row.find('.validate-cost').addClass('is-invalid');
-                Swal.fire({ icon: 'warning', title: 'Selling price must be greater than cost price!' });
-            } else {
-                $row.find('.validate-cost').removeClass('is-invalid');
-            }
-        });
+        // Cost validation: cannot be 0 or negative
+        if (costPrice <= 0) {
+            $row.find('.validate-cost').addClass('is-invalid');
+            Swal.fire({ icon: 'error', title: 'Cost cannot be 0 or negative!' });
+        } else {
+            $row.find('.validate-cost').removeClass('is-invalid');
+        }
 
+        // Selling price must be greater than cost
+        if (sellingPrice <= costPrice && costPrice > 0) {
+            $row.find('.validate-cost').addClass('is-invalid');
+            Swal.fire({ icon: 'warning', title: 'Selling price must be greater than cost price!' });
+        } else if (costPrice > 0) {
+            $row.find('.validate-cost').removeClass('is-invalid');
+        }
+    });
 });
 </script>
+
 
 
 

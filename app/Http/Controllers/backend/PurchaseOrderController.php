@@ -248,6 +248,29 @@ public function SaveOrderdeliveries(Request $request)
         'items.*.batch_number' => 'nullable|string|max:255',
     ]);
 
+
+
+
+    // Loop through each item to validate quantity logic
+    // // Loop through items array from request
+    // foreach ($request->input('items', []) as $index => $item) {
+    //     $quantityOrdered = floatval($item['quantity_ordered'] ?? 0);
+    //     $quantityReceived = floatval($item['quantity_received'] ?? 0);
+
+    //     if ($quantityOrdered <= 0) {
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->withErrors(["Quantity for item #".($index+1)." must be greater than 0."]);
+    //     }
+
+    //     if ($quantityOrdered > $quantityReceived) {
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->withErrors(["Quantity for item #".($index+1)." cannot exceed quantity received."]);
+    //     }
+    // }
+
+
     if ($validator->fails()) {
         return redirect()->back()
             ->withErrors($validator)
@@ -256,6 +279,8 @@ public function SaveOrderdeliveries(Request $request)
     }
 
     DB::beginTransaction();
+
+    
 
     try {
         // 2. Create Delivery record
@@ -283,6 +308,7 @@ public function SaveOrderdeliveries(Request $request)
 
 
 
+
             // 4. Update inventory (FIFO)
             $supplierId = $item['supplier_id'] ?? ($po->supplier_id ?? null);
 
@@ -297,6 +323,10 @@ public function SaveOrderdeliveries(Request $request)
                 $inventoryRow->status = 'active';
                 $inventoryRow->save();
                 
+
+
+
+
             } else {
                 Inventory::create([
                     'product_id' => $item['product_id'],
@@ -310,6 +340,9 @@ public function SaveOrderdeliveries(Request $request)
                 ]);
             }
         }
+
+
+
 
         // 5. Update PO status
         if ($po) {

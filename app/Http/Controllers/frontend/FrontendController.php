@@ -89,6 +89,13 @@ class FrontendController extends Controller
 
 
 
+            // dd([
+            //     'customer' => auth('customer')->check(),
+            //     'admin' => auth('web')->check(),
+            // ]);
+
+
+
             // If logged in as customer → show customer dashboard
             if (Auth::guard('customer')->check()) {
                 return view('Ecommerce.CustomerDashboard', compact('categori', 'newArrivals', 'bestSellers', 'HeroSlider', 'inventory', 'brand'));

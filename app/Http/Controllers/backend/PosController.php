@@ -371,7 +371,7 @@ public function PaymentWalkin(Request $request)
             'order_source'     => 'POS',
             'customer_id'      => null, // Walk-in
             'order_date'       => Carbon::now(),
-            'order_status'     => 'complete',
+            'order_status'     => 'completed',
             'order_type'     => 'In-Store',
             'total_products'   => Cart::count(),
             'sub_total'        => $subTotal,

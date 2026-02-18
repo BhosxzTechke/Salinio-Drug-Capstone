@@ -40,7 +40,7 @@
 
                     <div class="tab-pane" id="settings">
 
-                        <form method="POST" id="cart-table" action="{{ route('save.deliveries') }}" enctype="multipart/form-data" >
+                        <form id="MyForm" method="POST" id="cart-table" action="{{ route('save.deliveries') }}" enctype="multipart/form-data" >
                             @csrf 
 
 
@@ -201,12 +201,13 @@
     {{-- Quantity Received (default = ordered qty) --}}
     <td>
             <input type="number"
-                value="{{ $data->quantity_ordered }}"
+                value="{{ $data->remaining_qty ?? $data->quantity_ordered }}"
                 name="items[{{ $key }}][quantity_received]"
                 class="form-control quantity_ordered"
                 min="1"
                 max="{{ $data->remaining_qty ?? $data->quantity_ordered }}">
         </td>
+
 
 
 
@@ -263,6 +264,9 @@
                 </div>
                 
             </form>
+
+
+            
         </div>
         <!-- end settings content-->
 
@@ -300,34 +304,64 @@
             });
 
             </script>
-                            
-<script>
+
+
+
+
+       <script>
 $(document).ready(function () {
 
-    $(document).on('change blur', '.quantity_ordered', function () {
-        const $row = $(this).closest('tr');
+    function validateRow($row) {
+        const maxQty = parseFloat($row.find('.quantity_received').val()) || 0;
+        const enteredQty = parseFloat($row.find('.quantity_ordered').val()) || 0;
 
-        const maxQty = parseFloat($row.find('.quantity_received').val()) || 0; // hidden input
-        const enteredQty = parseFloat($(this).val()) || 0;
-
-        // Reset validation
-        $(this).removeClass('is-invalid');
+        $row.find('.quantity_ordered').removeClass('is-invalid');
 
         if (enteredQty <= 0) {
-            $(this).addClass('is-invalid');
+            $row.find('.quantity_ordered').addClass('is-invalid');
             Swal.fire({
                 icon: 'error',
                 title: 'Invalid Quantity',
                 text: 'Quantity received must be greater than 0',
                 timer: 2500
             });
+            return false;
         }
         else if (enteredQty > maxQty) {
-            $(this).addClass('is-invalid');
+            $row.find('.quantity_ordered').addClass('is-invalid');
             Swal.fire({
                 icon: 'warning',
                 title: 'Quantity Too High',
                 text: 'Quantity received cannot be greater than quantity ordered',
+                timer: 2500
+            });
+            return false;
+        }
+
+        return true;
+    }
+
+    // Validate on change or blur
+    $(document).on('change blur', '.quantity_ordered', function () {
+        const $row = $(this).closest('tr');
+        validateRow($row);
+    });
+
+    // Form submission
+    $('#MyForm').on('submit', function (e) {
+        let isValid = true;
+        $(this).find('tr').each(function () {
+            if (!validateRow($(this))) {
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault(); // stop form submission
+            Swal.fire({
+                icon: 'error',
+                title: 'Cannot Save',
+                text: 'Please fix the invalid quantities before saving',
                 timer: 2500
             });
         }
@@ -335,6 +369,10 @@ $(document).ready(function () {
 
 });
 </script>
+
+
+
+
 
 
 <script>

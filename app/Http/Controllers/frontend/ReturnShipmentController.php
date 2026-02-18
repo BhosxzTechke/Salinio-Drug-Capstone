@@ -20,7 +20,7 @@ public function CustomerReturnRequest(Request $request)
     $validated = $request->validate([
         'order_id' => 'nullable|exists:orders,id',
         'reason' => 'required|string|max:255',
-        'description' => 'required|string|min:10',
+        'description' => 'required|string|min:5',
         'quantity' => 'required|integer|min:1',
 
         'images'   => 'nullable|array|max:5',

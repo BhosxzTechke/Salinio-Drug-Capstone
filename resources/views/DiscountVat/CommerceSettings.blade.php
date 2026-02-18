@@ -20,81 +20,78 @@
                 </div>
 
                     <div class="col-sm-9">
+
+
+
                         <div class="tab-content pt-0">
 
 
-                <br>
-                <br>
+                                <br>
+                                <br>
 
+                                {{--                    VAT MAINTANANCE TAB                --}}
+                                <div class="tab-pane fade active show" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                    <form method="POST" action="{{ route('update.vat')}}"  >
+                                        @csrf
 
+                                        <input type="hidden" name="id" value="{{ $vat->id }}">
 
-                {{--                    VAT MAINTANANCE TAB                --}}
-              <div class="tab-pane fade active show" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                <form method="POST" action="{{ route('update.vat')}}"  >
-                    @csrf
+                                        <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Manage VAT Settings</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
 
-                    <input type="hidden" name="id" value="{{ $vat->id }}">
+                                                <div class="mb-3">
+                                                    <label for="brand" class="">Modify VAT</label>
+                                                    <input type="text" value="{{ $vat->name ?? '' }}" name="vatName" class="form-control @error('vatName') is-invalid @enderror" id="vatName" placeholder="Enter VAT Name">
 
+                                                    @error('vatName')
+                                                <span class="text-danger"> {{ $message }} </span>
+                                                @enderror 
+                                                </div>
 
-                    <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Manage VAT Settings</h5>
-                    <div class="row">
-                        <div class="col-md-6">
+                                                <div class="mb-3">
 
-                            <div class="mb-3">
-                                <label for="brand" class="">Modify VAT</label>
-                                <input type="text" value="{{ $vat->name ?? '' }}" name="vatName" class="form-control @error('vatName') is-invalid @enderror" id="vatName" placeholder="Enter VAT Name">
+                                                <input 
+                                                                    type="number" 
+                                                                    step="0.01" 
+                                                                    min="0" 
+                                                                    max="20" 
+                                                                    name="vatRate" 
+                                                                    id="vatRate" 
+                                                                    class="form-control" 
+                                                                    value="{{ old('vatRate', $vat->rate) }}" 
+                                                                    required
+                                                                >
+                                                    @error('vatRate')
+                                                        <span class="text-danger"> {{ $message }} </span>
+                                                        @enderror 
+                                                </div>
 
-                                @error('vatName')
-                            <span class="text-danger"> {{ $message }} </span>
-                            @enderror 
-                            </div>
+                                                        {{-- Dosage Form --}}
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <select name="activeVat" class="form-control" id="dosage_form">
+                                                            <option selected disabled >Select VAT Status </option>
+                                                            <option value="1" {{ $vat->active == 1 ? 'selected' : '' }}>Active</option>
+                                                            <option value="0" {{ $vat->active == 0 ? 'selected' : '' }}>Inactive</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="alert alert-info" role="alert">
+                                                        <i class="mdi mdi-information"></i> <strong>Note:</strong> If VAT is set to inactive, it will default to 12%.
+                                                    </div>
+                                                </div>
 
-                            <div class="mb-3">
+                                            </div>
+                                        </div>
 
-                               <input 
-                                            type="number" 
-                                            step="0.01" 
-                                            min="0" 
-                                            max="100" 
-                                            name="vatRate" 
-                                            id="vatRate" 
-                                            class="form-control" 
-                                            value="{{ old('vatRate', $vat->rate) }}" 
-                                            required
-                                        >
-                                @error('vatRate')
-                                    <span class="text-danger"> {{ $message }} </span>
-                                    @enderror 
-                            </div>
+                                        {{-- @if(Auth::user()->can('Update Business nam')) --}}
+                                                            <div class="text-end">
+                                                                <button type="submit" name="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Update Changes</button>
+                                                            </div>
 
-                                    {{-- Dosage Form --}}
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <select name="activeVat" class="form-control" id="dosage_form">
-                                <option selected disabled >Select VAT Status </option>
-                                <option value="1" {{ $vat->active == 1 ? 'selected' : '' }}>Active</option>
-                                <option value="0" {{ $vat->active == 0 ? 'selected' : '' }}>Inactive</option>
-                            </select>
-                        </div>
-                    </div>
-
-
-
-                </div>
-            </div>
-
-
-
-                 {{-- @if(Auth::user()->can('Update Business nam')) --}}
-                            <div class="text-end">
-                                <button type="submit" name="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Update Changes</button>
-                            </div>
-
-        </div> <!-- end row -->
-    
-
-                            {{-- @endif --}}
-                        </form>
+                                        </div> <!-- end row -->
+                                                                        {{-- @endif --}}
+                </form>
 
   </div>
 
@@ -108,132 +105,103 @@
 
 
  
+<div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
 
-            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+            
 
-
-                
-
-        <div class="text-end">
-            <button type="button" class="btn btn-info add-discount" data-bs-toggle="modal" data-bs-target="#discount-modal">Add Discount</button>
-        </div>
+    <div class="text-end">
+        <button type="button" class="btn btn-info add-discount" data-bs-toggle="modal" data-bs-target="#discount-modal">Add Discount</button>
+    </div>
 
 
 
-                    <!-- Modal -->
-                    <div class="modal fade" id="discount-modal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="discountModalLabel">Add Discount</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" id="discount_id" value="">
+        <!-- Modal -->
+        <div class="modal fade" id="discount-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="discountModalLabel">Add Discount</h5>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="discount_id" value="">
 
-                                    <div class="mb-2">
-                                        <label for="discountname" class="form-label">Discount Name <span class="text-danger">*</span></label>
-                                        <input id="discountname" class="form-control" placeholder="Discount Name">
-                                    </div>
+                        <div class="mb-2">
+                            <label for="discountname" class="form-label">Discount Name <span class="text-danger">*</span></label>
+                            <input id="discountname" class="form-control" placeholder="Discount Name">
+                        </div>
 
-                                    <div class="mb-2">
-                                        <label for="discountrate" class="form-label">Discount Rate (%) <span class="text-danger">*</span></label>
-                                        <input id="discountrate" class="form-control" placeholder="Rate" type="number" min="0">
-                                    </div>
+                        <div class="mb-2">
+                            <label for="discountrate" class="form-label">Discount Rate (%) <span class="text-danger">*</span></label>
+                            <input id="discountrate" class="form-control" placeholder="Rate" type="number" min="0">
+                        </div>
 
-                                    <div class="mb-2">
-                                        <label for="vat_exempt" class="form-label">Is this VAT Exempt? <span class="text-danger">*</span></label>
-                                        <select id="vat_exempt" class="form-control">
-                                            <option value="" selected disabled>Select option</option>
-                                            <option value="1">Yes</option>
-                                            <option value="0">No</option>
-                                        </select>
-                                    </div>
+                        <div class="mb-2">
+                            <label for="vat_exempt" class="form-label">Is this VAT Exempt? <span class="text-danger">*</span></label>
+                            <select id="vat_exempt" class="form-control">
+                                <option value="" selected disabled>Select option</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
 
-                                    <div class="mb-2">
-                                        <label for="is_active" class="form-label">Is this Active? <span class="text-danger">*</span></label>
-                                        <select id="is_active" class="form-control">
-                                            <option value="" selected disabled>Select option</option>
-                                            <option value="1">Active</option>
-                                            <option value="0">Inactive</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary submit-discount">Save</button>
-                                </div>
-                            </div>
+                        <div class="mb-2">
+                            <label for="is_active" class="form-label">Is this Active? <span class="text-danger">*</span></label>
+                            <select id="is_active" class="form-control">
+                                <option value="" selected disabled>Select option</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
                         </div>
                     </div>
 
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary submit-discount">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-
-
-
-
-
-
-
-                    
-<h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Manage Discount Settings</h5>
+        <h5 class="mb-4 text-uppercase"><i class="mdi mdi-percent me-1"></i> Manage Point of Sales Discount Settings</h5>
 
         <table id="basic-datatable" class="table dt-responsive nowrap w-100">
-                <thead>
-                    <tr>
-                        <th>SL</th>
-                        <th>Discount Name</th>
-                        <th>Discount Rate</th>
-                        <th>VAT Exempt</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-
+            <thead>
+                <tr>
+                    <th>SL</th>
+                    <th>Discount Name</th>
+                    <th>Discount Rate</th>
+                    <th>VAT Exempt</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
             </thead>
-                                        
-                                        
-        <tbody>
-
-    @php $sl = 1 @endphp
-        @foreach ($discount as $data)
-        <tr id="discount-row-{{ $data->id }}">
-            <td>{{ $data->id }}</td>
-            <td>{{ $data->name }}</td>
-            <td>{{ $data->rate }}%</td>
-            <td>{{ $data->vat_exempt ? 'Yes' : 'No' }}</td>
-            <td>{{ $data->active ? 'Active' : 'Inactive' }}</td>
-                <td>
-                    <button class="btn btn-sm btn-warning edit-discount" 
-                            data-id="{{ $data->id }}"
-                            data-name="{{ $data->name }}"
-                            data-rate="{{ $data->rate }}"
-                            data-vat="{{ $data->vat_exempt }}"
-                            data-active="{{ $data->active }}">
-                        Edit
-                    </button>
+            <tbody>
+                @php $sl = 1 @endphp
+                @foreach ($discount as $data)
+                <tr id="discount-row-{{ $data->id }}">
+                    <td>{{ $data->id }}</td>
+                    <td>{{ $data->name }}</td>
+                    <td>{{ $data->rate }}%</td>
+                    <td>{{ $data->vat_exempt ? 'Yes' : 'No' }}</td>
+                    <td>{{ $data->active ? 'Active' : 'Inactive' }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning edit-discount" 
+                                data-id="{{ $data->id }}"
+                                data-name="{{ $data->name }}"
+                                data-rate="{{ $data->rate }}"
+                                data-vat="{{ $data->vat_exempt }}"
+                                data-active="{{ $data->active }}">
+                            Edit
+                        </button>
                         <button class="btn btn-sm btn-danger delete-discount" 
                                 data-id="{{ $data->id }}">
                             Delete
                         </button>
-
-
-                </td>
-        </tr>
-    @endforeach
-                                        
-
-
-        </tbody>
-</table>
-
-
-
-     
-            </div>
-
-
-
-
-                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+</div>  </div>
                     </div> <!-- end col-->
                 </div> <!-- end row-->
             </div>

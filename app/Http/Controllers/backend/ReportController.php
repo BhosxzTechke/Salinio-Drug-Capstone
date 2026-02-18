@@ -13,51 +13,52 @@ class ReportController extends Controller
 {
     //
 
-public function dailyReport(Request $request)
-{
-    $fromDate = $request->input('from_date') 
-        ? \Carbon\Carbon::parse($request->input('from_date')) 
-        : \Carbon\Carbon::today();
-    $toDate = $request->input('to_date') 
-        ? \Carbon\Carbon::parse($request->input('to_date')) 
-        : \Carbon\Carbon::today();
+        public function dailyReport(Request $request)
+        {
+            $fromDate = $request->input('from_date') 
+                ? \Carbon\Carbon::parse($request->input('from_date')) 
+                : \Carbon\Carbon::today();
+            $toDate = $request->input('to_date') 
+                ? \Carbon\Carbon::parse($request->input('to_date')) 
+                : \Carbon\Carbon::today();
 
-    $sourceFilter = $request->input('source'); // POS / ECOM
+            $sourceFilter = $request->input('source'); // POS / ECOM
+            
 
-    // Query all completed orders within date range
-    $query = Order::whereBetween('order_date', [$fromDate, $toDate])
-        ->where('order_status', 'completed')
-        ->with(['orderDetails.product']); // include related product data
-
-
-    if ($sourceFilter) {
-        $query->where('order_source', $sourceFilter);
-    }
-
-    $orders = $query->get();
-
-    // Totals
-    $totalSales = $orders->sum('total');
-    $totalOrders = $orders->count();
-    $totalProductsSold = $orders->flatMap->orderDetails->sum('quantity');
-    $totalDiscounts = $orders->sum('discount');
-    $totalVAT = $orders->sum('vat');
+            // Query all completed orders within date range
+            $query = Order::whereBetween('order_date', [$fromDate, $toDate])
+                ->where('order_status', 'completed')
+                ->with(['orderDetails.product']); // include related product data
 
 
+            if ($sourceFilter) {
+                $query->where('order_source', $sourceFilter);
+            }
+
+            $orders = $query->get();
+
+            // Totals
+            $totalSales = $orders->sum('total');
+            $totalOrders = $orders->count();
+            $totalProductsSold = $orders->flatMap->orderDetails->sum('quantity');
+            $totalDiscounts = $orders->sum('discount');
+            $totalVAT = $orders->sum('vat');
 
 
-    return view('Reports.DailyReports', compact(
-        'orders',
-        'totalSales',
-        'totalOrders',
-        'totalProductsSold',
-        'totalDiscounts',
-        'totalVAT',
-        'fromDate',
-        'toDate',
-        'sourceFilter'
-    ));
-}
+
+
+            return view('Reports.DailyReports', compact(
+                'orders',
+                'totalSales',
+                'totalOrders',
+                'totalProductsSold',
+                'totalDiscounts',
+                'totalVAT',
+                'fromDate',
+                'toDate',
+                'sourceFilter'
+            ));
+        }
 
 
 

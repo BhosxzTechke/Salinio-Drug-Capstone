@@ -287,11 +287,14 @@ Create Invoice for Customer</button>
 
 
 
+
+
+
             <!-- Product Grid -->
-            <div class="row g-2" id="product-card">
+            <div class="row g-1" id="product-card">
                 @foreach($PosData as $key => $item)
                 
-                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 product-card" 
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-3 product-card" 
                         data-name="{{ strtolower($item->product->product_name) }}" 
                         data-category="{{ $item->product->category_id }}"
                         data-brand="{{ $item->product->brand_id }}">

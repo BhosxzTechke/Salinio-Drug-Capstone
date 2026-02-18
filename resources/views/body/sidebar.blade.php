@@ -567,7 +567,7 @@
                                     @endif
 
 
-                                    @if(Auth::user()->can('can-view-audit-by-logs'))
+                                    @if(Auth::user()->can('can-view-audit-by-log'))
                                     <li>
                                         <a href="{{ route('audit.log') }}">Audit By Log</a>
                                     </li>

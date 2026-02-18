@@ -171,9 +171,11 @@
 
                 {{-- Pending orders can be cancelled --}}
                 @if (!in_array($order->order_status, ['cancelled', 'shipped', 'completed']))
-                  <button class="btn btn-sm btn-error mark-cancelled-customer" data-id="{{ $order->id }}">
+                  <button class="btn btn-sm btn-error mark-cancelled-customer"  data-id="{{ $order->id }}"  data-url="{{ route('Customer.order.cancelled')  }}" >
                     Cancel
                   </button>
+
+
 
                 {{-- Completed orders can be returned ONLY within return window  7 DAYS--}} 
                 @elseif($order->canBeReturned())
@@ -342,47 +344,66 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
+
+
+
 <script>
-
 $(document).ready(function() {
+
+    // Setup CSRF token globally
     $.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      }
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     });
 
-  
     $('.mark-cancelled-customer').click(function() {
-      let id = $(this).data('id');
 
-      Swal.fire({
-          title: 'Cancel this order?',
-          text: 'This action cannot be undone!',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Yes, Cancel it!',
-          cancelButtonText: 'No, go back'
-      }).then((result) => {
-          if (result.isConfirmed) {
-              $.post("{{ route('Customer.order.cancelled') }}", { id: id }, function(data) {
-                  if (data.success) {
-                      $('#order-row-' + id).fadeOut();
-                      Swal.fire('Cancelled', data.message, 'success');
-                  } else {
-                      Swal.fire('Error', data.message, 'error');
-                  }
+        let id = $(this).data('id');
+        let url = $(this).data('url'); // dynamically get route
 
-              }).fail(function(xhr) {
-                  Swal.fire('Error', 'Unauthorized or session expired', 'error');
-              });
-          }
-      });
+        Swal.fire({
+            title: 'Cancel this order?',
+            text: 'This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Cancel it!',
+            cancelButtonText: 'No, go back'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(data) {
+                        if (data.success) {
+                            $('#order-row-' + id).fadeOut();
+                            Swal.fire('Cancelled', data.message, 'success');
+                        } else {
+                            Swal.fire('Error', data.message, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        // Detailed error message for debugging
+                        let msg = 'Unauthorized or session expired';
+                        if(xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        Swal.fire('Error', msg, 'error');
+                    }
+                });
+
+            }
+
+        });
+
     });
 
-
-    });
-
+});
 </script>
+
 
 
 @endsection
