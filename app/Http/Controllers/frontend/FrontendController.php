@@ -442,8 +442,17 @@ class FrontendController extends Controller
                     'image' => 'nullable|image|max:10240', // 10 MB
                 ]);
 
+
+
                 if ($validator->fails()) {
-                    return back()->withErrors($validator)->withInput();
+                    
+                    $allErrors = implode('<br>', $validator->errors()->all());
+
+                    // Send to session so toaster can display
+                    return back()
+                        ->withInput()
+                        ->with('message', $allErrors)
+                        ->with('alert-type', 'error');
                 }
 
 
@@ -484,14 +493,25 @@ class FrontendController extends Controller
 
                 return redirect()->route('customer.profile')->with($notification);
 
-            } catch (\Exception $e) {
-                return back()->with('error', 'Something went wrong: ' . $e->getMessage())->withInput();
+                } catch (\Throwable $th) {
+                    
+                    $notification = [
+                        'message' => 'Something went wrong: ' . $th->getMessage(),
+                        'alert-type' => 'error'
+                    ];
+                    return back()->with($notification);
+
+
             }
         }
 
 
 
 
+
+
+
+        
 
 
 

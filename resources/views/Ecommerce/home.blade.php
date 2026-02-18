@@ -114,6 +114,10 @@
 
         @foreach ($inventory as $inventories)
 
+
+      <a href="{{ route('product.show', $inventories->product_id) }}">
+
+
         {{-- ONE FORM ONLY --}}
         <form method="POST" action="{{ url('/ecommerce/add') }}" class="w-full">
           @csrf
@@ -198,6 +202,9 @@
 
           </div>
         </form>
+
+
+      </a>
 
         @endforeach
 

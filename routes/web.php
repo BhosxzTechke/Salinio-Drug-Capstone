@@ -962,29 +962,32 @@ Route::middleware(['auth', 'web'])->group(function () {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //////////////////////////////// Shipping Zone Provinces / City / Barangay ///////////////////////
 
+        Route::middleware(['auth', 'web'])->group(function () {
+
 
             Route::controller(ShippingZoneController::class)->group(function () {
-
-
-
 
                 route::get('/all/barangay', 'AllBarangay')->name('all.barangay');
                 route::get('/create/barangay', 'CreateBarangay')->name('barangay.create.form');
 
 
-
              // ---------------   CRUD ----------------
-
-
-                                
                 
         });
+
+});
+
 
 
                     //  POST     /provinces
             //  GET      /provinces/{province}/edit
             //  PUT      /provinces/{province}
             //  DELETE   /provinces/{province}
+
+
+
+    Route::middleware(['auth', 'web'])->group(function () {
+
 
                 Route::resource('provinces', ProvinceController::class);
 
@@ -994,7 +997,7 @@ Route::middleware(['auth', 'web'])->group(function () {
 
                 Route::resource('barangays', BarangayController::class);
 
-
+});
 
 
         //////////////////////////////// PERMISSIONS ///////////////////////
@@ -1359,6 +1362,9 @@ Route::middleware(['auth', 'web'])->group(function () {
                 Route::get('/customer/profile/edit', [FrontendController::class, 'ProfileEdit'])->name('customer.profile.edit');
 
                 Route::get('/customer/chat/admin', [FrontendController::class, 'ChatAdmin'])->name('chat.admin');
+
+
+
 
 
 
