@@ -313,7 +313,7 @@
         <p 
           class="text-gray-600 dark:text-gray-700 text-base sm:text-lg leading-relaxed mb-5 transition-all duration-1000 delay-100"
           :class="visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'">
-          Founded in 2020, Salinio Drug and General Merchandise started as a small local pharmacy with a mission to make quality medicines and everyday essentials accessible to everyone.
+          Founded in 1998, Salinio Drug and General Merchandise started as a small local pharmacy with a mission to make quality medicines and everyday essentials accessible to everyone.
         </p>
         <p 
           class="text-gray-600 dark:text-gray-700 text-base sm:text-lg leading-relaxed transition-all duration-1000 delay-200"
