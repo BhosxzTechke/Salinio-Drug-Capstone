@@ -97,7 +97,6 @@
 <section class="bg-gray-50 pt-10">
 
 
-  <a href="{{ route('product.show', $inventory->product_id) }}">
   <div class="max-w-6xl mx-auto px-4">
     <div class="bg-white shadow-sm rounded-xl overflow-hidden">
       <div class="p-6">
@@ -113,6 +112,10 @@
 
 
         @foreach ($inventory as $inventories)
+
+
+          <a href="{{ route('product.show', $inventories->product_id) }}">
+
 
         {{-- ONE FORM ONLY --}}
         <form method="POST" action="{{ url('/ecommerce/add') }}" class="w-full">
@@ -199,6 +202,8 @@
           </div>
         </form>
 
+          </a>
+
         @endforeach
 
         </div>
@@ -209,7 +214,6 @@
   </div>
 
 
-  </a>
 
 
 </section>
