@@ -466,7 +466,6 @@ private function processOrder(Request $request)
 
         
 
-
             foreach ($cart->content() as $item) {
 
                 $deduct = $inventoryService->deductFIFO(
@@ -475,14 +474,25 @@ private function processOrder(Request $request)
                     $item->price
                 );
 
-                Orderdetails::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item->options->product_id,
-                    'quantity' => $item->qty,
-                    'price' => $item->price,
-                    'unitcost' => $deduct['unit_cost'] / $item->qty,
-                    'profit' => $deduct['profit'],
-                ]);
+            ///////////////// AFTER DEDUCTING SA SERVICES THEN BACK ON     
+            foreach ($deduct['layers'] as $layer) {
+
+
+                            Orderdetails::create([
+                                'order_id'     => $order->id,
+                                'product_id'   => $item->options->product_id,
+                                'inventory_id' => $layer['inventory_id'],  // 
+                                'batch_number' => $layer['batch_number'],
+                                'expiry_date'  => $layer['expiry_date'],
+                                'quantity'     => $layer['quantity'],
+                                'price'        => $item->price,
+                                'unitcost'     => $layer['unit_cost'],
+                                'profit'       => ($item->price - $layer['unit_cost']) * $layer['quantity'],
+                            ]);
+
+                        }
+
+                
             }
 
 
