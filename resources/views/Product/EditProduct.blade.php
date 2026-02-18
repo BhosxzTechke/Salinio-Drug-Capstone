@@ -113,21 +113,7 @@
             @enderror
         </div>
 
-        {{-- Dosage Form --}}
-        <div class="col-md-6 mb-3">
-                <label for="dosage_form">Dosage Form (Optional)</label>
-            <select name="dosage_form" class="form-control @error('dosage_form') is-invalid @enderror">
-                @php $dosageOptions = ['Tablet','Capsule','Syrup','Cream','Ointment']; @endphp
-                @foreach($dosageOptions as $option)
-                    <option value="{{ $option }}" {{ old('dosage_form', $product->dosage_form) == $option ? 'selected' : '' }}>
-                        {{ $option }}
-                    </option>
-                @endforeach
-            </select>
-            @error('dosage_form')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
+
 
 
 

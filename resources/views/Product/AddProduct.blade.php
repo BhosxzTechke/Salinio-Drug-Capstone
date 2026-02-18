@@ -148,29 +148,6 @@
             </div>
         </div>
 
-        {{-- Dosage Form --}}
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="dosage_form">Dosage Form (Optional)</label>
-                <select name="dosage_form"
-                        class="form-control @error('dosage_form') is-invalid @enderror"
-                        id="dosage_form">
-                    <option selected disabled>Select Dosage</option>
-                    @foreach (['Tablet', 'Capsule', 'Syrup', 'Cream', 'Ointment'] as $dosage)
-                        <option value="{{ $dosage }}" {{ old('dosage_form') == $dosage ? 'selected' : '' }}>
-                            {{ $dosage }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('dosage_form')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-
-
-
- 
 
 
 

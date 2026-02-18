@@ -63,19 +63,14 @@ $validated = $request->validate([
         'max:100',
         Rule::unique('products')->where(function ($query) use ($request) {
             $query->where('brand_id', $request->brand_id);
-
-            if ($request->filled('dosage_form')) {
-                $query->where('dosage_form', $request->dosage_form);
-            } else {
-                $query->whereNull('dosage_form');
-            }
         })->ignore($request->id),
+
+
     ],
 
     'category_id' => 'required|integer|exists:categories,id',
     'subcategory_id' => 'required|integer|exists:subcategories,id',
     'brand_id' => 'required|integer|exists:brands,id',
-    'dosage_form' => 'nullable|string|max:50',
 
     //  Ecommerce-only
     'is_ecommerce' => 'sometimes|boolean',
@@ -131,7 +126,6 @@ $validated = $request->validate([
             'subcategory_id' => $validated['subcategory_id'],
             'brand_id' => $validated['brand_id'],
             'has_expiration' => $request->has('has_expiration'),
-            'dosage_form' => $validated['dosage_form'],
 
             
             /// if  toggle is on saka ilalagay for pos and ecommerce product
@@ -149,7 +143,7 @@ $validated = $request->validate([
         ]);
 
         return redirect()->route('product.list')->with([
-            'message' => 'Product inserted successfully with Cloudinary image',
+            'message' => 'Product inserted successfully ',
             'alert-type' => 'success'
         ]);
 
@@ -266,11 +260,6 @@ public function UpdateProduct(Request $request)
                 'max:100',
                 Rule::unique('products')->where(function ($query) use ($request) {
                     $query->where('brand_id', $request->brand_id);
-                    if ($request->filled('dosage_form')) {
-                        $query->where('dosage_form', $request->dosage_form);
-                    } else {
-                        $query->whereNull('dosage_form');
-                    }
                 })
                 ->ignore($request->id),
             ],
@@ -279,7 +268,6 @@ public function UpdateProduct(Request $request)
             'subcategory_id'        => 'required|integer|exists:subcategories,id',
             'brand_id'              => 'required|integer|exists:brands,id',
             'description'           => 'required|string|min:10',
-            'dosage_form'           => 'required|string|max:50',
 
             /// ECOMMERCE FIELDS VALIDATION PART
             'target_gender' => 'required_if:is_ecommerce,1|string|max:50',

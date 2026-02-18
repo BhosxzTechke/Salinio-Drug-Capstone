@@ -598,6 +598,8 @@ Route::middleware(['auth', 'web'])->group(function () {
         Route::get('/supplier/confirm/{token}', [SupplierConfirmationController::class, 'show'])
         ->name('supplier.confirm');
 
+        
+
         Route::post('/supplier/confirm/{token}', [SupplierConfirmationController::class, 'store'])
             ->name('supplier.confirm.store');
 
