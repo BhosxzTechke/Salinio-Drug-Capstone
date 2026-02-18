@@ -83,6 +83,8 @@ class CustomerRegisteredController extends Controller
             }
         }
 
+        
+
     
 
 

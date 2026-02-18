@@ -95,6 +95,9 @@
 @if($inventory)
 
 <section class="bg-gray-50 pt-10">
+
+
+  <a href="{{ route('product.show', $inventory->product_id) }}">
   <div class="max-w-6xl mx-auto px-4">
     <div class="bg-white shadow-sm rounded-xl overflow-hidden">
       <div class="p-6">
@@ -204,6 +207,11 @@
       </div>
     </div>
   </div>
+
+
+  </a>
+
+
 </section>
 
 
