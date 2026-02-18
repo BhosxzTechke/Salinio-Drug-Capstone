@@ -43,7 +43,7 @@ class ChatController extends Controller
 
                     Chat::create([
                         'sender_id' => $senderId,
-                        'receiver_id' => 1,
+                        'receiver_id' => 5,
                         'message' => $request->message
                     ]);
 
