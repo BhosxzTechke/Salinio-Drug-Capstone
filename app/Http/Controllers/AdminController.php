@@ -381,11 +381,19 @@ public function StoreAdmin(Request $request)
     $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
-        'phone' => 'required|numeric|unique:users,phone',
+        'phone' => [
+            'required',
+            'unique:users,phone',
+            'regex:/^(?:\+639|09)\d{9,12}$/', // allows +639XXXXXXXXX or 09XXXXXXXXX, total 11-15 digits
+        ],
         'role' => 'required|string',
         'vehicle_type' => $request->role === 'Rider' ? 'required|string|max:255' : 'nullable',
         'availability' => $request->role === 'Rider' ? 'required|in:available,busy' : 'nullable',
+    ], [
+        'phone.regex' => 'Phone number must start with +639 or 09 and be between 11 to 15 digits.',
     ]);
+
+
 
     if ($request->role === 'superadmin') {
         $superadminCount = User::role('superadmin')->count();
@@ -449,10 +457,18 @@ public function UpdateAdmin(Request $request)
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'required|numeric|unique:users,phone,' . $user->id,
+            'phone' => [
+                'required',
+                'unique:users,phone,' . $user->id,
+                'regex:/^(?:\+639|09)\d{9,12}$/', // only +639 or 09, 11-15 digits total
+            ],
             'role' => 'required|string',
+        ], [
+            'phone.regex' => 'Phone number must start with +639 or 09 and be between 11 to 15 digits.',
         ]);
 
+
+        
         // Reset password logic
         if ($request->has('reset_password') && $request->filled('admin_password')) {
             $admin = Auth::guard('web')->user();
@@ -533,29 +549,46 @@ public function UpdateAdmin(Request $request)
     }
 
 
-    public function StoreBusinessName(Request $request){
 
 
-        $businessTitle = $request->id;
-
-        $request->validate([
-            'business_name' => 'required|string|max:255',
-        ]);
 
 
-        BusinessTitle::findorfail($businessTitle)->update([
-            'business_name' => $request->business_name,
+        public function StoreBusinessName(Request $request)
+        {
+            $businessTitleId = $request->id;
 
-        ]);
-        
-        $notification = array(
-            'message' => 'Business Title Updated Successfully',
-            'alert-type' => 'success'
-        );
+            $request->validate([
+                'business_name' => 'required|string|max:255',
+            ]);
 
-        return redirect()->back()->with($notification); 
+            $businessTitle = BusinessTitle::findOrFail($businessTitleId);
 
-    }
+            // Store old value before update
+            $oldName = $businessTitle->business_name;
+
+            // Update
+            $businessTitle->update([
+                'business_name' => $request->business_name,
+            ]);
+
+            // Log activity
+            activity('business_title')
+                ->causedBy(auth()->guard('web')->user())
+                ->performedOn($businessTitle)
+                ->withProperties([
+                    'old' => $oldName,
+                    'new' => $request->business_name,
+                ])
+                ->log('Business name updated');
+
+            $notification = array(
+                'message' => 'Business Title Updated Successfully',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->back()->with($notification);
+        }
+
 
 
 
@@ -631,27 +664,38 @@ public function UpdateAdmin(Request $request)
 
 
 
+
                 public function BackupNow()
-                    {
-                        $php = '"C:\\xampp\\php\\php.exe"';
-                        $artisan = base_path('artisan');
+                {
+                    $php = '"C:\\xampp\\php\\php.exe"';
+                    $artisan = base_path('artisan');
 
-                        $cmd = $php . ' ' . $artisan . ' backup:run';
+                    $cmd = $php . ' ' . $artisan . ' backup:run';
 
-                        exec($cmd, $output, $result);
+                    exec($cmd, $output, $result);
 
-                        if ($result === 0) {
-                            return back()->with([
-                                'message' => 'Backup completed successfully!',
-                                'alert-type' => 'success'
-                            ]);
-                        } else {
-                            return back()->with([
-                                'message' => 'Backup failed — check logs.',
-                                'alert-type' => 'error'
-                            ]);
-                        }
+                    // Audit log
+                    activity('backup')
+                        ->causedBy(auth()->guard('web')->user()) // web guard
+                        ->withProperties([
+                            'command' => $cmd,
+                            'output' => $output,
+                            'result' => $result === 0 ? 'success' : 'failure'
+                        ])
+                        ->log($result === 0 ? 'Backup completed successfully' : 'Backup failed');
+
+                    if ($result === 0) {
+                        return back()->with([
+                            'message' => 'Backup completed successfully!',
+                            'alert-type' => 'success'
+                        ]);
+                    } else {
+                        return back()->with([
+                            'message' => 'Backup failed — check logs.',
+                            'alert-type' => 'error'
+                        ]);
                     }
+                }
 
 
 

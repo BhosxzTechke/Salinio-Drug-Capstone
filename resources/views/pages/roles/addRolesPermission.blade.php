@@ -129,6 +129,9 @@
 
 
 
+
+
+
                     <!-- RIGHT: PERMISSIONS -->
                     <div class="permission-content">
                         @foreach ($permissionGroups as $index => $group)

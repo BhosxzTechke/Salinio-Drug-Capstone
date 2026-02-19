@@ -18,6 +18,8 @@
             <p class="text-gray-700 mb-2"><strong>Order ID:</strong> {{ $order->id }}</p>
             <p class="text-gray-700 mb-2"><strong>Reason:</strong> {{ $returnRequest->reason }}</p>
             <p class="text-gray-700 mb-3"><strong>Description:</strong> {{ $returnRequest->description }}</p>
+            <p class="text-gray-700 mb-3"><strong>Tracking Number:</strong> {{ $returnRequest->shipment->tracking_number ?? '' }}</p>
+
             <p class="mb-4">
                 <strong>Status:</strong>
             @php
@@ -49,6 +51,8 @@
                 </form>
             @endif
 
+
+
             @if($returnRequest->images)
                 <div class="mt-6">
                     <p class="text-gray-700 font-medium mb-3">Uploaded Images:</p>
@@ -62,6 +66,12 @@
         </div>
 
         @else
+
+
+
+
+
+
 
         <div class="card shadow-sm rounded-lg overflow-hidden border border-gray-200">
             <div class="card-header bg-white border-b border-gray-200 p-6">

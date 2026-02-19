@@ -12,7 +12,10 @@
             <p>
                 <strong>Order #:</strong> {{ $requestData->order->id ?? '' }} <br>
                 <strong>PayPal TXN:</strong> {{ $requestData->order->paypal_order_id ?? '' }} <br>
-                <strong>Paid Amount:</strong> ₱{{ $requestData->order->total ?? '' }}
+                <strong>Paid Amount:</strong> ₱{{ $requestData->order->total ?? '' }} <br>
+                <strong>Customer Payment Method:</strong> {{ $requestData->order->payment_method == 'cod' ? 'Cash On Delivery' : 'PayPal' }}
+
+
             </p>
 
             <form method="POST" action="{{ route('admin.handle.return', $requestData->id )}}">
@@ -50,8 +53,6 @@
                         <label class="form-label">Refund Reason</label>
                         <select class="form-select" name="refund_reason">
                             <option value="ITEM_RETURNED">Item Returned</option>
-                            <option value="DAMAGED">Damaged</option>
-                            <option value="OTHER">Other</option>
                         </select>
                     </div>
                 </div>

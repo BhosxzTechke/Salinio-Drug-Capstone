@@ -47,8 +47,54 @@
                 <td>{{ optional($log->causer)->name ?? 'System' }}</td>
                 <td>{{ $log->description }}</td>
                 <td>{{ class_basename($log->subject_type) }}</td>
-                <td><pre>{{ json_encode($log->properties['old'] ?? [], JSON_PRETTY_PRINT) }}</pre></td>
-                <td><pre>{{ json_encode($log->properties['new'] ?? [], JSON_PRETTY_PRINT) }}</pre></td>
+
+
+                        <td>
+                            @php
+                                $old = $log->properties['old'] ?? null;
+                            @endphp
+
+                            @if(is_array($old))
+                                <ul class="mb-0">
+                                    @foreach($old as $key => $value)
+                                        <li>
+                                            <strong>{{ ucfirst(str_replace('_',' ',$key)) }}:</strong>
+                                            {{ is_array($value) ? implode(', ', $value) : $value }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @elseif(!empty($old))
+                                {{ $old }}
+                            @else
+                                —
+                            @endif
+                        </td>
+
+
+
+
+                    <td>
+                        @php
+                            $new = $log->properties['new'] ?? null;
+                        @endphp
+
+                        @if(is_array($new))
+                            <ul class="mb-0">
+                                @foreach($new as $key => $value)
+                                    <li>
+                                        <strong>{{ ucfirst(str_replace('_',' ',$key)) }}:</strong>
+                                        {{ is_array($value) ? implode(', ', $value) : $value }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @elseif(!empty($new))
+                            {{ $new }}
+                        @else
+                            —
+                        @endif
+                    </td>
+
+
                 <td>{{ $log->created_at }}</td>
             </tr>
                     @endforeach

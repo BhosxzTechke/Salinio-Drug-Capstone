@@ -43,23 +43,20 @@ class PurchaseOrderController extends Controller
 
 
 
+
 public function SavePurchaseOrder(Request $request)
 {
     try {
-    
+
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
-        //   'cost_price' => 'required|numeric|min:1'
         ], [
             'supplier_id.required' => 'Please select a supplier.',
         ]);
 
-
-        
         $po_number = 'PO-' . strtoupper(uniqid());
 
         $cart = Cart::instance('purchaseOrder')->content();
-
 
         if ($cart->isEmpty()) {
             return back()->with([
@@ -68,16 +65,7 @@ public function SavePurchaseOrder(Request $request)
             ]);
         }
 
-
-        // $purchase = PurchaseOrder::create([
-        //     'po_number' => $po_number,
-        //     'supplier_id' => $request->supplier_id,
-        //     'expected_delivery_date' => $request->expected_delivery_date,
-        //     'status' => 'sent',
-        // ]);
-
-
-        #1 purchasing
+        #1 Create Purchase Order
         $purchase = PurchaseOrder::create([
             'po_number' => $po_number,
             'supplier_id' => $request->supplier_id,
@@ -85,17 +73,15 @@ public function SavePurchaseOrder(Request $request)
             'status' => 'sent',
         ]);
 
-
-        #2 token for supplier email
+        #2 Generate token for supplier email
         $purchase->supplier_confirmation_token = Str::uuid();
         $purchase->save();
 
-
         $confirmationUrl = route('supplier.confirm', $purchase->supplier_confirmation_token);
 
-
+        $itemsData = [];
         foreach ($cart as $item) {
-            $cost = $item->options->cost_price ?? 0;    
+            $cost = $item->options->cost_price ?? 0;
             $selling = $item->price ?? 0;
 
             if ($selling <= $cost) {
@@ -104,42 +90,52 @@ public function SavePurchaseOrder(Request $request)
                 ]);
             }
 
-
-
-
-            PurchaseOrderItem::create([
+            $poItem = PurchaseOrderItem::create([
                 'purchase_order_id' => $purchase->id,
                 'product_id'        => $item->id,
                 'quantity_ordered'  => $item->qty,
                 'cost_price'        => $cost,
                 'line_total'        => $cost * $item->qty,
             ]);
+
+            $itemsData[] = [
+                'product' => $item->name,
+                'qty' => $item->qty,
+                'cost_price' => $cost,
+                'line_total' => $cost * $item->qty,
+            ];
         }
 
+        #3 Send email to supplier
+        $supplier = $purchase->supplier;
+        Mail::to($supplier->email)
+            ->send(new PurchaseOrderMail($purchase, $confirmationUrl));
 
-                #3 supplier email needed for mailing
-            $supplier = $purchase->supplier;
+        #4 Audit log
+        activity('purchase_order')
+            ->causedBy(auth()->guard('web')->user()) // force web guard
+            ->performedOn($purchase)
+            ->withProperties([
+                'po_number' => $purchase->po_number,
+                'supplier' => $supplier->name,
+                'items' => $itemsData,
+                'expected_delivery_date' => $purchase->expected_delivery_date,
+            ])
+            ->log('Purchase Order created');
 
-            Mail::to($supplier->email)
-                ->send(new PurchaseOrderMail($purchase, $confirmationUrl));
-
-
-    
-                
+        #5 Clear cart
         Cart::instance('purchaseOrder')->destroy();
 
-            return redirect()->route('purchase.order')->with([
-                'message' => 'Purchase Order successfully created!',
-                'alert-type' => 'success',
-            ]);
+        return redirect()->route('purchase.order')->with([
+            'message' => 'Purchase Order successfully created!',
+            'alert-type' => 'success',
+        ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
-        // Laravel handles validation errors automatically
         throw $e;
 
     } catch (\Exception $e) {
         \Log::error('Purchase Order Save Error: ' . $e->getMessage());
-            // dd($e->getMessage());
 
         return back()->with([
             'message' => 'Something went wrong while saving the purchase order. Please try again.',
@@ -147,6 +143,11 @@ public function SavePurchaseOrder(Request $request)
         ]);
     }
 }
+
+
+
+
+
 
 
 
@@ -232,11 +233,9 @@ public function SavePurchaseOrder(Request $request)
 
 
 
-        
-
-public function SaveOrderdeliveries(Request $request)
+ public function SaveOrderdeliveries(Request $request)
 {
-    // 1. Validate request
+    // 1️⃣ Validate request
     $validator = Validator::make($request->all(), [
         'purchase_order_id' => 'required|exists:purchase_orders,id',
         'delivery_date' => 'nullable|date',
@@ -248,29 +247,6 @@ public function SaveOrderdeliveries(Request $request)
         'items.*.batch_number' => 'nullable|string|max:255',
     ]);
 
-
-
-
-    // Loop through each item to validate quantity logic
-    // // Loop through items array from request
-    // foreach ($request->input('items', []) as $index => $item) {
-    //     $quantityOrdered = floatval($item['quantity_ordered'] ?? 0);
-    //     $quantityReceived = floatval($item['quantity_received'] ?? 0);
-
-    //     if ($quantityOrdered <= 0) {
-    //         return redirect()->back()
-    //             ->withInput()
-    //             ->withErrors(["Quantity for item #".($index+1)." must be greater than 0."]);
-    //     }
-
-    //     if ($quantityOrdered > $quantityReceived) {
-    //         return redirect()->back()
-    //             ->withInput()
-    //             ->withErrors(["Quantity for item #".($index+1)." cannot exceed quantity received."]);
-    //     }
-    // }
-
-
     if ($validator->fails()) {
         return redirect()->back()
             ->withErrors($validator)
@@ -280,11 +256,9 @@ public function SaveOrderdeliveries(Request $request)
 
     DB::beginTransaction();
 
-    
-
     try {
-        // 2. Create Delivery record
-        $delivery = Delivery::create([
+        // Create Delivery record
+        $delivery = delivery::create([
             'purchase_order_id' => $request->input('purchase_order_id'),
             'delivery_date' => $request->input('delivery_date') ?? now(),
             'remarks' => $request->input('remarks'),
@@ -293,11 +267,12 @@ public function SaveOrderdeliveries(Request $request)
         $deliveryItems = $request->input('items');
         $po = PurchaseOrder::find($request->input('purchase_order_id'));
 
+        $itemsData = [];
+
         foreach ($deliveryItems as $item) {
 
-
-            // 3. Create DeliveryItem
-            delivery_item::create([
+            // Create DeliveryItem (only valid columns)
+            $deliveryItem = delivery_item::create([
                 'delivery_id' => $delivery->id,
                 'product_id' => $item['product_id'],
                 'batch_number' => $item['batch_number'] ?? null,
@@ -306,10 +281,15 @@ public function SaveOrderdeliveries(Request $request)
                 'cost_price' => $item['cost_price'],
             ]);
 
+            $itemsData[] = [
+                'product_id' => $item['product_id'],
+                'batch_number' => $item['batch_number'] ?? null,
+                'expiry_date' => $item['expiry_date'] ?? null,
+                'quantity_received' => $item['quantity_received'],
+                'cost_price' => $item['cost_price'],
+            ];
 
-
-
-            // 4. Update inventory (FIFO)
+            //  Update inventory (FIFO)
             $supplierId = $item['supplier_id'] ?? ($po->supplier_id ?? null);
 
             $inventoryRow = Inventory::where('product_id', $item['product_id'])
@@ -322,11 +302,6 @@ public function SaveOrderdeliveries(Request $request)
                 $inventoryRow->increment('quantity', $item['quantity_received']);
                 $inventoryRow->status = 'active';
                 $inventoryRow->save();
-                
-
-
-
-
             } else {
                 Inventory::create([
                     'product_id' => $item['product_id'],
@@ -341,10 +316,7 @@ public function SaveOrderdeliveries(Request $request)
             }
         }
 
-
-
-
-        // 5. Update PO status
+        //  Update PO status
         if ($po) {
             $totalOrdered = $po->items()->sum('quantity_ordered');
             $totalReceived = delivery_item::whereHas('delivery', function ($q) use ($po) {
@@ -355,9 +327,23 @@ public function SaveOrderdeliveries(Request $request)
             $po->save();
         }
 
+        // 6Audit log
+        activity('deliveries')
+            ->causedBy(auth()->guard('web')->user()) // web guard
+            ->performedOn($delivery)
+            ->withProperties([
+                'purchase_order_id' => $po->id ?? null,
+                'delivery_id' => $delivery->id,
+                'delivery_date' => $delivery->delivery_date,
+                'items' => $itemsData,
+                'po_status' => $po->status ?? null,
+            ])
+            ->log('Delivery saved and inventory updated');
+
         DB::commit();
 
         return redirect()->route('deliveries.index')->with('success', 'Delivery saved and inventory updated!');
+
     } catch (\Exception $e) {
         DB::rollBack();
         Log::error('Failed to save delivery: ' . $e->getMessage(), [
@@ -367,10 +353,6 @@ public function SaveOrderdeliveries(Request $request)
         return redirect()->back()->withInput()->with('error', 'Something went wrong while saving the delivery. Please try again.');
     }
 }
-
-
-
-
 
 
 

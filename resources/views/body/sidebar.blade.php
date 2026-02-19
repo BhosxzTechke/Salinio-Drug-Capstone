@@ -772,9 +772,9 @@
                 <div class="collapse" id="sidebarExpages">
                     <ul class="nav-second-level">   
 
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('all.permission') }}">All Permission</a>
-                        </li>
+                        </li> --}}
 
                         @if(Auth::user()->can('can-add-roles-in-permissions'))
                         <li>

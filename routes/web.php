@@ -1107,38 +1107,38 @@ Route::middleware(['auth', 'web'])->group(function () {
 
 
 
-        Route::middleware(['auth', 'web'])->group(function () {
+            Route::middleware(['auth', 'web'])->group(function () {
 
 
-                 //////////////////////////////// Admin User SYSTEM ///////////////////////
-            Route::controller(AdminController::class)->group(function () {
+                    //////////////////////////////// Admin User SYSTEM ///////////////////////
+                Route::controller(AdminController::class)->group(function () {
 
-            //All Admin User Table
-            Route::get('/admin/all', 'AllAdmin')->name('all.admin');
-
-
-            Route::get('/admin/Create', 'CreateAdmin')->name('create.admin');
-            
-            Route::post('/admin/Store', 'StoreAdmin')->name('Store.admin');
-
-            
-            // EDIT ADMIN
-            Route::get('/admin/edit/{id}', 'EditAdmin')->name('edit.admin');
+                //All Admin User Table
+                Route::get('/admin/all', 'AllAdmin')->name('all.admin');
 
 
-            // Update ADMIN
-            Route::post('/admin/update', 'UpdateAdmin')->name('update.admin');
-            
+                Route::get('/admin/Create', 'CreateAdmin')->name('create.admin')->middleware('permission:can-view-all-users');
+                
+                Route::post('/admin/Store', 'StoreAdmin')->name('Store.admin');
 
-            
-            // Update ADMIN
-            Route::get('/admin/delete/{id}', 'DeleteAdmin')->name('delete.admin')->middleware('permission:delete-admin-account');
+                
+                // EDIT ADMIN
+                Route::get('/admin/edit/{id}', 'EditAdmin')->name('edit.admin');
+
+
+                // Update ADMIN
+                Route::post('/admin/update', 'UpdateAdmin')->name('update.admin');
+                
+
+                
+                // Update ADMIN
+                Route::get('/admin/delete/{id}', 'DeleteAdmin')->name('delete.admin')->middleware('permission:delete-admin-account');
+
+
+            });
 
 
         });
-
-
-    });
 
 
         /////////////// Change TITLE  SYSTEM 

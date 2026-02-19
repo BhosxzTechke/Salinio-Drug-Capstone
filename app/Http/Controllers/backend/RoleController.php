@@ -8,6 +8,9 @@ use Spatie\Permission\Models\Permission; // have a Permission model
 use Spatie\Permission\Models\Role; // Import the Role model if needed
 use App\Models\User; // Import the User model
 use Illuminate\Support\Facades\DB;
+use  Spatie\Activitylog\activity;
+
+
 
 class RoleController extends Controller
 {
@@ -115,35 +118,32 @@ class RoleController extends Controller
     }
 
 
-    public function AllRoles()
-    {
-        // Fetch all roles from the database
-        $roles = Role::all();
+                public function AllRoles()
+                {
+                    // Fetch all roles from the database
+                    $roles = Role::all();
 
-        // Return a view with the roles data
-        return view('pages.roles.allRoles', compact('roles'));
-    }
-
-
-    // SHOW ADD ROLES FORM
-    public function AddRoles()
-    {
-        // Return a view to add a new role
-        return view('pages.roles.addRoles');
-    } // End Method
+                    // Return a view with the roles data
+                    return view('pages.roles.allRoles', compact('roles'));
+                }
 
 
-            public function StoreRoles(Request $request)
-            {
+                // SHOW ADD ROLES FORM
+                public function AddRoles()
+                {
+                    // Return a view to add a new role
+                    return view('pages.roles.addRoles');
+                } // End Method
 
 
-                $request->validate([
-                    'name' => 'required|string|max:255|unique:roles,name', 
-                    'permissions' => 'nullable|array', 
-                    'permissions.*' => 'exists:permissions,id', 
-                ]);
 
-
+                public function StoreRoles(Request $request)
+                {
+                    $request->validate([
+                        'name' => 'required|string|max:255|unique:roles,name',
+                        'permissions' => 'nullable|array',
+                        'permissions.*' => 'exists:permissions,id',
+                    ]);
 
 
                 $role = Role::create(['name' => $request->name]);
@@ -152,14 +152,35 @@ class RoleController extends Controller
                     $role->syncPermissions($request->permissions);
                 }
 
-                $notification = [
-                    'message' => 'Role created successfully!',
-                    'alert-type' => 'success'
-                ];
+                // Reload updated relationships
+                $role->refresh();
 
-                // Redirect back with a success message
-                return redirect()->route('all.roles')->with($notification);
-            }
+                $permissionNames = \Spatie\Permission\Models\Permission::whereIn('id', $request->permissions ?? [])
+                    ->pluck('name')
+                    ->toArray();
+
+
+                activity('roles')
+                    ->causedBy(auth()->guard('web')->user())
+                    ->performedOn($role)
+                    ->withProperties([
+                        'role_name' => $role->name,
+                        'permissions' => $permissionNames,
+                    ])
+                    ->log('Role created');
+
+
+
+                    $notification = [
+                        'message' => 'Role created successfully!',
+                        'alert-type' => 'success'
+                    ];
+
+                    return redirect()->route('all.roles')->with($notification);
+                }
+
+
+
 
 
     public function EditRoles($id)
