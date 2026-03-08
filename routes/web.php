@@ -44,6 +44,7 @@ use App\Http\Controllers\frontend\CustomerRegisteredController;
 use App\Http\Controllers\frontend\OrderController as FrontendOrderController;
 use App\Http\Controllers\frontend\ReturnShipmentController;
 use App\Http\Controllers\frontend\WishlistController;
+use App\Http\Controllers\ReturnReportController;
 use App\Http\Controllers\SupplierConfirmationController;
 use App\Models\HeroSlider;
 use App\Models\Inventory;
@@ -483,6 +484,8 @@ Route::middleware(['auth', 'web'])->group(function () {
         $html .= '<td class="product-name">'.$item->name.'</td>';
         $html .= '<td class="product-code">'.($item->options->code ?? '-').'</td>';
         $html .= '<td class="selling-price">'.$item->price.'</td>';
+        $html .= '<td class="unit_of_measure">'.$item->options->unit_of_measure.'</td>';
+
 
             $html .= '<td>
                 <input type="number" 
@@ -535,6 +538,8 @@ Route::middleware(['auth', 'web'])->group(function () {
                 'weight'  => 0,  // Add this line
                     'options' => [
                         'code' => $request->code,
+                        'unit_of_measure' => $request->unit,
+                        'pieces_of_unit' => $request->pieces_unit,
                         'cost_price' => $request->cost_price ?? 0, // store cost price separately
                     ]
 
@@ -1211,11 +1216,15 @@ Route::middleware(['auth', 'web'])->group(function () {
 
             });
 
-        });
 
-            
+                Route::controller(ReturnReportController::class)->group(function () {
+
+                Route::get('/returns-summary', 'summary')->name('returns.report.summary');
+
+                });
 
 
+    });
 
 
 

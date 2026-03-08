@@ -117,6 +117,7 @@
                                 <th>Product Name</th>
                                 <th>Product Code</th>
                                 <th>Selling Price</th>
+                                <th>Packaging</th>
                                 <th>Quantity Order </th>
                                 <th>Cost Price </th>
                                 <th>Total Cost Price </th>
@@ -190,7 +191,7 @@
         <thead>
             <tr>
             <th>SL</th><th>Image</th><th>Product Name</th>
-            <th>Product Code</th><th>Price</th><th>Actions</th>
+            <th>Product Code</th><th>Price</th><th>Unit Of Measure</th><th>Pieces Per Unit</th><th>Actions</th>
             </tr>
             </thead>
             <tbody id="modal-products">
@@ -202,17 +203,25 @@
             <td>{{ $data->product_name }}</td>
             <td>{{ $data->product_code }}</td>
             <td>{{ $data->selling_price }}</td>
+            <td>{{ $data->unit_of_measure }}</td>
+            <td>{{ $data->pieces_per_unit }}</td>
+
             <td>
-                        <button type="button"
-                                class="btn btn-sm btn-primary add-product"
-                                data-id="{{ $data->id }}"
-                                data-name="{{ $data->product_name }}"
-                                data-code="{{ $data->product_code }}"
-                                data-price="{{ $data->selling_price }}">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                            
+                                <button type="button"
+                                                class="btn btn-sm btn-primary add-product"
+                                                data-id="{{ $data->id }}"
+                                                data-name="{{ $data->product_name }}"
+                                                data-code="{{ $data->product_code }}"
+                                                data-unit="{{ $data->unit_of_measure ?? 1 }}"
+                                                data-pieces_unit="{{ $data->pieces_per_unit ?? 1 }}"
+                                                data-price="{{ $data->selling_price }}"
+                                                data-qty="1">  <!-- add this -->
+
+                                        <i class="fa fa-plus"></i>
+                                </button>
                         </td>
+
+
                 </tr>
                 @endforeach
                 </tbody>
@@ -341,8 +350,12 @@ $(document).on('click', '.add-product', function () {
     let productId = $(this).data('id');
     let name = $(this).data('name');
     let code = $(this).data('code');
-    let qty = $(this).data('qty');
+    let qty = $(this).data('qty') || 1; // default to 1 if undefined
     let price = $(this).data('price');
+    let unit = $(this).data('unit');
+    let pieces_unit = $(this).data('pieces_unit');
+
+
 
     $.ajax({
         url: "{{ route('cart.add') }}",
@@ -353,8 +366,12 @@ $(document).on('click', '.add-product', function () {
             name: name,
             code: code,
             qty: qty,
-            price: price
+            price: price,
+            unit: unit,
+            pieces_unit: pieces_unit
         },
+
+
         success: function (response) {
             if (response.success) {
                 refreshMainTable(); // updates table immediately

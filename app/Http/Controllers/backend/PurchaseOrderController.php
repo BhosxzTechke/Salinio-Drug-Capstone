@@ -298,8 +298,23 @@ public function SavePurchaseOrder(Request $request)
                 ->where('cost_price', $item['cost_price'])
                 ->first();
 
+
+                
+            /// pieces siang papasok nd box or bottle 
+            
+            $product = Product::find($item['product_id']);
+
+            // Convert received quantity (units) into pieces
+            $piecesReceived = $item['quantity_received'] * ($product->pieces_per_unit ?? 1);
+
+            $inventoryRow = Inventory::where('product_id', $item['product_id'])
+                ->where('supplier_id', $supplierId)
+                ->where('expiry_date', $item['expiry_date'] ?? null)
+                ->where('cost_price', $item['cost_price'])
+                ->first();
+
             if ($inventoryRow) {
-                $inventoryRow->increment('quantity', $item['quantity_received']);
+                $inventoryRow->increment('quantity', $piecesReceived); // now in pieces
                 $inventoryRow->status = 'active';
                 $inventoryRow->save();
             } else {
@@ -309,11 +324,13 @@ public function SavePurchaseOrder(Request $request)
                     'batch_number' => $item['batch_number'] ?? null,
                     'expiry_date' => $item['expiry_date'] ?? null,
                     'received_date' => now(),
-                    'quantity' => $item['quantity_received'],
+                    'quantity' => $piecesReceived, // convert units → pieces
                     'cost_price' => $item['cost_price'],
                     'selling_price' => $item['selling_price'] ?? null,
                 ]);
             }
+
+
         }
 
         //  Update PO status

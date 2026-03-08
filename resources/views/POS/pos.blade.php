@@ -315,16 +315,25 @@ Create Invoice for Customer</button>
                                     Stock: {{ $item->total_quantity }}
                                 </span>
 
+
+                                <span class="badge bg-warning text-dark mb-1" style="font-size: 0.75rem;">
+                                    {{ 'Unit:  ' .  $item->product->unit_of_measure }}
+                                </span>
+
+                                <span class="badge bg-warning text-dark mb-1" style="font-size: 0.75rem;">
+                                    {{   ' (' . $item->product->pieces_per_unit . ') pcs' }}
+                                </span>
+
+
                                 <span class="badge bg-danger text-dark mb-1" style="font-size: 0.75rem;">
                                     {{ $item->prescription_required ? 'Rx' : 'Not Rx' }}
                                 </span>
-
 
                                 <form method="POST" action="{{ url('/pos/add') }}">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $item->product_id }}">
                                     <input type="hidden" name="name" value="{{ $item->product->product_name }}">
-                                    <input type="hidden" name="qty" value="1">
+                                    <input type="hidden" name="qty" value="{{$item->product->pieces_per_unit ?? 1 }}">
                                     <input type="hidden" name="selling_price" value="{{ $item->product->selling_price }}">
 
                                     <button type="submit" class="btn btn-sm btn-primary w-100">

@@ -148,6 +148,24 @@
 
 
 
+        <div class="form-group mb-3">
+            <label>Unit of Measure<span class="text-danger"> *</span></label>
+            <select name="unit_of_measure" class="form-control" required>
+                <option value="Box" {{ $product->unit_of_measure == 'Box' ? 'selected' : '' }}>Box</option>
+                <option value="Bottle" {{ $product->unit_of_measure == 'Bottle' ? 'selected' : '' }}>Bottle</option>
+                <option value="Strip" {{ $product->unit_of_measure == 'Strip' ? 'selected' : '' }}>Strip</option>
+                <option value="Pack" {{ $product->unit_of_measure == 'Pack' ? 'selected' : '' }}>Pack</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Pieces per Unit<span class="text-danger"> *</span></label>
+            <input type="number" name="pieces_per_unit" class="form-control" placeholder="Example: 10" value="{{ $product->pieces_per_unit }}" required>
+        </div>
+
+
+
+
                     {{-- Expiration Switch --}}
             <div class="form-check form-switch mb-3">
                 <input type="checkbox" class="form-check-input" id="has_expiration" name="has_expiration"

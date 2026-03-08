@@ -38,7 +38,9 @@ use HasFactory;
         'is_new_arrival',
         'is_active',
         'has_expiration',
-        'is_ecommerce'
+        'is_ecommerce',
+        'unit_of_measure',
+        'pieces_per_unit'
     ];
 
 

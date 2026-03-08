@@ -183,15 +183,37 @@
 
 
 
+
+        <div class="form-group mb-3">
+                <label>Unit of Measure<span class="text-danger"> *</span></label>
+                <select name="unit_of_measure" class="form-control">
+                    <option value="Box">Box</option>
+                    <option value="Bottle">Bottle</option>
+                    <option value="Strip">Strip</option>
+                    <option value="Pack">Pack</option>
+                    <option value="Piece">Piece</option>
+
+                </select>
+        </div>
+
+
+
+        <div class="form-group mb-3">
+            <label>Pieces per Unit<span class="text-danger"> *</span></label>
+            <input type="number" name="pieces_per_unit" class="form-control" placeholder="Example: 10" required>
+        </div>
+
+
     {{-- Expiration Switch --}}
     <div class="form-check form-switch mb-3">
         <input type="checkbox" class="form-check-input" id="has_expiration" name="has_expiration"
-                value="1" {{ old('has_expiration', true) ? 'checked' : '' }}>
+                value="1" {{ old('has_expiration', true) ? 'checked' : '' }} required>
         <label class="form-check-label" for="has_expiration">Has Expiration</label>
     </div>
 
 
 
+    
 
     
         {{-- TOGGLE TO OPEN ECOMMERCE PART --}}

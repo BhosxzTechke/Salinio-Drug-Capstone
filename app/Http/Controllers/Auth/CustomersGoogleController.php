@@ -24,6 +24,7 @@ class CustomersGoogleController extends Controller
                 [
                     'name' => $googleUser->name,
                     'google_id' => $googleUser->id,
+                    'phone' => '+639',
                     'password' => bcrypt(str()->random(16)),
                     'email_verified_at' => now(),
                 ]

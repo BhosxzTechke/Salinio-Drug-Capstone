@@ -251,13 +251,18 @@ public function paypalSuccess(Request $request)
             //  FIFO STOCK DEDUCT FIRST
             foreach ($cart->content() as $item) {
 
-                $deduct = $inventoryService->deductFIFO(
-                    $item->options->product_id,
-                    $item->qty,
-                    $item->price
-                );
+            $product = Product::find($item->options->product_id);
+            $qtyNeeded = $item->qty * ($product->pieces_per_unit ?? 1);
 
-            ///////////////// AFTER DEDUCTING SA SERVICES THEN BACK ON     
+            $deduct = $inventoryService->deductFIFO(
+                $item->options->product_id,
+                $qtyNeeded,
+                $item->price
+            );
+
+
+            
+                        ///////////////// AFTER DEDUCTING SA SERVICES THEN BACK ON     
             foreach ($deduct['layers'] as $layer) {
 
 
@@ -468,11 +473,17 @@ private function processOrder(Request $request)
 
             foreach ($cart->content() as $item) {
 
+                $product = Product::find($item->options->product_id);
+                $qtyNeeded = $item->qty * ($product->pieces_per_unit ?? 1);
+
                 $deduct = $inventoryService->deductFIFO(
                     $item->options->product_id,
-                    $item->qty,
+                    $qtyNeeded,
                     $item->price
                 );
+
+
+                
 
             ///////////////// AFTER DEDUCTING SA SERVICES THEN BACK ON     
             foreach ($deduct['layers'] as $layer) {

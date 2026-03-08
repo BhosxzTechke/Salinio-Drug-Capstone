@@ -84,6 +84,9 @@ $validated = $request->validate([
 
     'selling_price' => 'required|numeric|min:0',
     'prescription_required' => 'nullable|boolean',
+    'unit_of_measure' => 'required',
+    'pieces_per_unit' => 'required',
+
 ], [
     'product_name.unique' => 'A product with the same name, brand, and dosage form already exists.',
     'target_gender.required_if' => 'Target gender is required for ecommerce products.',
@@ -126,8 +129,10 @@ $validated = $request->validate([
             'subcategory_id' => $validated['subcategory_id'],
             'brand_id' => $validated['brand_id'],
             'has_expiration' => $request->has('has_expiration'),
-
+            'unit_of_measure' => $validated['unit_of_measure'],
+            'pieces_per_unit' => $validated['pieces_per_unit'],
             
+
             /// if  toggle is on saka ilalagay for pos and ecommerce product
             'is_ecommerce' => $request->boolean('is_ecommerce'),
 
@@ -268,6 +273,8 @@ public function UpdateProduct(Request $request)
             'subcategory_id'        => 'required|integer|exists:subcategories,id',
             'brand_id'              => 'required|integer|exists:brands,id',
             'description'           => 'required|string|min:10',
+            'unit_of_measure' => 'required',
+            'pieces_per_unit' => 'required',
 
             /// ECOMMERCE FIELDS VALIDATION PART
             'target_gender' => 'required_if:is_ecommerce,1|string|max:50',
@@ -304,6 +311,9 @@ public function UpdateProduct(Request $request)
             'brand_id'              => $request->input('brand_id'),
             'has_expiration'        => $request->has('has_expiration'),
             'dosage_form'           => $request->input('dosage_form'),
+            'unit_of_measure'       => $request->input('unit_of_measure'),
+            'pieces_per_unit'       => $request->input('pieces_per_unit'),
+
 
             /// ECOMMERCE FIELDS FOR UPDATE
             'target_gender'         => $request->input('target_gender') ?? null,

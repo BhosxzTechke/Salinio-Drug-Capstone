@@ -623,6 +623,40 @@
 
 
 
+                            {{-- @if(Auth::user()->can('can-view-reports')) --}}
+                                <li>
+                                    <a href="#ReturnReport" data-bs-toggle="collapse">
+                                        <i class="fas fa-undo"></i>
+                                        <span>Returns Report </span>
+                                        <span class="menu-arrow"></span>
+                                    </a>
+
+
+                                <div class="collapse" id="ReturnReport">
+                                    <ul class="nav-second-level">
+
+                                        {{-- @if(Auth::user()->can('can-view-daily-sales')) --}}
+                                            <li>
+                                                {{-- <a href="{{ route('returns.report.daily')}}">Daily Returns Report</a> --}}
+                                            </li>
+                                        {{-- @endif --}}
+
+
+                                        {{-- @if(Auth::user()->can('can-view-top-sellings')) --}}
+                                        <li>
+                                            <a href="{{ route('returns.report.summary') }}">Returns Summary</a>
+                                        </li>
+                                        {{-- @endif --}}
+
+                                        </ul>
+                                    </div>
+                                </li>
+                            {{-- @endif --}}
+
+
+
+
+
 
 
 
