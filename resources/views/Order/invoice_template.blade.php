@@ -44,23 +44,23 @@
 </head>
 <body>
 
-  <table width="100%" style="background: #F7F7F7; padding:0 20px 0 20px;">
-    <tr>
-        <td valign="top">
-          <!-- {{-- <img src="" alt="" width="150"/> --}} -->
-          <h2 style="color: rgb(24, 30, 81); font-size: 26px;"><strong>Salinio Drug</strong></h2>
-        </td>
-        <td align="right">
-            <pre class="font" >
-               Salinio Drug and General Merchandise <br>
-               1245454545 <br>
-               Email:support@sdprime.com <br>
-               Mob: 1245454545 <br>
-               C5 Taguig, Manila, Philippines  <br>
-              
-            </pre>
-        </td>
-    </tr>
+    <table width="100%" style="background: #F7F7F7; padding:0 20px 0 20px;">
+      <tr>
+          <td valign="top">
+            <!-- {{-- <img src="" alt="" width="150"/> --}} -->
+            <h2 style="color: rgb(24, 30, 81); font-size: 26px;"><strong>Salinio Drug</strong></h2>
+          </td>
+          <td align="right">
+              <pre class="font" >
+                Salinio Drug and General Merchandise <br>
+                1245454545 <br>
+                Email:support@sdprime.com <br>
+                Mob: 1245454545 <br>
+                C5 Taguig, Manila, Philippines  <br>
+                
+              </pre>
+          </td>
+      </tr>
 
   </table>
 
@@ -109,15 +109,18 @@
 
      @foreach($orderDetails as $item)
       <tr class="font">
-        <td align="center">
-            <img src="{{ public_path($item->product->product_image )}}" height="50px;" width="50px;" alt="">
-        </td>
+
+      <td align="center">
+          <img src="{{ asset($item->product->product_image ?? 'default-image.png') }}" height="50px" width="50px" alt="">
+      </td>
+
         <td align="center">{{  $item->product->product_name }}</td>
         
         <td align="center">{{  $item->product->product_code }} </td>
         <td align="center">{{  $item->quantity }} </td>
 
          
+        @dd($item->order)
         
          <td align="center">{{  $item->total }} </td>
       </tr>

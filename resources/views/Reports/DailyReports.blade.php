@@ -14,7 +14,7 @@
             <label>From:</label>
             <input type="date" name="from_date" value="{{ $fromDate->format('Y-m-d') }}">
             <label>To:</label>
-            <input type="date" name="to_date" value="{{ $toDate->format('Y-m-d') }}">
+<input type="date" name="to_date" min="{{ $fromDate->format('Y-m-d') }}" value="{{ $toDate->copy()->addDay()->format('Y-m-d') }}">
             <select name="source">
                 <option value="">All Sources</option>
                 <option value="POS" {{ $sourceFilter == 'POS' ? 'selected' : '' }}>POS</option>

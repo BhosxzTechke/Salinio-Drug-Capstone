@@ -55,6 +55,8 @@
             </th> --}}
             <th scope="col" class="px-6 py-3">Image</th>
             <th scope="col" class="px-6 py-3">Product Name</th>
+            <th scope="col" class="px-6 py-3">Product Unit</th>
+            <th scope="col" class="px-6 py-3">Product Per Pieces</th>
             <th scope="col" class="px-6 py-3">Quantity</th>
             <th scope="col" class="px-6 py-3">Product Code</th>
             <th scope="col" class="px-6 py-3">Price</th>
@@ -88,8 +90,13 @@
 
             <td class="px-6 py-4">{{ $item->product->product_name }}</td>
 
-            <td class="px-6 py-4">{{ $item->quantity }}</td>
+            <td class="px-6 py-4">{{ $item->product->unit_of_measure }}</td>
+            
+            <td class="px-6 py-4">{{ $item->product->pieces_per_unit }}</td>
 
+
+
+            <td class="px-6 py-4">{{ $item->quantity }}</td>
 
 
             <td class="px-6 py-4">{{ $item->product->product_code ?? '' }}</td>

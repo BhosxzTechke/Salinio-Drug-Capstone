@@ -495,7 +495,7 @@ private function processOrder(Request $request)
                                 'inventory_id' => $layer['inventory_id'],  // 
                                 'batch_number' => $layer['batch_number'],
                                 'expiry_date'  => $layer['expiry_date'],
-                                'quantity'     => $layer['quantity'],
+                                'quantity'     => $item->qty,
                                 'price'        => $item->price,
                                 'unitcost'     => $layer['unit_cost'],
                                 'profit'       => ($item->price - $layer['unit_cost']) * $layer['quantity'],
@@ -644,7 +644,7 @@ private function processOrder(Request $request)
                 //  RESTORE STOCK (FIFO SAFE)
                 foreach ($order->orderdetails as $detail) {
                     Inventory::where('id', $detail->inventory_id)
-                        ->increment('quantity', $detail->quantity);
+                        ->increment('quantity', $detail->quantity * $detail->product->pieces_per_unit);
                 }
 
                 // Update order

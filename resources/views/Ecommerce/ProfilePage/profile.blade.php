@@ -290,7 +290,7 @@
                     ₱{{ number_format($detail->product->selling_price * $detail->quantity, 2) }}
                 @else
                     N/A
-                @endif
+                @endif  
             </td>
 
             <td class="md:table-cell px-0 md:px-6 py-2 md:text-center">

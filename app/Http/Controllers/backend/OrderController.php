@@ -729,7 +729,7 @@ class OrderController extends Controller
                         $inventory = Inventory::find($detail->inventory_id);
 
                         if ($inventory) {
-                            $inventory->quantity += $detail->quantity;
+                            $inventory->quantity += $detail->quantity * $detail->product->pieces_per_unit;
                             $inventory->save();
                         }
                     }
@@ -792,21 +792,20 @@ class OrderController extends Controller
 
 
     
-    public function CreatePDF($id) {
-        $order = Order::findOrFail($id);
-        $orderDetails = Orderdetails::where('order_id', $id)->get();
+        public function CreatePDF($id) {
+            $order = Order::findOrFail($id);
+            $orderDetails = Orderdetails::where('order_id', $id)->get();
 
-        // Generate PDF using a library like Dompdf or Snappy
-        // For example, using Dompdf:
-        $pdf = PDF::loadView('Order.invoice_template', compact('order', 'orderDetails'));
+            // Generate PDF using a library like Dompdf or Snappy
+            // For example, using Dompdf:
+            $pdf = PDF::loadView('Order.invoice_template', compact('order', 'orderDetails'));
 
-        // Return the generated PDF as a response
-        return $pdf->download('invoice_' . $order->invoice_no . '.pdf');
+            // Return the generated PDF as a response
+            return $pdf->download('invoice_' . $order->invoice_no . '.pdf');
     }
 
 
 
-    
 
 
 }
