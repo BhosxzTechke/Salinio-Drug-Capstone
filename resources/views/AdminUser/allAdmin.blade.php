@@ -57,6 +57,12 @@
 
     @php $sl = 1 @endphp
                 @foreach ($user as $data)
+
+
+                <input type="hidden" id="userEmail" value="{{ $data->email }}">
+
+
+
                         <tr>
                             <td>{{ $sl++ }}</td>
                             <td>
@@ -111,6 +117,42 @@
                             </td>
                         </tr>
 
+
+
+
+
+                                                {{--  TEMPORARY PASSWORD MODAL  --}}
+            <div class="modal fade" id="tempPassModal" tabindex="-1" aria-labelledby="tempPassModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tempPassModalLabel">Temporary Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body justify-between">
+                        <p>Your temporary password is: <strong id="modalPassword"></strong></p>
+                        <button class="btn btn-sm btn-light" onclick="copyModalPassword()">📋 Copy</button>
+                    <button class="btn btn-sm btn-primary"
+                            id="sendEmailBtn"
+                            data-email="{{ $data->email }}"
+                            onclick="sendPasswordEmail(this)">
+                        📧 Send Email
+                    </button>
+
+
+                    </div>
+
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
                         
                 @endforeach
 
@@ -140,25 +182,7 @@
 
 
 
-                        {{--  TEMPORARY PASSWORD MODAL  --}}
-        <div class="modal fade" id="tempPassModal" tabindex="-1" aria-labelledby="tempPassModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="tempPassModalLabel">Temporary Password</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Your temporary password is: <strong id="modalPassword"></strong></p>
-                <button class="btn btn-sm btn-light" onclick="copyModalPassword()">📋 Copy</button>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-            </div>
-        </div>
-        </div>
-
+ 
 
 
 
@@ -190,33 +214,65 @@
         </div>
 
 
-<script>
-var tempPassModal = document.getElementById('tempPassModal');
+        <script>
+        var tempPassModal = document.getElementById('tempPassModal');
 
-// Update modal content every time it opens
-tempPassModal.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget; // Button that triggered the modal
-    var password = button.getAttribute('data-password'); // Get password from button
-    var modalPassword = tempPassModal.querySelector('#modalPassword');
-    modalPassword.textContent = password; // Update content
-});
-
-
-
-// Optional: clear modal content when hidden
-tempPassModal.addEventListener('hidden.bs.modal', function () {
-    tempPassModal.querySelector('#modalPassword').textContent = '';
-});
+        // Update modal content every time it opens
+        tempPassModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Button that triggered the modal
+            var password = button.getAttribute('data-password'); // Get password from button
+            var modalPassword = tempPassModal.querySelector('#modalPassword');
+            modalPassword.textContent = password; // Update content
+        });
 
 
 
-function copyModalPassword() {
-    const password = document.getElementById('modalPassword').textContent;
-    navigator.clipboard.writeText(password)
-        .then(() => alert('Password copied!'))
-        .catch(() => alert('Failed to copy'));
-}
-</script>
+        // Optional: clear modal content when hidden
+        tempPassModal.addEventListener('hidden.bs.modal', function () {
+            tempPassModal.querySelector('#modalPassword').textContent = '';
+        });
+
+
+
+        function copyModalPassword() {
+            const password = document.getElementById('modalPassword').textContent;
+            navigator.clipboard.writeText(password)
+                .then(() => alert('Password copied!'))
+                .catch(() => alert('Failed to copy'));
+        }
+
+
+
+            function sendPasswordEmail(btn) {
+
+                let password = document.getElementById('modalPassword').innerText;
+                let email = btn.getAttribute('data-email');
+
+                $.ajax({
+                    url: "/send-temp-password",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        password: password,
+                        email: email
+                    },
+                    beforeSend: function(){
+                        $("#sendEmailBtn").prop("disabled", true);
+                    },
+                    success: function(){
+                        alert("Email sent!");
+                        $("#sendEmailBtn").prop("disabled", false);
+                    }
+                });
+
+            }
+
+
+        </script>
+
+
+
+
 
 
 

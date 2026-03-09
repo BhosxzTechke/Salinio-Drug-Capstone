@@ -73,18 +73,21 @@ class ChatController extends Controller
 
 
                 //// Getting Customer Messages Automatically without Reloading the page
-                    public function fetchCustomer()
+            public function fetchCustomer()
             {
-                $customerId = Auth::guard('customer')->id(); // logged-in customer
-                $adminId = User::value('id'); // first user in users table (admin)
-    
+                $customerId = Auth::guard('customer')->id();
+                $adminId = Auth::guard('web')->id();
+
+
                 $messages = Chat::where(function($q) use ($customerId, $adminId) {
                     $q->where('sender_id', $customerId)
                     ->where('receiver_id', $adminId);
                 })->orWhere(function($q) use ($customerId, $adminId) {
                     $q->where('sender_id', $adminId)
                     ->where('receiver_id', $customerId);
-                })->orderBy('created_at')->get();
+                })
+                ->orderBy('created_at')
+                ->get();
 
                 return response()->json($messages);
             }

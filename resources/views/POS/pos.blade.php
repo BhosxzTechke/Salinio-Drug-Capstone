@@ -320,9 +320,13 @@ Create Invoice for Customer</button>
                                     {{ 'Unit:  ' .  $item->product->unit_of_measure }}
                                 </span>
 
-                                <span class="badge bg-warning text-dark mb-1" style="font-size: 0.75rem;">
-                                    {{   ' (' . $item->product->pieces_per_unit . ') pcs' }}
-                                </span>
+                                @unless($item->product->unit_of_measure == 'Piece')
+                                    <span class="badge bg-warning text-dark mb-1" style="font-size: 0.75rem;">
+                                        ({{ $item->product->pieces_per_unit }}) pcs
+                                    </span>
+                                @endunless
+
+
 
 
                                 <span class="badge bg-danger text-dark mb-1" style="font-size: 0.75rem;">

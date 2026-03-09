@@ -131,7 +131,7 @@
                     <img src="{{ asset(Auth::guard('customer')->user()->image ?? 'uploads/noimage.png') }}" 
                          alt="Avatar" class="w-10 h-10 rounded-full border-2 border-gray-300">
                 </button>
-                <div id="dropdown-menu" class="hidden origin-top-left absolute left-0 mt-2 w-48 rounded-md shadow-lg z-50 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div id="dropdown-menu" class="hidden origin-top-left absolute left-0 mt-2 w-31 rounded-md shadow-lg z-50 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div class="py-1">
                         <a href="{{ route('customer.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                         <form method="POST" action="{{ route('customer.logout') }}">

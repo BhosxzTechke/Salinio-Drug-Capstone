@@ -42,7 +42,10 @@
                                     <th>SL</th>
                                     <th>Product</th>
                                     <th>Quantity Ordered</th>
+                                    <th>Unit</th>
+                                    <th>Unit Per Piece</th>
                                     <th>Expiration Date</th>
+
                                 </tr>
                             </thead>
             <tbody>
@@ -55,13 +58,15 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->product->product_name }}</td>
                     <td>{{ $item->quantity_ordered }}</td>
+                    <td>{{ $item->product->unit_of_measure ?? '' }}</td>
+                    <td>{{ $item->product->pieces_per_unit ?? ''  }}</td>
 
                     @if ($item->product && $item->product->has_expiration === 1)
                         <td>
                             <input type="date"
                                 name="items[{{ $key }}][expiration_date]"
                                 class="form-control"
-                                min="{{ now()->format('Y-m-d') }}"
+                                min="{{ now()->addDays(30)->format('Y-m-d') }}"
                                 required>
                         </td>
 
@@ -76,8 +81,13 @@
                                 readonly>
                         </td>
                     @endif
+
+
                 </tr>
             @endforeach
+
+
+
             </tbody>
 
                         </table>

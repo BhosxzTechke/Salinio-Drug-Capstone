@@ -236,21 +236,21 @@
                 defer
             ></script>
 
- --}}
+    --}}
 
-            
-            {{--  ONLY OPEN AI IF AUTHENTICATED --}}
-            @if(auth()->guard('customer')->check())
-                    <script
-                        src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
-                        data-name="wonderchat-seo"
-                        data-address="app.wonderchat.io"
-                        data-id="cmlngm5dm15hm146zlwxi1jw4"
-                        data-widget-size="small"
-                        data-widget-button-size="normal"
-                        defer
-                    ></script>
-                @endif
+                
+                {{--  ONLY OPEN AI IF AUTHENTICATED --}}
+                @if(auth()->guard('customer')->check())
+                        <script
+                            src="https://app.wonderchat.io/scripts/wonderchat-seo.js"
+                            data-name="wonderchat-seo"
+                            data-address="app.wonderchat.io"
+                            data-id="cmkxnhttc0n0wi5krxp0dqty9"
+                            data-widget-size="small"
+                            data-widget-button-size="normal"
+                            defer
+                        ></script>
+                    @endif
 
 </main>
 

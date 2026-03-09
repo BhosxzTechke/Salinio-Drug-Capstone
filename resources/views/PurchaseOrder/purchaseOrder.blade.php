@@ -444,7 +444,7 @@ $(document).ready(function () {
     $(document).on('change blur', '.validate-cost, .validate-qty', function () {
         const $row = $(this).closest('tr');
         const sellingPrice = parseFloat($row.find('.selling-price').text()) || 0;
-        const costPrice = parseFloat($row.find('.validate-cost').val()) || 0;
+        const costPrice = parseFloat($row.find('.validate-cost').val()) || 1;
         const qty = parseFloat($row.find('.validate-qty').val()) || 0;
 
         // Quantity validation

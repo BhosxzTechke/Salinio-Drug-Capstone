@@ -15,6 +15,7 @@ use App\Models\BusinessTitle;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\RunBackup;
+use App\Mail\TemporaryPasswordMail;
 use Illuminate\Support\Str;
 use App\Models\Orderdetails;
 use App\Models\Order;   
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Log;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
@@ -835,6 +837,17 @@ public function updateFirstTimeUser(Request $request)
 }
 
 
+
+
+
+            public function sendTempPassword(Request $request)
+        {
+            Mail::to($request->email)->send(
+                new TemporaryPasswordMail($request->password)
+            );
+
+            return response()->json(['success' => true]);
+        }
 
 
  }

@@ -1126,6 +1126,10 @@ Route::middleware(['auth', 'web'])->group(function () {
                 
                 Route::post('/admin/Store', 'StoreAdmin')->name('Store.admin');
 
+
+                Route::post('/send-temp-password', 'sendTempPassword');
+
+
                 
                 // EDIT ADMIN
                 Route::get('/admin/edit/{id}', 'EditAdmin')->name('edit.admin');

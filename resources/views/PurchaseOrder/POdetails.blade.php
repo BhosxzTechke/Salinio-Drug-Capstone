@@ -122,6 +122,8 @@
                             <th>SL</th>
                             <th>Image</th>
                             <th>Product Name</th>
+                            <th>Unit</th>
+                            <th>Unit Per Piece</th>
                             <th>LOT #</th>
                             <th>Quantity Ordered</th>                            
                             <th>Expiration Date</th>
@@ -151,7 +153,15 @@
 
 
     {{-- Product Name --}}
-    <td>{{ $data->product->product_name }}</td>
+        <td>{{ $data->product->product_name }}</td>
+
+
+        <td>{{ $data->product->unit_of_measure }}</td>
+
+
+
+        <td>{{ $data->product->pieces_per_unit }}</td>
+
 
 
 
