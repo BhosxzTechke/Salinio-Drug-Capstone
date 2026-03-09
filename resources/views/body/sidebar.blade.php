@@ -642,11 +642,11 @@
                                         {{-- @endif --}}
 
 
-                                        {{-- @if(Auth::user()->can('can-view-top-sellings')) --}}
-                                        <li>
-                                            <a href="{{ route('returns.report.summary') }}">Returns Summary</a>
-                                        </li>
-                                        {{-- @endif --}}
+                                        @if(Auth::user()->can('can-view-returns-report'))
+                                            <li>
+                                                <a href="{{ route('returns.report.summary') }}">Returns Summary</a>
+                                            </li>
+                                        @endif
 
                                         </ul>
                                     </div>
