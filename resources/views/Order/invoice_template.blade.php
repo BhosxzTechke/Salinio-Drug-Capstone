@@ -67,27 +67,27 @@
 
   <table width="100%" style="background:white; padding:2px;"></table>
 
-  <table width="100%" style="background: #F7F7F7; padding:0 5 0 5px;" class="font">
-    <tr>
-        <td>
-          <p class="font" style="margin-left: 20px;">
-           <strong>Customer Name:</strong>{{ $order->customer->name ?? '' }}   <br>
-           <strong>Customer Email:</strong>{{ $order->customer->email ?? '' }}   <br>
-           <strong>Customer Phone:</strong>{{ $order->customer->phone ?? '' }}   <br>
-          
-           <strong>Address:</strong>  {{ $order->customer->address ?? '' }} 
+    <table width="100%" style="background: #F7F7F7; padding:0 5 0 5px;" class="font">
+      <tr>
+          <td>
+            <p class="font" style="margin-left: 20px;">
+            <strong>Customer Name:</strong>{{ $order->customer->name ?? '' }}   <br>
+            <strong>Customer Email:</strong>{{ $order->customer->email ?? '' }}   <br>
+            <strong>Customer Phone:</strong>{{ $order->customer->phone ?? '' }}   <br>
             
-         </p>
-        </td>
-        <td>
-          <p class="font">
-            <h3><span style="color: rgb(9, 14, 61);">Invoice:</span> #  </h3>
-            Order Date: {{ $order->order_date }}  <br>
-            Order Status: {{ $order->order_status }}  <br>
-            Payment Status: {{ $order->payment_status }}  <br>
-            Total Pay : {{ $order->pay }}  <br>
+            <strong>Address:</strong>  {{ $order->customer->address ?? '' }} 
+              
+          </p>
+          </td>
+          <td>
+            <p class="font">
+              <h3><span style="color: rgb(9, 14, 61);">Invoice:</span> #  </h3>
+              Order Date: {{ $order->order_date }}  <br>
+              Order Status: {{ $order->order_status }}  <br>
+              Payment Status: {{ $order->payment_status }}  <br>
+              Total Pay : {{ $order->pay }}  <br>
 
-         </p>
+          </p>
         </td>
     </tr>
   </table>
@@ -120,7 +120,6 @@
         <td align="center">{{  $item->quantity }} </td>
 
          
-        @dd($item->order)
         
          <td align="center">{{  $item->total }} </td>
       </tr>
