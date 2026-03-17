@@ -623,7 +623,7 @@
 
 
 
-                            {{-- @if(Auth::user()->can('can-view-reports')) --}}
+                            @if(Auth::user()->can('can-view-returns-report'))
                                 <li>
                                     <a href="#ReturnReport" data-bs-toggle="collapse">
                                         <i class="fas fa-undo"></i>
@@ -635,23 +635,16 @@
                                 <div class="collapse" id="ReturnReport">
                                     <ul class="nav-second-level">
 
-                                        {{-- @if(Auth::user()->can('can-view-daily-sales')) --}}
-                                            <li>
-                                                {{-- <a href="{{ route('returns.report.daily')}}">Daily Returns Report</a> --}}
-                                            </li>
-                                        {{-- @endif --}}
-
-
-                                        @if(Auth::user()->can('can-view-returns-report'))
+                                        {{-- @if(Auth::user()->can('can-view-returns-report')) --}}
                                             <li>
                                                 <a href="{{ route('returns.report.summary') }}">Returns Summary</a>
                                             </li>
-                                        @endif
+                                        {{-- @endif --}}
 
                                         </ul>
                                     </div>
                                 </li>
-                            {{-- @endif --}}
+                            @endif
 
 
 
@@ -806,9 +799,9 @@
                 <div class="collapse" id="sidebarExpages">
                     <ul class="nav-second-level">   
 
-                        {{-- <li>
+                        <li>
                             <a href="{{ route('all.permission') }}">All Permission</a>
-                        </li> --}}
+                        </li>
 
                         @if(Auth::user()->can('can-add-roles-in-permissions'))
                         <li>

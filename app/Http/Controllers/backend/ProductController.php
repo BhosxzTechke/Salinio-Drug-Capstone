@@ -273,8 +273,9 @@ public function UpdateProduct(Request $request)
             'subcategory_id'        => 'required|integer|exists:subcategories,id',
             'brand_id'              => 'required|integer|exists:brands,id',
             'description'           => 'required|string|min:10',
+
             'unit_of_measure' => 'required',
-            'pieces_per_unit' => 'required',
+            'pieces_per_unit' => 'nullable|integer|min:1',
 
             /// ECOMMERCE FIELDS VALIDATION PART
             'target_gender' => 'required_if:is_ecommerce,1|string|max:50',
@@ -297,6 +298,11 @@ public function UpdateProduct(Request $request)
         ]);
 
 
+        $piecesPerUnit = $request->unit_of_measure === 'Piece' 
+            ? 1 
+            : $request->pieces_per_unit;
+        // Kapag piece ang pinili 1 and value pag hindi kung anong pieces niya since box 
+
 
         
         $product = Product::findOrFail($request->input('id'));
@@ -312,7 +318,7 @@ public function UpdateProduct(Request $request)
             'has_expiration'        => $request->has('has_expiration'),
             'dosage_form'           => $request->input('dosage_form'),
             'unit_of_measure'       => $request->input('unit_of_measure'),
-            'pieces_per_unit'       => $request->input('pieces_per_unit'),
+            'pieces_per_unit'       => $piecesPerUnit,
 
 
             /// ECOMMERCE FIELDS FOR UPDATE

@@ -184,24 +184,43 @@
 
 
 
-        <div class="form-group mb-3">
+            <div class="form-group mb-3">
                 <label>Unit of Measure<span class="text-danger"> *</span></label>
-                <select name="unit_of_measure" class="form-control">
+                <select name="unit_of_measure" id="unit_of_measure" class="form-control">
                     <option value="Box">Box</option>
-                    <option value="Bottle">Bottle</option>
-                    <option value="Strip">Strip</option>
-                    <option value="Pack">Pack</option>
                     <option value="Piece">Piece</option>
-
                 </select>
-        </div>
+            </div>
+
+            <div class="form-group mb-3" id="pieces_wrapper">
+                <label>Pieces per Unit<span class="text-danger"> *</span></label>
+                <input type="number" id="pieces_per_unit" name="pieces_per_unit" 
+                    class="form-control" placeholder="Example: 10">
+            </div>
 
 
+            <script>
+                    const unitSelect = document.getElementById('unit_of_measure');
+                    const piecesWrapper = document.getElementById('pieces_wrapper');
+                    const piecesInput = document.getElementById('pieces_per_unit');
 
-        <div class="form-group mb-3">
-            <label>Pieces per Unit<span class="text-danger"> *</span></label>
-            <input type="number" name="pieces_per_unit" class="form-control" placeholder="Example: 10" required>
-        </div>
+                    function togglePiecesField() {
+                        if (unitSelect.value === 'Piece') {
+                            piecesWrapper.style.display = 'none';
+                            piecesInput.value = 1; // auto set
+                        } else {
+                            piecesWrapper.style.display = 'block';
+                            piecesInput.value = ''; // clear for input
+                        }
+                    }
+
+                    // Run on load
+                    togglePiecesField();
+
+                    // Run on change
+                    unitSelect.addEventListener('change', togglePiecesField);
+            </script>
+
 
 
     {{-- Expiration Switch --}}

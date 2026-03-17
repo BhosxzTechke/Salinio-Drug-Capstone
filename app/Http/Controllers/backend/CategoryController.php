@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 
@@ -53,7 +54,8 @@ class CategoryController extends Controller
                         // → Replaces spaces with dashes.
                         // "Pain Relief" → "Pain-Relief" and make lowercase.
 
-
+                // Clear cached categories to force fresh retrieval on next request
+                Cache::forget('categories');
 
                 $notification = array(
                     'message' => 'Succesfully inserted new category',
@@ -100,6 +102,9 @@ class CategoryController extends Controller
                         }
 
                         $category->delete();
+                        Cache::forget('categories');  // Clear cache after delete
+
+
 
                         $notification = [
                             'message' => 'Successfully deleted category',
@@ -156,6 +161,10 @@ class CategoryController extends Controller
                     'category_name' => $request->input('category'),
                     'slug' => Str::slug($request->input('category')),
                 ]);
+
+
+                Cache::forget('categories');
+
 
                 $notification = [
                     'message' => 'Successfully updated category',

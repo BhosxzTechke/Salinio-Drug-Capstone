@@ -148,21 +148,55 @@
 
 
 
-        <div class="form-group mb-3">
-            <label>Unit of Measure<span class="text-danger"> *</span></label>
-            <select name="unit_of_measure" class="form-control" required>
-                <option value="Box" {{ $product->unit_of_measure == 'Box' ? 'selected' : '' }}>Box</option>
-                <option value="Bottle" {{ $product->unit_of_measure == 'Bottle' ? 'selected' : '' }}>Bottle</option>
-                <option value="Strip" {{ $product->unit_of_measure == 'Strip' ? 'selected' : '' }}>Strip</option>
-                <option value="Pack" {{ $product->unit_of_measure == 'Pack' ? 'selected' : '' }}>Pack</option>
-            </select>
-        </div>
+            <div class="form-group mb-3">
+                <label>Unit of Measure<span class="text-danger"> *</span></label>
+                <select name="unit_of_measure" id="unit_of_measure" class="form-control" required>
+                    <option value="Box" {{ $product->unit_of_measure == 'Box' ? 'selected' : '' }}>Box</option>
+                    <option value="Piece" {{ $product->unit_of_measure == 'Piece' ? 'selected' : '' }}>Piece</option>
+                </select>
+            </div>
 
-        <div class="form-group mb-3">
-            <label>Pieces per Unit<span class="text-danger"> *</span></label>
-            <input type="number" name="pieces_per_unit" class="form-control" placeholder="Example: 10" value="{{ $product->pieces_per_unit }}" required>
-        </div>
+            <div class="form-group mb-3" id="pieces_wrapper">
+                <label>Pieces per Unit<span class="text-danger"> *</span></label>
+                <input type="number" 
+                    id="pieces_per_unit"
+                    name="pieces_per_unit" 
+                    class="form-control" 
+                    placeholder="Example: 10" 
+                    value="{{ $product->pieces_per_unit }}">
+            </div>
 
+
+
+
+
+        <script>
+                const unitSelect = document.getElementById('unit_of_measure');
+                const piecesWrapper = document.getElementById('pieces_wrapper');
+                const piecesInput = document.getElementById('pieces_per_unit');
+
+                function togglePiecesField() {
+                    if (unitSelect.value === 'Piece') {
+                        piecesWrapper.style.display = 'none';
+                        piecesInput.value = 1; // force to 1
+                    } else {
+                        piecesWrapper.style.display = 'block';
+
+                        // IMPORTANT: only reset if empty
+                        if (!piecesInput.value || piecesInput.value == 1) {
+                            piecesInput.value = '';
+                        }
+                    }
+                }
+
+                // Run when page loads (VERY IMPORTANT for edit)
+                window.addEventListener('load', function () {
+                    togglePiecesField();
+                });
+
+                // Run when changed
+                unitSelect.addEventListener('change', togglePiecesField);
+        </script>
 
 
 

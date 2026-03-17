@@ -4,7 +4,7 @@
 
 <div class="text-sm text-black w-full">
     <div class="text-center font-medium py-2 bg-gradient-to-r from-green-200 via-green-100 to-green-200">
-        <p>Exclusive Price Drop! Hurry, <span class="underline underline-offset-2">Offer Ends Soon!</span></p>
+        {{-- <p>Exclusive Price Drop! Hurry, <span class="underline underline-offset-2">Offer Ends Soon!</span></p> --}}
     </div>
 </div>
 
