@@ -484,7 +484,7 @@ Route::middleware(['auth', 'web'])->group(function () {
         $html .= '<td class="product-name">'.$item->name.'</td>';
         $html .= '<td class="product-code">'.($item->options->code ?? '-').'</td>';
         $html .= '<td class="selling-price">'.$item->price.'</td>';
-        $html .= '<td class="unit_of_measure">'.$item->options->unit_of_measure.'</td>';
+        $html .= '<td class="unit_of_measure">'.$item->options->unit_of_measure .'(' . $item->options->pieces_of_unit .')' .'pcs' .'</td>';
 
 
             $html .= '<td>
@@ -519,6 +519,11 @@ Route::middleware(['auth', 'web'])->group(function () {
         $html .= '</tr>';
     }
 
+
+        // button for check sa qty
+
+            
+
             return $html;
         })->name('cart.content');
 
@@ -540,7 +545,6 @@ Route::middleware(['auth', 'web'])->group(function () {
                         'code' => $request->code,
                         'unit_of_measure' => $request->unit,
                         'pieces_of_unit' => $request->pieces_unit,
-                        'cost_price' => $request->cost_price ?? 0, // store cost price separately
                     ]
 
             ]);
@@ -556,25 +560,36 @@ Route::middleware(['auth', 'web'])->group(function () {
         Route::delete('/cart/remove', function (Illuminate\Http\Request $request) {
             Cart::instance('purchaseOrder')->remove($request->rowId);
             return response()->json(['success' => true]);
-        })->name('cart.remove');
+            })->name('cart.remove');
 
 
 
-        Route::patch('/cart/update-item', function (Illuminate\Http\Request $request) {
-            $item = Cart::instance('purchaseOrder')->get($request->rowId);
+            Route::patch('/cart/update-item', function (Illuminate\Http\Request $request) {
+                $item = Cart::instance('purchaseOrder')->get($request->rowId);
 
-            // Preserve existing options but update cost price
-            $options = $item->options->toArray();
-            $options['cost_price'] = $request->cost_price;
+                // Preserve existing options but update cost price
+                $options = $item->options->toArray();
+                $options['cost_price'] = $request->cost_price;
 
-            Cart::instance('purchaseOrder')->update($request->rowId, [
-                'qty' => $request->qty,
-                'options' => $options,
-            ]);
 
-            return response()->json(['success' => true]);
-        })->name('cart.updateItem');
+                Cart::instance('purchaseOrder')->update($request->rowId, [
+                    'qty' => $request->qty,
+                    'options' => $options,
+                ]);
 
+
+                return response()->json(['success' => true]);
+            })->name('cart.updateItem');
+
+
+
+
+
+
+
+
+
+        
 
 
         ///////////////////// DOWNLOAD EXCELLLLL ///////////////////////////////////
@@ -614,6 +629,16 @@ Route::middleware(['auth', 'web'])->group(function () {
 
 
         // ---------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -147,56 +147,55 @@
         </div>
 
 
-
             <div class="form-group mb-3">
-                <label>Unit of Measure<span class="text-danger"> *</span></label>
-                <select name="unit_of_measure" id="unit_of_measure" class="form-control" required>
-                    <option value="Box" {{ $product->unit_of_measure == 'Box' ? 'selected' : '' }}>Box</option>
-                    <option value="Piece" {{ $product->unit_of_measure == 'Piece' ? 'selected' : '' }}>Piece</option>
+                <label>Purchase Unit<span class="text-danger"> *</span></label>
+                <select name="purchase_unit" id="purchase_unit" class="form-control" required>
+                    <option value="Box" {{ $product->purchase_unit == 'Box' ? 'selected' : '' }}>Box</option>
+                    <option value="Piece" {{ $product->purchase_unit == 'Piece' ? 'selected' : '' }}>Piece</option>
                 </select>
             </div>
 
             <div class="form-group mb-3" id="pieces_wrapper">
-                <label>Pieces per Unit<span class="text-danger"> *</span></label>
+                <label>Pieces per Purchase Unit<span class="text-danger"> *</span></label>
                 <input type="number" 
                     id="pieces_per_unit"
                     name="pieces_per_unit" 
                     class="form-control" 
                     placeholder="Example: 10" 
-                    value="{{ $product->pieces_per_unit }}">
+                    value="{{ $product->pieces_per_unit ?? 1 }}">
             </div>
 
 
 
 
-
-        <script>
-                const unitSelect = document.getElementById('unit_of_measure');
+            <script>
+                const unitSelect = document.getElementById('purchase_unit');
                 const piecesWrapper = document.getElementById('pieces_wrapper');
-                const piecesInput = document.getElementById('pieces_per_unit');
+                const piecesInput = document.getElementById('pieces_per_purchase_unit');
 
                 function togglePiecesField() {
                     if (unitSelect.value === 'Piece') {
                         piecesWrapper.style.display = 'none';
-                        piecesInput.value = 1; // force to 1
+                        piecesInput.value = 1; // force 1 piece
                     } else {
                         piecesWrapper.style.display = 'block';
-
-                        // IMPORTANT: only reset if empty
+                        // Only clear if empty or previously set to 1
                         if (!piecesInput.value || piecesInput.value == 1) {
                             piecesInput.value = '';
                         }
                     }
                 }
 
-                // Run when page loads (VERY IMPORTANT for edit)
+                // Run on page load (important for edit form)
                 window.addEventListener('load', function () {
                     togglePiecesField();
                 });
 
-                // Run when changed
+                // Run on change
                 unitSelect.addEventListener('change', togglePiecesField);
-        </script>
+            </script>
+            
+
 
 
 

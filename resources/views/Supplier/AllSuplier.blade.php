@@ -22,6 +22,11 @@
                                     </div>
                                     <h4 class="page-title">Manage Supplier</h4>
                                 </div>
+
+                                
+                                        <div class="alert alert-info" role="alert">
+                                            <i class="mdi mdi-information"></i> <strong>Note:</strong> The supplier's email will be used when generating purchase orders.
+                                        </div>
                             </div>
                         </div>     
                         <!-- end page title --> 

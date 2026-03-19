@@ -203,7 +203,7 @@
             <td>{{ $data->product_name }}</td>
             <td>{{ $data->product_code }}</td>
             <td>{{ $data->selling_price }}</td>
-            <td>{{ $data->unit_of_measure }}</td>
+            <td>{{ $data->purchase_unit }}</td>
             <td>{{ $data->pieces_per_unit }}</td>
 
             <td>
@@ -212,9 +212,9 @@
                                                 data-id="{{ $data->id }}"
                                                 data-name="{{ $data->product_name }}"
                                                 data-code="{{ $data->product_code }}"
-                                                data-unit="{{ $data->unit_of_measure ?? 1 }}"
+                                                data-unit="{{ $data->purchase_unit ?? 1 }}"
                                                 data-pieces_unit="{{ $data->pieces_per_unit ?? 1 }}"
-                                                data-price="{{ $data->selling_price }}"
+                                                data-price="{{ $data->selling_price * $data->pieces_per_unit }}"
                                                 data-qty="1">  <!-- add this -->
 
                                         <i class="fa fa-plus"></i>

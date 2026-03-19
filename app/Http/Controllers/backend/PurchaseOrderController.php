@@ -48,6 +48,7 @@ public function SavePurchaseOrder(Request $request)
 {
     try {
 
+
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
         ], [
@@ -89,6 +90,7 @@ public function SavePurchaseOrder(Request $request)
                     'price' => "Selling price must be greater than cost price for product: {$item->name}."
                 ]);
             }
+
 
             $poItem = PurchaseOrderItem::create([
                 'purchase_order_id' => $purchase->id,
@@ -151,6 +153,9 @@ public function SavePurchaseOrder(Request $request)
 
 
 
+
+
+
         public function AllPurchaseOrder (){
 
             $PurchaseOrder = PurchaseOrder::latest()->get();
@@ -163,7 +168,7 @@ public function SavePurchaseOrder(Request $request)
         public function AllPendingOrder()
         {
             // Get only POs where status is still "sent" or "partially_received"
-            $PendingOrder = PurchaseOrder::whereIn('status', ['confirmed', 'partially_received'])
+            $PendingOrder = PurchaseOrder::whereIn('status', ['confirmed', 'partially_received', 'cancelled'])
                 ->latest()
                 ->get();
 
@@ -301,11 +306,19 @@ public function SavePurchaseOrder(Request $request)
 
                 
             /// pieces siang papasok nd box or bottle 
-            
-            $product = Product::find($item['product_id']);
+    
+                $product = Product::find($item['product_id']);
 
-            // Convert received quantity (units) into pieces
-            $piecesReceived = $item['quantity_received'] * ($product->pieces_per_unit ?? 1);
+                $piecesPerUnit = $product->pieces_per_unit ?? 1;
+
+                // Convert quantity to pieces
+                $piecesReceived = $item['quantity_received'] * $piecesPerUnit;
+
+                // Convert cost price to per piece
+                $costPerPiece = $item['cost_price'] / $piecesPerUnit;
+
+
+
 
             $inventoryRow = Inventory::where('product_id', $item['product_id'])
                 ->where('supplier_id', $supplierId)
@@ -325,7 +338,7 @@ public function SavePurchaseOrder(Request $request)
                     'expiry_date' => $item['expiry_date'] ?? null,
                     'received_date' => now(),
                     'quantity' => $piecesReceived, // convert units → pieces
-                    'cost_price' => $item['cost_price'],
+                    'cost_price' => $costPerPiece,
                     'selling_price' => $item['selling_price'] ?? null,
                 ]);
             }

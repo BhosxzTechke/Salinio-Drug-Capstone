@@ -67,7 +67,6 @@
                                 @endforeach
                             @endforeach
                         </tbody>
-
                                 <tfoot class="table-light">
             <tr>
                 <th colspan="6" class="text-end">Total Products Sold:</th>

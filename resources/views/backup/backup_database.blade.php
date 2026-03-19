@@ -74,15 +74,15 @@
                         {{-- <td> --}}
 
                                 
-                            @if(Auth::user()->can('download-backup')) 
+                            {{-- @if(Auth::user()->can('download-backup')) 
                                     <a href="{{ url($data->getFilename()) }}" class="btn btn-blue rounded-pill waves-effect waves-light">Download </a> 
-                        @endif 
+                        {{-- @endif  --}}
 
 
-                            {{-- <a href="{{ route('backup.download', $data->getFilename()) }}"
+                            <a href="{{ route('backup.download', $data->getFilename()) }}"
                                                     class="btn btn-blue rounded-pill waves-effect waves-light">
                                                     Download
-                                                    </a> --}}
+                                                    </a>
 
 
                 

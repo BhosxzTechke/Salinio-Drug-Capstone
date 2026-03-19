@@ -34,32 +34,59 @@ class SupplierConfirmationController extends Controller
 
 
 
-            public function store(Request $request, $token)
-            {
-                $purchase = PurchaseOrder::where('supplier_confirmation_token', $token)
-                    ->whereNull('supplier_confirmed_at')
-                    ->firstOrFail();
+public function store(Request $request, $token)
+{
+    $purchase = PurchaseOrder::with('items')->where('supplier_confirmation_token', $token)
+        ->whereNull('supplier_confirmed_at')
+        ->firstOrFail();
 
-                foreach ($request->items as $item) {
-                    PurchaseOrderItem::where('id', $item['purchase_order_item_id'])
-                        ->where('purchase_order_id', $purchase->id)
-                        ->update([
-                            'expiration_date' => $item['expiration_date'] ?? null
-                        ]);
-                }
+    if ($request->has('cancel_order')) {
+        // Cancel the entire order
+        $purchase->update([
+            'status' => 'cancelled',
+            'supplier_confirmed_at' => now(),
+            'supplier_confirmation_token' => null,
+        ]);
 
+        return view('Supplier.cancel-success', ['purchase' => $purchase]);
+    }
 
-                // Update purchase order (NO expiration_date here anymore)
-                $purchase->update([
-                    'expected_delivery_date' => $request->expected_delivery_date,
-                    'supplier_confirmed_at' => now(),
-                    'supplier_confirmation_token' => null,
-                    'status' => 'confirmed',
-                ]);
+    foreach ($request->items as $itemData) {
+        $item = PurchaseOrderItem::where('id', $itemData['purchase_order_item_id'])
+            ->where('purchase_order_id', $purchase->id)
+            ->first();
 
-                return view('Supplier.confirm-success');
-            }
+        if (!$item) continue;
 
+        if (!empty($itemData['cancel'])) {
+            $item->update([
+                'status' => 'cancelled'
+            ]);
+            continue;
+        }
+
+        // Update expiration date if not cancelled
+        $item->update([
+            'expiration_date' => $itemData['expiration_date'] ?? null
+        ]);
+    }
+
+    // Update purchase order status if all items are cancelled
+    if ($purchase->items()->where('status', '!=', 'cancelled')->count() === 0) {
+        $purchase->update([
+            'status' => 'cancelled',
+        ]);
+    } else {
+        $purchase->update([
+            'expected_delivery_date' => $request->expected_delivery_date,
+            'supplier_confirmed_at' => now(),
+            'supplier_confirmation_token' => null,
+            'status' => 'confirmed',
+        ]);
+    }
+
+    return view('Supplier.confirm-success', ['purchase' => $purchase]);
+}
 
 
 

@@ -603,7 +603,7 @@
 
                                         @if(Auth::user()->can('can-view-daily-sales'))
                                             <li>
-                                                <a href="{{ route('daily.reports')}}">Daily Sales Report</a>
+                                                <a href="{{ route('daily.reports')}}">Sales Report</a>
                                             </li>
                                         @endif
 

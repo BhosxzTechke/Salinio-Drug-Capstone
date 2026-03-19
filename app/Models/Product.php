@@ -39,7 +39,7 @@ use HasFactory;
         'is_active',
         'has_expiration',
         'is_ecommerce',
-        'unit_of_measure',
+        'purchase_unit',
         'pieces_per_unit'
     ];
 

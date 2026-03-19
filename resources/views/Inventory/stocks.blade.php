@@ -18,17 +18,28 @@
     </div>
 
     <div class="col-md-3">
-        <input type="text" name="product" value="{{ request('product') }}" class="form-control" placeholder="Search by Product name">
-    </div>
+            <select name="channel" class="form-control">
+                <option value="">-- Filter by Type --</option>
+                <option value="pos" {{ request('channel') == 'pos' ? 'selected' : '' }}>POS</option>
+                <option value="ecommerce" {{ request('channel') == 'ecommerce' ? 'selected' : '' }}>E-Commerce</option>
+            </select>
+        </div>
 
-    <div class="col-md-2">
-        <button type="submit" class="btn btn-primary w-100">Filter</button>
-    </div>
 
-    <div class="col-md-2">
-        <a href="{{ route('show.inventory') }}" class="btn btn-secondary w-100">Reset</a>
-    </div>
-</form>
+
+
+    <div class="col-md-5">
+            <input type="text" name="product" value="{{ request('product') }}" class="form-control" placeholder="Search by Product name">
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+
+        <div class="col-md-2">
+            <a href="{{ route('show.inventory') }}" class="btn btn-secondary w-100">Reset</a>
+        </div>
+    </form>
 
 
 

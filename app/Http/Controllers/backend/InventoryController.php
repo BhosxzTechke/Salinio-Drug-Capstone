@@ -46,37 +46,45 @@ class InventoryController extends Controller
     //
 public function Inventory(Request $request)
 {
-
     $today = now()->toDateString();
-    $status = $request->get('status', 'active'); // default to active
+    $status = $request->get('status', 'active');
+    $channel = $request->get('channel'); // new filter
 
     $query = Inventory::with('product');
 
-    // 🔍 Filter by status
-    if ($status == 'expired') {
-        $query->where('expiry_date', '<=', $today);
-    } elseif ($status == 'out_of_stock') {
-        $query->where('quantity', '<=', 0);
-    } elseif ($status == 'active') {
-        $query->where('quantity', '>', 0)
+        if ($status == 'expired') {
+            $query->where('expiry_date', '<=', $today);
+        } elseif ($status == 'out_of_stock') {
+            $query->where('quantity', '<=', 0);
+        } elseif ($status == 'active') {
+            $query->where('quantity', '>', 0)
                 ->where(function ($q) use ($today) {
                     $q->whereNull('expiry_date')
                         ->orWhere('expiry_date', '>', $today);
                 });
-    }
+        }
 
-    // Filter by product name
     if ($request->filled('product')) {
         $query->whereHas('product', function ($q) use ($request) {
             $q->where('product_name', 'like', '%'.$request->product.'%');
         });
     }
 
+    if ($channel == 'pos') {
+        $query->whereHas('product', function ($q) {
+            $q->where('is_ecommerce', 0);
+        });
+    } elseif ($channel == 'ecommerce') {
+        $query->whereHas('product', function ($q) {
+            $q->where('is_ecommerce', 1);
+        });
+    }
 
     $inventory = $query->orderBy('created_at', 'desc')->get();
 
     return view('Inventory.stocks', compact('inventory'));
-}   
+}
+
 
 
     public function updateStatus()

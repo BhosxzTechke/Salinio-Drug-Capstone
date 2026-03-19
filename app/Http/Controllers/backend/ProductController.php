@@ -84,7 +84,7 @@ $validated = $request->validate([
 
     'selling_price' => 'required|numeric|min:0',
     'prescription_required' => 'nullable|boolean',
-    'unit_of_measure' => 'required',
+    'purchase_unit' => 'required',
     'pieces_per_unit' => 'required',
 
 ], [
@@ -129,9 +129,10 @@ $validated = $request->validate([
             'subcategory_id' => $validated['subcategory_id'],
             'brand_id' => $validated['brand_id'],
             'has_expiration' => $request->has('has_expiration'),
-            'unit_of_measure' => $validated['unit_of_measure'],
+            // New / renamed columns
+            'purchase_unit' => $validated['purchase_unit'],
             'pieces_per_unit' => $validated['pieces_per_unit'],
-            
+            'base_unit' => $validated['base_unit'] ?? 'piece',
 
             /// if  toggle is on saka ilalagay for pos and ecommerce product
             'is_ecommerce' => $request->boolean('is_ecommerce'),
@@ -274,7 +275,7 @@ public function UpdateProduct(Request $request)
             'brand_id'              => 'required|integer|exists:brands,id',
             'description'           => 'required|string|min:10',
 
-            'unit_of_measure' => 'required',
+            'purchase_unit' => 'required',
             'pieces_per_unit' => 'nullable|integer|min:1',
 
             /// ECOMMERCE FIELDS VALIDATION PART
@@ -317,8 +318,9 @@ public function UpdateProduct(Request $request)
             'brand_id'              => $request->input('brand_id'),
             'has_expiration'        => $request->has('has_expiration'),
             'dosage_form'           => $request->input('dosage_form'),
-            'unit_of_measure'       => $request->input('unit_of_measure'),
+            'purchase_unit'         => $request->input('purchase_unit'),
             'pieces_per_unit'       => $piecesPerUnit,
+
 
 
             /// ECOMMERCE FIELDS FOR UPDATE

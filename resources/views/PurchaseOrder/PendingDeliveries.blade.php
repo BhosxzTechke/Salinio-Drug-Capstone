@@ -61,9 +61,15 @@
                     <td><span class="badge badge-pill bg-danger"> {{ $data->status }}</span></td>
 
                     <td>
-                        {{-- @if(Auth::user()->can('receive-pending-order-button')) --}}
+
+                        @if($data->status == 'cancelled')
+
+                        <p>Cancelled</p>
+
+                        @else 
                         <a href="{{ route('Received.Order', $data->id)}}" class="btn btn-dark rounded-pill waves-effect waves-light">Received Delivery</a>
-                        {{-- @endif --}}
+                        @endif
+                    
                     </td>
                 </tr>
                     @endforeach

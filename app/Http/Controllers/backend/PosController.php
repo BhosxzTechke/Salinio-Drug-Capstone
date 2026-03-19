@@ -59,6 +59,9 @@ public function viewPos()
         ->get();
 
 
+        
+
+
     $stockMap = $PosData->keyBy('product_id');
 
 
