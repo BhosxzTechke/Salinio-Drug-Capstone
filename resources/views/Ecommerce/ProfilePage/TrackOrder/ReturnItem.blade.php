@@ -110,7 +110,7 @@
                         <div class="mb-5">
                             <label class="block font-medium text-gray-800 mb-2" for="quantity">Quantity to Return</label>
                             <input type="number" name="quantity" id="quantity" class="form-control" min="1" max="{{ $order->total_products }}" value="1" required>
-                            <small class="text-gray-500">Maximum: {{ $order->quantity }}</small>
+                            <small class="text-gray-500">Maximum: {{ $order->total_products }}</small>
                         </div>
 
                         <div class="mb-5">

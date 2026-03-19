@@ -33,6 +33,7 @@
                         <thead>
                             <tr>
                                 <th>Sl</th>
+                                <th>Order Source</th>
                                 <th>Name</th>
                                 <th>Order Date</th>
                                 <th>Payment Status</th>
@@ -49,7 +50,8 @@
         	@foreach($Orders as $key=> $item)
             <tr>
                 <td>{{ $key+1 }}</td>
-                <td>{{ $item['customer']['name'] ?? '' }}</td>
+                <td>{{  $item->order_source ?? '' }}</td>
+                <td>{{ $item['customer']['name'] ?? 'In-Store Customer' }}</td>
                 <td>{{ $item->order_date }}</td>
                 <td>{{ $item->payment_status }}</td>
                 <td>{{ $item->payment_method }}</td>

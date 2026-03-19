@@ -90,7 +90,7 @@
 
             <td class="px-6 py-4">{{ $item->product->product_name }}</td>
 
-            <td class="px-6 py-4">{{ $item->product->unit_of_measure }}</td>
+            <td class="px-6 py-4">{{ $item->product->purchase_unit }}</td>
             
             <td class="px-6 py-4">{{ $item->product->pieces_per_unit }}</td>
 

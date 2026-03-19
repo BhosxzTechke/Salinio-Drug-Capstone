@@ -60,11 +60,19 @@
       Product Code: <span class="font-medium">{{ $product->product_code ?? 'No Product Code' }}</span>
     </p>
     <p class="text-sm text-gray-500">
-      Unit: <span class="font-medium">{{ $product->unit_of_measure ?? 'Box' }}</span>
+      Unit: <span class="font-medium">{{ $product->purchase_unit ?? 'Box' }}</span>
     </p>
-    <p class="text-sm text-gray-500">
-      Unit Per Pieces: <span class="font-medium">{{ $product->pieces_per_unit ?? '1' }}</span>
-    </p>
+
+
+    @if($product->purchase_unit == 'Box')
+          <p class="text-sm text-gray-500">
+            Unit Per Pieces: <span class="font-medium">{{ $product->pieces_per_unit ?? '1' }}</span>
+          </p>
+
+    @else
+
+    @endif
+
 
 
     <!-- Price + Stock -->

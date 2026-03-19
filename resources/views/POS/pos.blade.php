@@ -347,22 +347,39 @@ Create Invoice for Customer</button>
 
 
                 <!-- Add Button -->
-                        <form method="POST" action="{{ url('/pos/add') }}" class="mt-auto product-add-form">
-                            @csrf
-                            <input type="hidden" name="id" value="{{ $item->product_id }}">
-                            <input type="hidden" name="name" value="{{ $item->product->product_name }}">
-                            
-                            <!-- Quantity -->
-                            <input type="number" name="qty" value="1" min="1" max="{{ $item->total_quantity }}" class="form-control form-control-sm mb-1">
+                    <form method="POST" action="{{ url('/pos/add') }}" class="mt-auto product-add-form">
+                        @csrf
+                        <input type="hidden" name="id" value="{{ $item->product_id }}">
+                        <input type="hidden" name="name" value="{{ $item->product->product_name }}">
+                        <input type="hidden" name="selling_price" class="selling-price-input" value="{{ $item->product->selling_price }}">
 
+                        <!-- SELECT BUTTON -->
+                        <button type="button" class="btn btn-outline-primary btn-sm w-100 select-btn mb-1">
+                            Select
+                        </button>
 
-                            <!-- Selling Price (will update via JS) -->
-                            <input type="hidden" name="selling_price" class="selling-price-input" value="{{ $item->product->selling_price }}">
+                        <!-- HIDDEN AREA (Qty + Add) -->
+                        <div class="qty-section d-none">
+                            <input type="number" 
+                                name="qty" 
+                                value="1" 
+                                min="1" 
+                                max="{{ $item->total_quantity }}" 
+                                class="form-control form-control-sm mb-1">
 
                             <button type="submit" class="btn btn-primary btn-sm w-100">
                                 <i class="fas fa-plus"></i> Add
                             </button>
-                        </form>
+
+                            <button type="button" class="btn btn-secondary btn-sm w-100 cancel-btn mt-1">
+                                Cancel
+                            </button>
+
+                        </div>
+                    </form>
+
+
+
             </div>
         </div>
     @endforeach
@@ -399,7 +416,43 @@ document.querySelectorAll('.product-add-form').forEach(form => {
     // Run on page load
     updatePrice();
 });
+
+
+
 </script>
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.product-add-form').forEach(form => {
+    const selectBtn = form.querySelector('.select-btn');
+    const qtySection = form.querySelector('.qty-section');
+    const cancelBtn = form.querySelector('.cancel-btn');
+    const qtyInput = form.querySelector('input[name="qty"]');
+
+    // SELECT CLICK
+    selectBtn.addEventListener('click', () => {
+        selectBtn.classList.add('d-none');
+        qtySection.classList.remove('d-none');
+
+        // optional: focus input
+        if (qtyInput) qtyInput.focus();
+    });
+
+    // CANCEL CLICK
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            qtySection.classList.add('d-none');
+            selectBtn.classList.remove('d-none');
+        });
+    }
+});
+</script>
+
+
 
     </div>
 
