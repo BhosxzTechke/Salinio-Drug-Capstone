@@ -184,42 +184,47 @@
 
 
 
-            <div class="form-group mb-3">
-                <label>Purchase Unit <span class="text-danger"> *</span></label>
-                <select name="purchase_unit" id="purchase_unit" class="form-control">
-                    <option value="Box" {{ old('purchase_unit') == 'Box' ? 'selected' : '' }}>Box</option>
-                    <option value="Piece" {{ old('purchase_unit') == 'Piece' ? 'selected' : '' }}>Piece</option>
-                </select>
-            </div>
+<div class="form-group mb-3">
+    <label>
+        Purchase Unit <span class="text-danger"> *</span>
+        <small class="text-muted">(Choose how you are ordering this item from the supplier: by box/package or by individual piece)</small>
+    </label>
+    <select name="purchase_unit" id="purchase_unit" class="form-control">
+        <option value="Box" {{ old('purchase_unit') == 'Box' ? 'selected' : '' }}>Box / Package</option>
+        <option value="Piece" {{ old('purchase_unit') == 'Piece' ? 'selected' : '' }}>Piece</option>
+    </select>
+</div>
 
-            <div class="form-group mb-3" id="pieces_wrapper">
-                <label>Pieces per Purchase Unit <span class="text-danger"> *</span></label>
-                <input type="number" id="pieces_per_unit" name="pieces_per_unit" 
-                    class="form-control" placeholder="Example: 10" value="{{ old('pieces_per_purchase_unit', 1) }}">
-            </div>
+<div class="form-group mb-3" id="pieces_wrapper">
+    <label>
+        Pieces per Purchase Unit <span class="text-danger"> *</span>
+        <small class="text-muted">(Number of pieces in one box/package. This is used to calculate total quantity when ordering by box. Ignored if ordering by individual pieces.)</small>
+    </label>
+    <input type="number" id="pieces_per_unit" name="pieces_per_unit" 
+        class="form-control" placeholder="Example: 10" value="{{ old('pieces_per_purchase_unit', 1) }}">
+</div>
 
+<script>
+    const unitSelect = document.getElementById('purchase_unit');
+    const piecesWrapper = document.getElementById('pieces_wrapper');
+    const piecesInput = document.getElementById('pieces_per_unit');
 
-            <script>
-                const unitSelect = document.getElementById('purchase_unit');
-                const piecesWrapper = document.getElementById('pieces_wrapper');
-                const piecesInput = document.getElementById('pieces_per_unit');
+    function togglePiecesField() {
+        if (unitSelect.value === 'Piece') {
+            piecesWrapper.style.display = 'none';
+            piecesInput.value = 1; // auto set to 1 for piece orders
+        } else {
+            piecesWrapper.style.display = 'block';
+            piecesInput.value = ''; // clear input for box/package orders
+        }
+    }
 
-                function togglePiecesField() {
-                    if (unitSelect.value === 'Piece') {
-                        piecesWrapper.style.display = 'none';
-                        piecesInput.value = 1; // auto set to 1 for piece
-                    } else {
-                        piecesWrapper.style.display = 'block';
-                        piecesInput.value = ''; // clear input for box
-                    }
-                }
+    // Initialize on page load
+    togglePiecesField();
 
-                // Run on page load
-                togglePiecesField();
-
-                // Run on change
-                unitSelect.addEventListener('change', togglePiecesField);
-            </script>
+    // Update when selection changes
+    unitSelect.addEventListener('change', togglePiecesField);
+</script>
 
 
 
