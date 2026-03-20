@@ -39,6 +39,16 @@
                 Superadmins: <strong>{{ $superadminCount }}</strong> / {{ $superadminLimit }}
             </div>
 
+                            <!-- Email Note -->
+                <div class="col-12 mb-3">
+                    <div class="alert alert-info" role="alert">
+                        <i class="mdi mdi-information me-2"></i>
+                        <strong>Note:</strong> The email provided will be used to send the temporary password to the new user.
+                    </div>
+                </div>
+
+                
+
         <div class="col-lg-8 col-xl-12">
                 <div class="card">
                     <div class="card-body">

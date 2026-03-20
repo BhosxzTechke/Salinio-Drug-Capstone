@@ -61,11 +61,11 @@
 
                     </div> <!-- end row -->
     
-                            @if(Auth::user()->can('change-business-name'))
+                            {{-- @if(Auth::user()->can('change-business-name')) --}}
                             <div class="text-end">
                                 <button type="submit" name="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Update Changes</button>
                             </div>
-                            @endif
+                            {{-- @endif --}}
 
                         </form>
                     </div>

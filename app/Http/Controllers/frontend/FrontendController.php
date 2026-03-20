@@ -41,7 +41,7 @@ class FrontendController extends Controller
 
             $today = now()->toDateString();
 
-            $inventory = Inventory::where('quantity', '>', 10)
+            $inventory = Inventory::where('quantity', '>', 0)
 
                 ->whereHas('product', function ($query) {
                     $query->where('is_ecommerce', true);

@@ -160,9 +160,9 @@
                                                     <th>Image</th>
                                                     <th>Product Name</th>
                                                     <th>Product Code</th>
-                                                    <th>Quantity </th>
-                                                    <th>Price</th>
-                                                    <th>Total</th>
+                                                    <th>Quantity Per Piece</th>
+                                                    {{-- <th>Price</th>
+                                                    <th>Total</th> --}}
                                                 </tr>
 
                                         </thead>
@@ -178,8 +178,8 @@
                             <td>{{ $data->product->product_name }}</td>
                             <td>{{ $data->product->product_code }}</td>
                             <td>{{ $data->quantity }}</td>
-                            <td>{{ $data->product->selling_price }}</td>
-                            <td>{{ $data->quantity * $data->product->selling_price }}</td>
+                            {{-- <td>{{ $data->product->selling_price }}</td>
+                            <td>{{ $data->quantity * $data->product->selling_price }}</td> --}}
 
                         </tr>
                             @endforeach

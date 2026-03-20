@@ -28,69 +28,71 @@
         <!-- end page title -->
 
 
-  <div class="row">
+<div class="row">
 
-        <div class="col-lg-8 col-xl-12">
-                <div class="card">
-                    <div class="card-body">
+    <div class="col-lg-8 col-xl-12">
+        <div class="card">
+            <div class="card-body">
 
-                            <div class="tab-pane" id="settings">
+                <div class="tab-pane" id="settings">
 
+                    <form id="myForm" method="POST" action="{{ route('Store.admin')}}" enctype="multipart/form-data">
+                        @csrf
 
+                        <h5 class="mb-4 text-uppercase">
+                            <i class="mdi mdi-account-circle me-1"></i>User Info
+                        </h5>
 
-<form id="myForm" method="POST" action="{{ route('Store.admin')}}" enctype="multipart/form-data">
-    @csrf
+                        <div class="row">
 
-    <h5 class="mb-4 text-uppercase">
-        <i class="mdi mdi-account-circle me-1"></i>User Info
-    </h5>
+                            @php
+                                $superadminCount = \App\Models\User::role('Super Admin')->count();
+                                $superadminLimit = config('roles.superadmin_limit');
+                            @endphp
 
-    <div class="row">
+                            <div class="alert alert-info">
+                                Superadmins: <strong>{{ $superadminCount }}</strong> / {{ $superadminLimit }}
+                            </div>
 
+                            <!-- Email Note -->
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-info" role="alert">
+                                    <i class="mdi mdi-information me-2"></i>
+                                    <strong>Note:</strong> The email provided will be used to send the temporary password to the new user.
+                                </div>
+                            </div>
 
+                            <!-- Name -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="name">Name <span class="text-danger">*</span></label>
+                                    <input type="text"  
+                                        name="name" 
+                                        class="form-control @error('name') is-invalid @enderror" 
+                                        id="name" 
+                                        placeholder="Enter User name" 
+                                        required>
+                                    @error('name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror 
+                                </div>
+                            </div>
 
-        @php
-                $superadminCount = \App\Models\User::role('Super Admin')->count();
-                $superadminLimit = config('roles.superadmin_limit');
-            @endphp
-
-            <div class="alert alert-info">
-                Superadmins: <strong>{{ $superadminCount }}</strong> / {{ $superadminLimit }}
-            </div>
-
-
-
-        <!-- Name -->
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="name">Name <span class="text-danger">*</span></label>
-                <input type="text"  
-                       name="name" 
-                       class="form-control @error('name') is-invalid @enderror" 
-                       id="name" 
-                       placeholder="Enter User name" 
-                       required>
-                @error('name')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror 
-            </div>
-        </div>
-
-        <!-- Email -->
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="email">Email <span class="text-danger">*</span></label>
-                <input type="email" 
-                       name="email" 
-                       class="form-control @error('email') is-invalid @enderror" 
-                       id="email" 
-                       placeholder="Enter User Email" 
-                       required>
-                @error('email')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="email">Email <span class="text-danger">*</span></label>
+                                    <input type="email" 
+                                           name="email" 
+                                           class="form-control @error('email') is-invalid @enderror" 
+                                           id="email" 
+                                           placeholder="Enter User Email" 
+                                           required>
+                                    @error('email')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
 
         <!-- Hidden Default Password -->
         <input type="hidden" name="password" value="12345678">

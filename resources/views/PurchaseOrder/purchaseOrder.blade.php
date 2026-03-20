@@ -43,7 +43,18 @@
 
                     <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Purchase Order</h5>
                     <div class="row">
-                        <div class="col-md-6">
+
+
+
+
+
+
+<div class="col-md-6">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+
+                                    <div class="col-md-6">
 
                             <div class="mb-3">
                                 <label for="brand" class="">Purchase Order #</label>
@@ -54,45 +65,62 @@
                             @enderror 
                             </div>
                         </div>
+                        
 
+            <h5 class="mb-3">Supplier Details</h5>
 
+            <!-- Supplier Dropdown -->
+            <div class="form-group mb-3">
+                <label for="supplier_id" class="form-label fw-semibold">Select Supplier</label>
+                <select name="supplier_id" id="supplier_id" class="form-control">
+                    <option selected disabled>Choose a supplier...</option>
+                    @foreach ($sup as $supplier)
+                        <option value="{{ $supplier->id }}" data-email="{{ $supplier->email }}">
+                            {{ $supplier->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
+            <!-- Email Display Box -->
+            <div class="mb-3 p-3 bg-light rounded border">
+                <label class="form-label fw-semibold mb-1">📧 Order Email</label>
+                <div id="display_email" class="text-dark">
+                    <span class="text-muted">No supplier selected</span>
+                </div>
+                <small class="text-muted">
+                    This email will be used to send the purchase order.
+                </small>
+            </div>
 
+            <!-- Hidden Field -->
+            <input type="hidden" name="supplier_email" id="supplier_email">
 
-<div class="col-md-6">
-    <div class="form-group mb-3">
-        <label for="supplier_id">Supplier</label>
-
-        <select name="supplier_id"
-                id="supplier_id"
-                class="form-control @error('supplier_id') is-invalid @enderror">
-            <option selected disabled>Select Supplier</option>
-
-            @foreach ($sup as $supplier)
-                <option value="{{ $supplier->id }}"
-                        data-email="{{ $supplier->email }}">
-                    {{ $supplier->name }}
-                </option>
-            @endforeach
-        </select>
-
-        <!-- Hidden field that updates automatically -->
-        <input type="hidden" name="supplier_email" id="supplier_email">
-
-        @error('supplier_id')
-            <span class="text-danger">{{ $message }}</span>
-        @enderror
+        </div>
     </div>
 </div>
 
-        <script>
-                document.getElementById('supplier_id').addEventListener('change', function () {
-                    const selectedOption = this.options[this.selectedIndex];
-                    const email = selectedOption.getAttribute('data-email');
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const supplierSelect = document.getElementById('supplier_id');
+    const emailDisplay = document.getElementById('display_email');
+    const hiddenEmail = document.getElementById('supplier_email');
 
-                    document.getElementById('supplier_email').value = email;
-                });
-        </script>
+    supplierSelect.addEventListener('change', function () {
+        let selectedOption = this.options[this.selectedIndex];
+        let email = selectedOption.getAttribute('data-email');
+
+        if (email) {
+            emailDisplay.innerHTML = `<strong>${email}</strong>`;
+        } else {
+            emailDisplay.innerHTML = `<span class="text-muted">No email available</span>`;
+        }
+
+        hiddenEmail.value = email || '';
+    });
+});
+</script>
+
 
 
 
