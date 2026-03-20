@@ -623,7 +623,7 @@
 
 
 
-                            @if(Auth::user()->can('can-view-returns-report'))
+                            {{-- @if(Auth::user()->can('can-view-returns-report')) --}}
                                 <li>
                                     <a href="#ReturnReport" data-bs-toggle="collapse">
                                         <i class="fas fa-undo"></i>
@@ -644,7 +644,7 @@
                                         </ul>
                                     </div>
                                 </li>
-                            @endif
+                            {{-- @endif --}}
 
 
 
