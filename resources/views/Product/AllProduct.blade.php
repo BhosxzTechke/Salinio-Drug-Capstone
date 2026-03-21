@@ -45,6 +45,7 @@
                                                     <th>Image</th>
                                                     <th>Name</th>
                                                     <th>Category</th>
+                                                    <th>Brand</th>
                                                     <th>Expiration</th>
                                                     <th>Code</th>
                                                     <th>Price</th>
@@ -63,6 +64,7 @@
                                                     <td><img src="{{ asset($data->product_image) ?? '' }}" style="height: 3rem" ></td>
                                                     <td>{{ $data->product_name }}</td>
                                                     <td>{{ $data->Category->category_name  ?? ''}}</td>
+                                                    <td>{{ $data->brand->name  ?? ''}}</td>
                                                     <td>    @if($data->has_expiration && $data->has_expiration === 1)Yes
                                                             @else No @endif </td>
                                                     <td>{{ $data->product_code }}</td>

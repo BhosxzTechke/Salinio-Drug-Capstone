@@ -623,7 +623,7 @@
 
 
 
-                            {{-- @if(Auth::user()->can('can-view-returns-report')) --}}
+                            @if(Auth::user()->can('can-view-returns-report'))
                                 <li>
                                     <a href="#ReturnReport" data-bs-toggle="collapse">
                                         <i class="fas fa-undo"></i>
@@ -644,7 +644,7 @@
                                         </ul>
                                     </div>
                                 </li>
-                            {{-- @endif --}}
+                            @endif
 
 
 
@@ -799,9 +799,9 @@
                 <div class="collapse" id="sidebarExpages">
                     <ul class="nav-second-level">   
 
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('all.permission') }}">All Permission</a>
-                        </li>
+                        </li> --}}
 
                         @if(Auth::user()->can('can-add-roles-in-permissions'))
                         <li>
